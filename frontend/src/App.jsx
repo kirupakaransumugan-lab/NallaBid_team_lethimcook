@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
+import Register from "./pages/Register";
 
 function Home() {
     return (
@@ -18,6 +19,16 @@ function App() {
         <BrowserRouter>
 
             <Routes>
+
+                <Route
+                    path="/register"
+                    element={
+                        <>
+                            <Navbar />
+                            <Register />
+                        </>
+                    }
+                />
 
                 <Route
                     path="*"
