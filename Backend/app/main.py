@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import Base, engine
 from app.models.user import User
 from app.routers.auth import router as auth_router
-
+from app.routers import RFQs
 
 
 app = FastAPI(
@@ -23,6 +23,11 @@ app.add_middleware(
 
 app.include_router(
     auth_router,
+    prefix="/api"
+)
+
+app.include_router(
+    rfqs.router,
     prefix="/api"
 )
 
