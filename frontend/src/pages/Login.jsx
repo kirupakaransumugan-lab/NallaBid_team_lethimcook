@@ -32,7 +32,7 @@ function Login() {
         try {
             const user = await loginUser(email.trim(), password);
 
-            navigate(user.role === "BUYER" ? "/buyer" : "/");
+            navigate(user.role === "BUYER" ? "/buyer" : "/supplier");
 
         } catch (err) {
             setError(err.message);

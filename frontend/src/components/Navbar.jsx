@@ -44,11 +44,6 @@ function Navbar({ children }) {
             path: "/rfqs"
         },
         {
-            name: "Create RFQ",
-            icon: "bi-plus-circle",
-            path: "/rfqs/create"
-        },
-        {
             name: "Quotations",
             icon: "bi-file-earmark-check",
             path: "/quotations"
