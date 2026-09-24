@@ -28,6 +28,8 @@ app.add_middleware(
         settings.FRONTEND_URL,
         "http://127.0.0.1:5173"
     ],
+    # Vite falls back to 5174, 5175... when 5173 is busy; allow any local dev port.
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
