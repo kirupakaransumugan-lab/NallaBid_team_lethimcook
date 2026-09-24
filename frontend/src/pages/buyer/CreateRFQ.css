@@ -1,0 +1,162 @@
+.create-rfq-page {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 50px;
+}
+
+.create-rfq-header {
+    margin-bottom: 24px;
+}
+
+.back-button {
+    border: none;
+    background: transparent;
+    color: #60a5fa;
+    padding: 0;
+    margin-bottom: 16px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.create-rfq-header h1 {
+    margin: 0 0 8px;
+    color: #ffffff;
+    font-size: 28px;
+}
+
+.create-rfq-header p {
+    margin: 0;
+    color: #8fa8c4;
+    font-size: 14px;
+}
+
+.rfq-form {
+    background: #061d32;
+    border: 1px solid #123d61;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.form-section {
+    padding: 24px;
+}
+
+.form-section h2 {
+    margin: 0 0 24px;
+    color: #ffffff;
+    font-size: 19px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    color: #d8e7f5;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #1c4b70;
+    border-radius: 9px;
+    background: #04172a;
+    color: #ffffff;
+    padding: 12px 14px;
+    outline: none;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #1683ff;
+    box-shadow: 0 0 0 2px rgba(22, 131, 255, 0.12);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group small {
+    margin-top: 6px;
+    color: #718aa5;
+    font-size: 12px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid #123d61;
+}
+
+.cancel-button,
+.create-button {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 20px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.cancel-button {
+    background: #102c46;
+    color: #c5d8ea;
+}
+
+.create-button {
+    background: #087cff;
+    color: #ffffff;
+}
+
+.create-button:hover {
+    background: #006ce6;
+}
+
+.create-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.rfq-error {
+    margin: 0 24px 20px;
+    padding: 12px 14px;
+    border: 1px solid #7f1d1d;
+    border-radius: 8px;
+    background: #3b1117;
+    color: #fca5a5;
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    .create-rfq-page {
+        padding: 32px 28px 60px;
+    }
+
+    .create-rfq-header h1 {
+        font-size: 32px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-row .form-group {
+        margin-bottom: 20px;
+    }
+}
