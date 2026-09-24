@@ -1,11 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { logout } from "../services/authService";
 
 import sidebarCard from "../assets/sidebar-card.png.png";
 
-function Navbar() {
 
+function Navbar({ children }) {
     const [active, setActive] = useState("Home");
+    const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
+
+    async function handleLogout() {
+        setMenuOpen(false);
+        await logout().catch(() => {});
+        navigate("/login");
+    }
 
     const menuItems = [
         {
@@ -46,9 +56,11 @@ function Navbar() {
     ];
 
     return (
-        <>
+        <div className="appLayout">
 
-            {/* Sidebar */}
+            {/* =================================
+                SIDEBAR
+            ================================== */}
 
             <aside className="sidebar">
 
@@ -119,92 +131,135 @@ function Navbar() {
             </aside>
 
 
-            {/* Main topbar */}
+            {/* =================================
+                MAIN AREA
+            ================================== */}
 
-            <header className="topbar">
-
-                <div className="searchBox">
-
-                    <i className="bi bi-search"></i>
-
-                    <input
-                        type="search"
-                        placeholder="Search RFQs, suppliers, categories..."
-                    />
-
-                </div>
+            <div className="mainArea">
 
 
-                <div className="topbarRight">
+                {/* =================================
+                    TOPBAR
+                ================================== */}
 
-                    <button
-                        type="button"
-                        className="iconButton"
-                    >
+                <header className="topbar">
 
-                        <i className="bi bi-bell"></i>
+                    <div className="searchBox">
 
-                        <span className="notification">
-                            3
-                        </span>
+                        <i className="bi bi-search"></i>
 
-                    </button>
+                        <input
+                            type="search"
+                            placeholder="Search RFQs, suppliers, categories..."
+                        />
 
-
-                    <button
-                        type="button"
-                        className="iconButton"
-                    >
-
-                        <i className="bi bi-chat-square-text"></i>
-
-                    </button>
+                    </div>
 
 
-                    <button
-                        type="button"
-                        className="iconButton"
-                    >
+                    <div className="topbarRight">
 
-                        <i className="bi bi-question-circle"></i>
+                        <button
+                            type="button"
+                            className="iconButton"
+                        >
 
-                    </button>
+                            <i className="bi bi-bell"></i>
+
+                            <span className="notification">
+                                3
+                            </span>
+
+                        </button>
 
 
-                    <div className="profileDivider"></div>
+                        <button
+                            type="button"
+                            className="iconButton"
+                        >
+
+                            <i className="bi bi-chat-square-text"></i>
+
+                        </button>
 
 
-                    <button
-                        type="button"
-                        className="profileButton"
-                    >
+                        <button
+                            type="button"
+                            className="iconButton"
+                        >
 
-                        <div className="profileImage">
-                            KS
+                            <i className="bi bi-question-circle"></i>
+
+                        </button>
+
+
+                        <div className="profileDivider"></div>
+
+
+                        <div className="dropdown">
+
+                        <button
+                            type="button"
+                            className="profileButton"
+                            onClick={() => setMenuOpen(!menuOpen)}
+                            aria-expanded={menuOpen}
+                        >
+
+                            <div className="profileImage">
+                                KS
+                            </div>
+
+                            <div className="profileInfo">
+
+                                <strong>
+                                    Kajan Siva
+                                </strong>
+
+                                <small>
+                                    Procurement Manager
+                                </small>
+
+                            </div>
+
+                            <i className="bi bi-chevron-down"></i>
+
+                        </button>
+
+                        <ul
+                            className={`dropdown-menu dropdown-menu-end${menuOpen ? " show" : ""}`}
+                            style={{ right: 0 }}
+                        >
+                            <li>
+                                <button
+                                    type="button"
+                                    className="dropdown-item text-danger"
+                                    onClick={handleLogout}
+                                >
+                                    <i className="bi bi-box-arrow-right me-2"></i>
+                                    Logout
+                                </button>
+                            </li>
+                        </ul>
+
                         </div>
 
-                        <div className="profileInfo">
+                    </div>
 
-                            <strong>
-                                Kajan Siva
-                            </strong>
+                </header>
 
-                            <small>
-                                Procurement Manager
-                            </small>
 
-                        </div>
+                {/* =================================
+                    PAGE CONTENT
+                ================================== */}
 
-                        <i className="bi bi-chevron-down"></i>
+                <main className="mainContent">
+                    {children}
+                </main>
 
-                    </button>
+            </div>
 
-                </div>
-
-            </header>
-
-        </>
+        </div>
     );
 }
+
 
 export default Navbar;
