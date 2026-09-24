@@ -48,16 +48,16 @@ frontend/build/
 !.vscode/settings.json
 
 .idea/
-
+.cline/
+.claude/
+.cursor/
+*.log
 # OS files
 .DS_Store
 Thumbs.db
 
 # Database/local files
 *.db
-*.sqlite
-*.sqlite3
 
-# Uploaded/generated files
-uploads/
-generated/
+
+
