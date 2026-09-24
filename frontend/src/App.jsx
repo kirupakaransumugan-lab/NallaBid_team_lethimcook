@@ -10,6 +10,11 @@ import Navbar from "./components/Navbar";
 
 import BuyerDashboard from "./pages/buyer/BuyerDashboard";
 
+
+// =========================
+// GIDEON - SUPPLIER PAGES
+// =========================
+
 import SupplierDashboard from "./pages/supplier/SupplierDashboard";
 import SupplierRFQDetails from "./pages/supplier/SupplierRFQDetails";
 import QuotationForm from "./pages/supplier/QuotationForm";
@@ -31,6 +36,10 @@ function App() {
 
             <Routes>
 
+                {/* =========================
+                    AUTH
+                ========================= */}
+
                 <Route
                     path="/login"
                     element={<Login />}
@@ -44,6 +53,7 @@ function App() {
 
                 {/* =========================
                     BUYER
+                    Existing Team Lead Work
                 ========================= */}
 
                 <Route
@@ -58,6 +68,7 @@ function App() {
 
                 {/* =========================
                     SUPPLIER
+                    Gideon's Work
                 ========================= */}
 
                 <Route
@@ -113,11 +124,9 @@ function App() {
                 <Route
                     path="*"
                     element={
-                        <>
-                            <Navbar>
-                                <Home />
-                            </Navbar>
-                        </>
+                        <Navbar>
+                            <Home />
+                        </Navbar>
                     }
                 />
 
