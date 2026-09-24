@@ -6,6 +6,8 @@ import {
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
+import CreateRFQ from "./pages/buyer/CreateRFQ";
+import MyRFQs from "./pages/buyer/myRFQs";
 
 import BuyerDashboard from "./pages/buyer/BuyerDashboard";
 
@@ -46,6 +48,18 @@ function App() {
     element={
         <Navbar>
             <BuyerDashboard />
+        </Navbar>
+    }
+/>
+<Route
+    path="/buyer/rfqs/create"
+    element={<CreateRFQ />}
+/>
+<Route
+    path="/rfqs"
+    element={
+        <Navbar>
+            <MyRFQs />
         </Navbar>
     }
 />
