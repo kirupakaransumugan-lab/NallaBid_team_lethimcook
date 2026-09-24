@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import Base, engine
 from app.models.user import User
+from app.routers import suppliers, quotations, imports, reports
+
 from app.routers.auth import router as auth_router
 
 
@@ -25,6 +27,12 @@ app.include_router(
     auth_router,
     prefix="/api"
 )
+ #Register Gideon routers
+app.include_router(suppliers.router)
+app.include_router(quotations.router)
+app.include_router(imports.router)
+app.include_router(reports.router)
+
 
 @app.get("/")
 def root():
