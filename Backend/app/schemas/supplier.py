@@ -40,4 +40,3 @@ class SupplierCatalogueResponse(BaseModel):
     created_at: datetime
     updated_at: datetime | None = None
     model_config = ConfigDict(from_attributes=True)
-git status
