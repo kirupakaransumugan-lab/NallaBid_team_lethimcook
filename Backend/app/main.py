@@ -5,7 +5,7 @@ from app.models.user import User
 from app.routers import suppliers, quotations, imports, reports
 
 from app.routers.auth import router as auth_router
-
+from app.routers import RFQs
 
 
 app = FastAPI(
@@ -33,6 +33,11 @@ app.include_router(quotations.router)
 app.include_router(imports.router)
 app.include_router(reports.router)
 
+
+app.include_router(
+    rfqs.router,
+    prefix="/api"
+)
 
 @app.get("/")
 def root():
