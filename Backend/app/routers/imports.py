@@ -9,6 +9,7 @@ from app.services.csv_service import import_supplier_catalogue
 router = APIRouter(prefix="/api/imports", tags=["Imports"])
 MAX_FILE_SIZE = 2 * 1024 * 1024
 
+
 @router.post("/supplier-catalogue")
 async def upload_supplier_catalogue(file: UploadFile = File(...), db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     if current_user.role != "SUPPLIER": raise HTTPException(status_code=403, detail="Supplier access required")
