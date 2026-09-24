@@ -1,27 +1,42 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import { logout } from "../services/authService";
+import {
+    logout,
+    getCurrentUser
+} from "../services/authService";
 
 import sidebarCard from "../assets/sidebar-card.png.png";
 
 
 function Navbar({ children }) {
-    const [active, setActive] = useState("Home");
     const [menuOpen, setMenuOpen] = useState(false);
+
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Logged-in user
+    const currentUser = getCurrentUser();
+
+    // BUYER or SUPPLIER
+    const userRole = currentUser?.role;
+
 
     async function handleLogout() {
         setMenuOpen(false);
+
         await logout().catch(() => {});
+
         navigate("/login");
     }
 
-    const menuItems = [
+
+    // Buyer navigation
+    const buyerMenuItems = [
         {
-            name: "Home",
+            name: "Dashboard",
             icon: "bi-house",
-            path: "/"
+            path: "/buyer"
         },
         {
             name: "My RFQs",
@@ -50,6 +65,78 @@ function Navbar({ children }) {
         }
     ];
 
+
+    // Supplier navigation
+    const supplierMenuItems = [
+        {
+            name: "Dashboard",
+            icon: "bi-house",
+            path: "/supplier"
+        },
+        {
+            name: "Available RFQs",
+            icon: "bi-file-earmark-text",
+            path: "/supplier"
+        },
+        {
+            name: "My Quotations",
+            icon: "bi-file-earmark-check",
+            path: "/supplier/quotations"
+        },
+        {
+            name: "Reports",
+            icon: "bi-bar-chart",
+            path: "/supplier/reports"
+        },
+        {
+            name: "Profile",
+            icon: "bi-person",
+            path: "/supplier/profile"
+        }
+    ];
+
+
+    // Select menu according to role
+    const menuItems =
+        userRole === "SUPPLIER"
+            ? supplierMenuItems
+            : buyerMenuItems;
+
+
+    // Logged-in user's display name
+    const displayName =
+        currentUser?.full_name || "User";
+
+
+    // Show readable role
+    const displayRole =
+        userRole === "SUPPLIER"
+            ? "Supplier"
+            : userRole === "BUYER"
+                ? "Procurement Manager"
+                : "User";
+
+
+    // Create initials from full name
+    const initials = displayName
+        .split(" ")
+        .filter(Boolean)
+        .map((name) => name[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+
+
+    // Check which navigation item is active
+    function isActive(item) {
+        if (item.name === "Dashboard") {
+            return location.pathname === item.path;
+        }
+
+        return location.pathname === item.path;
+    }
+
+
     return (
         <div className="appLayout">
 
@@ -62,7 +149,7 @@ function Navbar({ children }) {
                 <div className="sidebarHeader">
 
                     <Link
-                        to="/"
+                        to={userRole === "SUPPLIER" ? "/supplier" : "/buyer"}
                         className="text-decoration-none"
                     >
 
@@ -86,9 +173,8 @@ function Navbar({ children }) {
                         <Link
                             key={item.name}
                             to={item.path}
-                            onClick={() => setActive(item.name)}
                             className={
-                                active === item.name
+                                isActive(item)
                                     ? "navItem active"
                                     : "navItem"
                             }
@@ -145,7 +231,11 @@ function Navbar({ children }) {
 
                         <input
                             type="search"
-                            placeholder="Search RFQs, suppliers, categories..."
+                            placeholder={
+                                userRole === "SUPPLIER"
+                                    ? "Search RFQs, quotations..."
+                                    : "Search RFQs, suppliers, categories..."
+                            }
                         />
 
                     </div>
@@ -157,13 +247,7 @@ function Navbar({ children }) {
                             type="button"
                             className="iconButton"
                         >
-
                             <i className="bi bi-bell"></i>
-
-                            <span className="notification">
-                                3
-                            </span>
-
                         </button>
 
 
@@ -171,9 +255,7 @@ function Navbar({ children }) {
                             type="button"
                             className="iconButton"
                         >
-
                             <i className="bi bi-chat-square-text"></i>
-
                         </button>
 
 
@@ -181,9 +263,7 @@ function Navbar({ children }) {
                             type="button"
                             className="iconButton"
                         >
-
                             <i className="bi bi-question-circle"></i>
-
                         </button>
 
 
@@ -192,48 +272,60 @@ function Navbar({ children }) {
 
                         <div className="dropdown">
 
-                        <button
-                            type="button"
-                            className="profileButton"
-                            onClick={() => setMenuOpen(!menuOpen)}
-                            aria-expanded={menuOpen}
-                        >
+                            <button
+                                type="button"
+                                className="profileButton"
+                                onClick={() => setMenuOpen(!menuOpen)}
+                                aria-expanded={menuOpen}
+                            >
 
-                            <div className="profileImage">
-                                KS
-                            </div>
+                                <div className="profileImage">
+                                    {initials}
+                                </div>
 
-                            <div className="profileInfo">
 
-                                <strong>
-                                    Kajan Siva
-                                </strong>
+                                <div className="profileInfo">
 
-                                <small>
-                                    Procurement Manager
-                                </small>
+                                    <strong>
+                                        {displayName}
+                                    </strong>
 
-                            </div>
+                                    <small>
+                                        {displayRole}
+                                    </small>
 
-                            <i className="bi bi-chevron-down"></i>
+                                </div>
 
-                        </button>
 
-                        <ul
-                            className={`dropdown-menu dropdown-menu-end${menuOpen ? " show" : ""}`}
-                            style={{ right: 0 }}
-                        >
-                            <li>
-                                <button
-                                    type="button"
-                                    className="dropdown-item text-danger"
-                                    onClick={handleLogout}
-                                >
-                                    <i className="bi bi-box-arrow-right me-2"></i>
-                                    Logout
-                                </button>
-                            </li>
-                        </ul>
+                                <i className="bi bi-chevron-down"></i>
+
+                            </button>
+
+
+                            <ul
+                                className={`dropdown-menu dropdown-menu-end${
+                                    menuOpen ? " show" : ""
+                                }`}
+                                style={{ right: 0 }}
+                            >
+
+                                <li>
+
+                                    <button
+                                        type="button"
+                                        className="dropdown-item text-danger"
+                                        onClick={handleLogout}
+                                    >
+
+                                        <i className="bi bi-box-arrow-right me-2"></i>
+
+                                        Logout
+
+                                    </button>
+
+                                </li>
+
+                            </ul>
 
                         </div>
 

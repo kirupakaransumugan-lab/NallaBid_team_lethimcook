@@ -4,6 +4,7 @@ import {
     Routes,
     Route
 } from "react-router-dom";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
@@ -18,6 +19,18 @@ const DASHBOARD_BY_ROLE = {
     BUYER: "/buyer",
     SUPPLIER: "/supplier"
 };
+
+
+
+// =========================
+// GIDEON - SUPPLIER PAGES
+// =========================
+
+import SupplierDashboard from "./pages/supplier/SupplierDashboard";
+import SupplierRFQDetails from "./pages/supplier/SupplierRFQDetails";
+import QuotationForm from "./pages/supplier/QuotationForm";
+import MyQuotations from "./pages/supplier/MyQuotations";
+import SupplierAwardResult from "./pages/supplier/AwardResult";
 
 
 function Home() {
@@ -82,21 +95,97 @@ function SupplierDashboardPlaceholder() {
     );
 }
 
+
 function App() {
     return (
         <BrowserRouter>
 
             <Routes>
 
+                {/* =========================
+                    AUTH
+                ========================= */}
+
                 <Route
                     path="/login"
                     element={<Login />}
                 />
 
-                 <Route
+                <Route
                     path="/register"
                     element={<Register />}
                 />
+
+
+                {/* =========================
+                    BUYER
+                    Existing Team Lead Work
+                ========================= */}
+
+                <Route
+                    path="/buyer"
+                    element={
+                        <Navbar>
+                            <BuyerDashboard />
+                        </Navbar>
+                    }
+                />
+
+
+                {/* =========================
+                    SUPPLIER
+                    Gideon's Work
+                ========================= */}
+
+                <Route
+                    path="/supplier"
+                    element={
+                        <Navbar>
+                            <SupplierDashboard />
+                        </Navbar>
+                    }
+                />
+
+                <Route
+                    path="/supplier/rfqs/:rfqId"
+                    element={
+                        <Navbar>
+                            <SupplierRFQDetails />
+                        </Navbar>
+                    }
+                />
+
+                <Route
+                    path="/supplier/rfqs/:rfqId/quotation"
+                    element={
+                        <Navbar>
+                            <QuotationForm />
+                        </Navbar>
+                    }
+                />
+
+                <Route
+                    path="/supplier/quotations"
+                    element={
+                        <Navbar>
+                            <MyQuotations />
+                        </Navbar>
+                    }
+                />
+
+                <Route
+                    path="/supplier/rfqs/:rfqId/award"
+                    element={
+                        <Navbar>
+                            <SupplierAwardResult />
+                        </Navbar>
+                    }
+                />
+
+
+                {/* =========================
+                    FALLBACK
+                ========================= */}
 
                 <Route
                     path="/"
@@ -121,45 +210,32 @@ function App() {
                         }
                     />
                 ))}
-                 <Route
-    path="/buyer"
-    element={
-        <RequireRole role="BUYER">
-            <Navbar>
-                <BuyerDashboard />
-            </Navbar>
-        </RequireRole>
-    }
-/>
-<Route
-    path="/supplier"
-    element={
-        <RequireRole role="SUPPLIER">
-            <Navbar>
-                <SupplierDashboardPlaceholder />
-            </Navbar>
-        </RequireRole>
-    }
-/>
-<Route
-    path="/buyer/rfqs/create"
-    element={<CreateRFQ />}
-/>
-<Route
-    path="/rfqs"
-    element={
-        <Navbar>
-            <MyRFQs />
-        </Navbar>
-    }
-/>
+
+                <Route
+                    path="/buyer/rfqs/create"
+                    element={
+                        <RequireRole role="BUYER">
+                            <CreateRFQ />
+                        </RequireRole>
+                    }
+                />
+
+                <Route
+                    path="/rfqs"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <MyRFQs />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
             </Routes>
-
-
-          
 
         </BrowserRouter>
     );
 }
+
 
 export default App;
