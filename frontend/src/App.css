@@ -11,7 +11,12 @@ body {
     background: var(--navy);
 }
 
-
+.mainContent {
+    margin-left: 238px;
+    padding-top: 80px;
+    min-height: 100vh;
+    background: #031a30;
+}
 /* Sidebar */
 
 .sidebar {

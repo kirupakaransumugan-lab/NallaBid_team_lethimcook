@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 
-
+import BuyerDashboard from "./pages/buyer/BuyerDashboard";
 
 function Home() {
     return (
@@ -41,7 +41,14 @@ function App() {
                         </>
                     }
                 />
-
+                 <Route
+    path="/buyer"
+    element={
+        <Navbar>
+            <BuyerDashboard />
+        </Navbar>
+    }
+/>
             </Routes>
 
 
