@@ -1,0 +1,329 @@
+/* this is auth page */
+.authPage {
+  min-height: 100vh;
+  padding-bottom: 30px;
+  background: radial-gradient(circle at 20% 80%, #0d2a6b 0%, transparent 45%),
+    radial-gradient(circle at 85% 20%, #0b2257 0%, transparent 40%), var(--bgMain);
+}
+
+.authLine {
+  width: 56px;
+  height: 3px;
+  background: var(--blue);
+  margin-bottom: 28px;
+}
+
+.authHeading {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.authText {
+  font-size: 1.15rem;
+  color: #d6e2f7;
+  margin-top: 16px;
+  max-width: 560px;
+}
+
+/* this is features */
+.featureGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.featureItem {
+  display: flex;
+  gap: 18px;
+}
+
+.featureIcon {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(47, 140, 255, 0.5);
+  background: rgba(20, 60, 150, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #7cb8ff;
+}
+
+.featureItem h6 {
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.featureItem p {
+  color: #c1cee6;
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.authArt {
+  display: none;
+  width: 100%;
+  max-width: 640px;
+  margin-top: 30px;
+  border-radius: 16px;
+  mask-image: radial-gradient(ellipse at center, #000 60%, transparent 100%);
+}
+
+.authQuote {
+  border-left: 2px solid var(--blue);
+  padding-left: 16px;
+  margin-top: 20px;
+  color: #d6e2f7;
+}
+
+/* this is form card */
+.authCard {
+  position: relative;
+  background: rgba(10, 22, 50, 0.85);
+  border: 1px solid var(--borderColor);
+  border-radius: 18px;
+  padding: 28px 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.cardLogo {
+  display: none;
+  position: absolute;
+  top: 26px;
+  right: 26px;
+  background: #050d20;
+  padding: 10px 16px;
+  text-align: center;
+}
+
+.cardLogo .logoSub {
+  font-size: 0.68rem;
+}
+
+.cardTitle {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.cardSubtitle {
+  font-size: 1.1rem;
+  color: #c1cee6;
+  margin-bottom: 26px;
+}
+
+/* this is input with icon */
+.inputBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bgInput);
+  border: 1px solid var(--borderColor);
+  border-radius: 10px;
+  padding: 0 16px;
+  margin-bottom: 18px;
+  color: #c1cee6;
+}
+
+.inputBox:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(47, 140, 255, 0.2);
+}
+
+.inputBox input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--textMain);
+  padding: 13px 0;
+}
+
+.inputBox input::placeholder {
+  color: #7b8db0;
+}
+
+.eyeBtn {
+  background: none;
+  border: none;
+  color: #c1cee6;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.checkLabel input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--blue);
+}
+
+.rememberRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.agreeRow {
+  margin-bottom: 24px;
+}
+
+/* this is role cards */
+.roleRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.roleCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--borderColor);
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  background: var(--bgInput);
+}
+
+.roleCard input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--blue);
+  flex-shrink: 0;
+}
+
+.roleActive {
+  border-color: var(--blue);
+  background: rgba(47, 140, 255, 0.1);
+}
+
+.roleIcon {
+  font-size: 1.8rem;
+}
+
+.roleCard strong {
+  display: block;
+  font-weight: 600;
+}
+
+.roleCard small {
+  color: #c1cee6;
+  font-size: 0.78rem;
+}
+
+.bigBtn {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.05rem;
+}
+
+/* this is or line */
+.orLine {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--textMuted);
+  font-size: 0.85rem;
+  margin: 26px 0;
+}
+
+.orLine::before,
+.orLine::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--borderColor);
+}
+
+/* this is social buttons */
+.socialRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.socialBtn {
+  background: transparent;
+  border: 1px solid var(--borderColor);
+  border-radius: 10px;
+  color: var(--textMain);
+  padding: 13px;
+  font-weight: 500;
+}
+
+.socialBtn:hover {
+  background: rgba(47, 140, 255, 0.08);
+}
+
+.googleIcon {
+  color: #ea4335;
+  margin-right: 8px;
+}
+
+.microsoftIcon {
+  color: #f25022;
+  margin-right: 8px;
+}
+
+.switchText {
+  text-align: center;
+  margin: 24px 0 0;
+}
+
+.switchText a {
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.cardQuote {
+  border-top: 1px solid var(--borderColor);
+  margin-top: 30px;
+  padding-top: 28px;
+  text-align: center;
+  font-style: italic;
+  color: #c1cee6;
+  font-size: 1.1rem;
+}
+
+/* this is bigger screens */
+@media (min-width: 576px) {
+  .featureGrid,
+  .roleRow,
+  .socialRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .authCard {
+    padding: 48px 44px;
+  }
+
+  .cardLogo {
+    display: block;
+  }
+
+  .cardTitle {
+    font-size: 2.2rem;
+    margin-top: 40px;
+  }
+
+  .authHeading {
+    font-size: 2.8rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .authArt {
+    display: block;
+  }
+}
