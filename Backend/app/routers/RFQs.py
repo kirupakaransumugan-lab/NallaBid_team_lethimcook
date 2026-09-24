@@ -6,10 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 
-from app.models.award import Award
-from app.models.evaluation import Evaluation
-from app.models.quotation import Quotation
-from app.models.rfq import RFQ
+from app.models.quotation import Quotation, QuotationStatus
+from app.models.rfq import RFQ, RFQStatus
 from app.models.user import User
 
 from app.schemas.rfq import (
@@ -39,7 +37,7 @@ router = APIRouter(
 # =========================================================
 
 def require_buyer(current_user: User):
-    if str(current_user.role) != "BUYER":
+    if current_user.role != "BUYER":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Buyer access required"
@@ -145,11 +143,272 @@ def get_my_rfqs(
             product_name=row.product_name,
             quantity=row.quantity,
             deadline=row.deadline,
-            status=str(row.status),
+            status=row.status.value,
             quotation_count=row.quotation_count
         )
         for row in rows
     ]
+
+
+# =========================================================
+# BUYER DASHBOARD
+# =========================================================
+
+@router.get(
+    "/dashboard",
+    response_model=BuyerDashboardResponse
+)
+def get_buyer_dashboard(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    require_buyer(current_user)
+
+    # -----------------------------------------------------
+    # Total RFQs
+    # -----------------------------------------------------
+
+    total_rfqs = (
+        db.query(func.count(RFQ.id))
+        .filter(
+            RFQ.buyer_id == current_user.id
+        )
+        .scalar()
+        or 0
+    )
+
+    # -----------------------------------------------------
+    # Quotations received
+    # -----------------------------------------------------
+
+    quotations_received = (
+        db.query(func.count(Quotation.id))
+        .join(
+            RFQ,
+            Quotation.rfq_id == RFQ.id
+        )
+        .filter(
+            RFQ.buyer_id == current_user.id
+        )
+        .scalar()
+        or 0
+    )
+
+    # -----------------------------------------------------
+    # Pending evaluation
+    # -----------------------------------------------------
+
+    pending_evaluation = (
+        db.query(func.count(Quotation.id))
+        .join(
+            RFQ,
+            Quotation.rfq_id == RFQ.id
+        )
+        .filter(
+            RFQ.buyer_id == current_user.id,
+            Quotation.status == QuotationStatus.SUBMITTED
+        )
+        .scalar()
+        or 0
+    )
+
+    # -----------------------------------------------------
+    # Awarded RFQs
+    # -----------------------------------------------------
+
+    awarded = (
+        db.query(func.count(RFQ.id))
+        .filter(
+            RFQ.buyer_id == current_user.id,
+            RFQ.status == RFQStatus.AWARDED
+        )
+        .scalar()
+        or 0
+    )
+
+    stats = DashboardStats(
+        total_rfqs=total_rfqs,
+        quotations_received=quotations_received,
+        pending_evaluation=pending_evaluation,
+        awarded=awarded
+    )
+
+    # -----------------------------------------------------
+    # Recent RFQs
+    # -----------------------------------------------------
+
+    recent_rows = (
+        db.query(
+            RFQ.id,
+            RFQ.rfq_number,
+            RFQ.product_name,
+            RFQ.deadline,
+            RFQ.status,
+            func.count(
+                Quotation.id
+            ).label("quotation_count")
+        )
+        .outerjoin(
+            Quotation,
+            Quotation.rfq_id == RFQ.id
+        )
+        .filter(
+            RFQ.buyer_id == current_user.id
+        )
+        .group_by(
+            RFQ.id,
+            RFQ.rfq_number,
+            RFQ.product_name,
+            RFQ.deadline,
+            RFQ.status
+        )
+        .order_by(
+            RFQ.created_at.desc()
+        )
+        .limit(5)
+        .all()
+    )
+
+    recent_rfqs = [
+        RecentRFQ(
+            id=row.id,
+            rfq_number=row.rfq_number,
+            product_name=row.product_name,
+            deadline=row.deadline,
+            quotation_count=row.quotation_count,
+            status=row.status.value
+        )
+        for row in recent_rows
+    ]
+
+    # -----------------------------------------------------
+    # Status overview
+    # -----------------------------------------------------
+
+    status_rows = (
+        db.query(
+            RFQ.status,
+            func.count(RFQ.id).label("count")
+        )
+        .filter(
+            RFQ.buyer_id == current_user.id
+        )
+        .group_by(
+            RFQ.status
+        )
+        .all()
+    )
+
+    status_counts = {
+        "DRAFT": 0,
+        "OPEN": 0,
+        "CLOSED": 0,
+        "AWARDED": 0
+    }
+
+    for row in status_rows:
+        status_name = row.status.value
+
+        if status_name in status_counts:
+            status_counts[status_name] = row.count
+
+    status_overview = RFQStatusOverview(
+        draft=status_counts["DRAFT"],
+        open=status_counts["OPEN"],
+        closed=status_counts["CLOSED"],
+        awarded=status_counts["AWARDED"]
+    )
+
+    # -----------------------------------------------------
+    # Upcoming deadlines
+    # -----------------------------------------------------
+
+    now = datetime.utcnow()
+
+    upcoming_rows = (
+        db.query(RFQ)
+        .filter(
+            RFQ.buyer_id == current_user.id,
+            RFQ.deadline >= now
+        )
+        .order_by(
+            RFQ.deadline.asc()
+        )
+        .limit(5)
+        .all()
+    )
+
+    upcoming_deadlines = []
+
+    for rfq in upcoming_rows:
+        days_left = max(
+            0,
+            (rfq.deadline.date() - now.date()).days
+        )
+
+        upcoming_deadlines.append(
+            UpcomingDeadline(
+                id=rfq.id,
+                rfq_number=rfq.rfq_number,
+                product_name=rfq.product_name,
+                deadline=rfq.deadline,
+                days_left=days_left,
+                status=rfq.status.value
+            )
+        )
+
+    # -----------------------------------------------------
+    # Quotation trend
+    # -----------------------------------------------------
+
+    quotation_rows = (
+        db.query(
+            func.date_format(
+                Quotation.submitted_at,
+                "%Y-%m"
+            ).label("month"),
+            func.count(
+                Quotation.id
+            ).label("quotation_count")
+        )
+        .join(
+            RFQ,
+            Quotation.rfq_id == RFQ.id
+        )
+        .filter(
+            RFQ.buyer_id == current_user.id
+        )
+        .group_by(
+            func.date_format(
+                Quotation.submitted_at,
+                "%Y-%m"
+            )
+        )
+        .order_by(
+            func.date_format(
+                Quotation.submitted_at,
+                "%Y-%m"
+            )
+        )
+        .limit(6)
+        .all()
+    )
+
+    quotation_trend = [
+        QuotationTrendItem(
+            month=row.month,
+            quotation_count=row.quotation_count
+        )
+        for row in quotation_rows
+    ]
+
+    return BuyerDashboardResponse(
+        stats=stats,
+        recent_rfqs=recent_rfqs,
+        status_overview=status_overview,
+        upcoming_deadlines=upcoming_deadlines,
+        quotation_trend=quotation_trend
+    )
 
 
 # =========================================================
@@ -348,274 +607,6 @@ def close_rfq(
     db.refresh(rfq)
 
     return rfq
-
-
-# =========================================================
-# BUYER DASHBOARD
-# =========================================================
-
-@router.get(
-    "/dashboard",
-    response_model=BuyerDashboardResponse
-)
-def get_buyer_dashboard(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    require_buyer(current_user)
-
-    # -----------------------------------------------------
-    # Total RFQs
-    # -----------------------------------------------------
-
-    total_rfqs = (
-        db.query(func.count(RFQ.id))
-        .filter(
-            RFQ.buyer_id == current_user.id
-        )
-        .scalar()
-        or 0
-    )
-
-    # -----------------------------------------------------
-    # Quotations received
-    # -----------------------------------------------------
-
-    quotations_received = (
-        db.query(func.count(Quotation.id))
-        .join(
-            RFQ,
-            Quotation.rfq_id == RFQ.id
-        )
-        .filter(
-            RFQ.buyer_id == current_user.id
-        )
-        .scalar()
-        or 0
-    )
-
-    # -----------------------------------------------------
-    # Pending evaluation
-    # -----------------------------------------------------
-
-    pending_evaluation = (
-        db.query(func.count(Quotation.id))
-        .join(
-            RFQ,
-            Quotation.rfq_id == RFQ.id
-        )
-        .outerjoin(
-            Evaluation,
-            Evaluation.quotation_id == Quotation.id
-        )
-        .filter(
-            RFQ.buyer_id == current_user.id,
-            Evaluation.id.is_(None)
-        )
-        .scalar()
-        or 0
-    )
-
-    # -----------------------------------------------------
-    # Awarded RFQs
-    # -----------------------------------------------------
-
-    awarded = (
-        db.query(func.count(Award.id))
-        .join(
-            RFQ,
-            Award.rfq_id == RFQ.id
-        )
-        .filter(
-            RFQ.buyer_id == current_user.id
-        )
-        .scalar()
-        or 0
-    )
-
-    stats = DashboardStats(
-        total_rfqs=total_rfqs,
-        quotations_received=quotations_received,
-        pending_evaluation=pending_evaluation,
-        awarded=awarded
-    )
-
-    # -----------------------------------------------------
-    # Recent RFQs
-    # -----------------------------------------------------
-
-    recent_rows = (
-        db.query(
-            RFQ.id,
-            RFQ.rfq_number,
-            RFQ.product_name,
-            RFQ.deadline,
-            RFQ.status,
-            func.count(
-                Quotation.id
-            ).label("quotation_count")
-        )
-        .outerjoin(
-            Quotation,
-            Quotation.rfq_id == RFQ.id
-        )
-        .filter(
-            RFQ.buyer_id == current_user.id
-        )
-        .group_by(
-            RFQ.id,
-            RFQ.rfq_number,
-            RFQ.product_name,
-            RFQ.deadline,
-            RFQ.status
-        )
-        .order_by(
-            RFQ.created_at.desc()
-        )
-        .limit(5)
-        .all()
-    )
-
-    recent_rfqs = [
-        RecentRFQ(
-            id=row.id,
-            rfq_number=row.rfq_number,
-            product_name=row.product_name,
-            deadline=row.deadline,
-            quotation_count=row.quotation_count,
-            status=str(row.status)
-        )
-        for row in recent_rows
-    ]
-
-    # -----------------------------------------------------
-    # Status overview
-    # -----------------------------------------------------
-
-    status_rows = (
-        db.query(
-            RFQ.status,
-            func.count(RFQ.id).label("count")
-        )
-        .filter(
-            RFQ.buyer_id == current_user.id
-        )
-        .group_by(
-            RFQ.status
-        )
-        .all()
-    )
-
-    status_counts = {
-        "DRAFT": 0,
-        "OPEN": 0,
-        "CLOSED": 0,
-        "AWARDED": 0
-    }
-
-    for row in status_rows:
-        status_name = str(row.status)
-
-        if status_name in status_counts:
-            status_counts[status_name] = row.count
-
-    status_overview = RFQStatusOverview(
-        draft=status_counts["DRAFT"],
-        open=status_counts["OPEN"],
-        closed=status_counts["CLOSED"],
-        awarded=status_counts["AWARDED"]
-    )
-
-    # -----------------------------------------------------
-    # Upcoming deadlines
-    # -----------------------------------------------------
-
-    now = datetime.utcnow()
-
-    upcoming_rows = (
-        db.query(RFQ)
-        .filter(
-            RFQ.buyer_id == current_user.id,
-            RFQ.deadline >= now
-        )
-        .order_by(
-            RFQ.deadline.asc()
-        )
-        .limit(5)
-        .all()
-    )
-
-    upcoming_deadlines = []
-
-    for rfq in upcoming_rows:
-        days_left = max(
-            0,
-            (rfq.deadline.date() - now.date()).days
-        )
-
-        upcoming_deadlines.append(
-            UpcomingDeadline(
-                id=rfq.id,
-                rfq_number=rfq.rfq_number,
-                product_name=rfq.product_name,
-                deadline=rfq.deadline,
-                days_left=days_left,
-                status=str(rfq.status)
-            )
-        )
-
-    # -----------------------------------------------------
-    # Quotation trend
-    # -----------------------------------------------------
-
-    quotation_rows = (
-        db.query(
-            func.date_format(
-                Quotation.submitted_at,
-                "%Y-%m"
-            ).label("month"),
-            func.count(
-                Quotation.id
-            ).label("quotation_count")
-        )
-        .join(
-            RFQ,
-            Quotation.rfq_id == RFQ.id
-        )
-        .filter(
-            RFQ.buyer_id == current_user.id
-        )
-        .group_by(
-            func.date_format(
-                Quotation.submitted_at,
-                "%Y-%m"
-            )
-        )
-        .order_by(
-            func.date_format(
-                Quotation.submitted_at,
-                "%Y-%m"
-            )
-        )
-        .limit(6)
-        .all()
-    )
-
-    quotation_trend = [
-        QuotationTrendItem(
-            month=row.month,
-            quotation_count=row.quotation_count
-        )
-        for row in quotation_rows
-    ]
-
-    return BuyerDashboardResponse(
-        stats=stats,
-        recent_rfqs=recent_rfqs,
-        status_overview=status_overview,
-        upcoming_deadlines=upcoming_deadlines,
-        quotation_trend=quotation_trend
-    )
 
 
 # =========================================================

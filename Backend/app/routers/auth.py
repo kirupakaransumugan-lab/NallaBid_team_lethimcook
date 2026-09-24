@@ -10,6 +10,7 @@ from app.security.jwt import create_access_token
 from app.security.password import verify_password
 from app.schemas.auth import LoginResponse, RegisterRequest, RegisterResponse
 from app.security.password import hash_password
+from app.security.auth import get_current_user
 
 
 router = APIRouter(
@@ -106,3 +107,13 @@ def login(
         email=user.email,
         role=user.role
     )
+
+# JWTs are stateless: the server can't revoke one, so the client deletes its
+# token. This endpoint confirms the token was valid when the user logged out.
+@router.post("/logout")
+def logout(
+    current_user: User = Depends(get_current_user)
+):
+    return {
+        "message": "Logged out successfully."
+    }

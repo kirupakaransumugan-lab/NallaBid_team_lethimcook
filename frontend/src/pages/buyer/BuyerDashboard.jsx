@@ -1,9 +1,48 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import { getCurrentUser } from "../../services/authService";
+import { getBuyerDashboard } from "../../services/rfqService";
 
 import "./BuyerDashboard.css";
 
 
+function formatDate(value) {
+    return new Date(value).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
+}
+
+
 function BuyerDashboard() {
+    const navigate = useNavigate();
+    const user = getCurrentUser();
+
+    const [dashboard, setDashboard] = useState(null);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        getBuyerDashboard()
+            .then(setDashboard)
+            .catch((err) => {
+                if (err.status === 401) {
+                    navigate("/login");
+                    return;
+                }
+                setError(err.message);
+            });
+    }, [navigate]);
+
+    const stats = dashboard?.stats;
+    const overview = dashboard?.status_overview;
+    const recentRfqs = dashboard?.recent_rfqs ?? [];
+    const deadlines = dashboard?.upcoming_deadlines ?? [];
+    const trend = dashboard?.quotation_trend ?? [];
+
+    const show = (value) => (dashboard ? value : "—");
+
     return (
         <main className="buyer-dashboard">
 
@@ -15,13 +54,19 @@ function BuyerDashboard() {
 
                 <div>
                     <h1>
-                        Welcome Back!
+                        Welcome Back{user ? `, ${user.full_name}` : ""}!
                     </h1>
 
                     <p>
                         Here's what's happening with your
                         procurement activities today.
                     </p>
+
+                    {error && (
+                        <p className="text-danger">
+                            {error}
+                        </p>
+                    )}
                 </div>
 
                 <Link
@@ -54,11 +99,11 @@ function BuyerDashboard() {
                         </span>
 
                         <strong>
-                            —
+                            {show(stats?.total_rfqs)}
                         </strong>
 
                         <small>
-                            Data will appear here
+                            All RFQs you created
                         </small>
 
                     </div>
@@ -79,11 +124,11 @@ function BuyerDashboard() {
                         </span>
 
                         <strong>
-                            —
+                            {show(stats?.quotations_received)}
                         </strong>
 
                         <small>
-                            Data will appear here
+                            Across all your RFQs
                         </small>
 
                     </div>
@@ -104,11 +149,11 @@ function BuyerDashboard() {
                         </span>
 
                         <strong>
-                            —
+                            {show(stats?.pending_evaluation)}
                         </strong>
 
                         <small>
-                            Data will appear here
+                            Quotations to review
                         </small>
 
                     </div>
@@ -129,11 +174,11 @@ function BuyerDashboard() {
                         </span>
 
                         <strong>
-                            —
+                            {show(stats?.awarded)}
                         </strong>
 
                         <small>
-                            Data will appear here
+                            RFQs awarded
                         </small>
 
                     </div>
@@ -193,6 +238,26 @@ function BuyerDashboard() {
 
                             <tbody>
 
+                                {recentRfqs.map((rfq, index) => (
+                                    <tr key={rfq.id}>
+                                        <td>{index + 1}</td>
+                                        <td>
+                                            <strong className="text-light">{rfq.product_name}</strong>
+                                            <br />
+                                            <small>{rfq.rfq_number}</small>
+                                        </td>
+                                        <td>{formatDate(rfq.deadline)}</td>
+                                        <td>{rfq.quotation_count}</td>
+                                        <td>{rfq.status}</td>
+                                        <td>
+                                            <Link to={`/buyer/rfqs/${rfq.id}`}>
+                                                View
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+
+                                {recentRfqs.length === 0 && (
                                 <tr>
                                     <td
                                         colSpan="6"
@@ -218,6 +283,7 @@ function BuyerDashboard() {
 
                                     </td>
                                 </tr>
+                                )}
 
                             </tbody>
 
@@ -253,7 +319,7 @@ function BuyerDashboard() {
 
                         <div className="buyer-donut-placeholder">
                             <span>
-                                —
+                                {show(stats?.total_rfqs)}
                             </span>
                         </div>
 
@@ -262,25 +328,26 @@ function BuyerDashboard() {
                             <div>
                                 <span className="status-dot open"></span>
                                 <span>Open</span>
-                                <strong>—</strong>
+                                <strong>{show(overview?.open)}</strong>
                             </div>
 
+                            {/* Closed RFQs no longer take bids and are awaiting evaluation. */}
                             <div>
                                 <span className="status-dot evaluating"></span>
                                 <span>Evaluating</span>
-                                <strong>—</strong>
+                                <strong>{show(overview?.closed)}</strong>
                             </div>
 
                             <div>
                                 <span className="status-dot closed"></span>
-                                <span>Closed</span>
-                                <strong>—</strong>
+                                <span>Awarded</span>
+                                <strong>{show(overview?.awarded)}</strong>
                             </div>
 
                             <div>
                                 <span className="status-dot draft"></span>
                                 <span>Draft</span>
-                                <strong>—</strong>
+                                <strong>{show(overview?.draft)}</strong>
                             </div>
 
                         </div>
@@ -316,6 +383,27 @@ function BuyerDashboard() {
                     </div>
 
 
+                    {deadlines.length > 0 ? (
+                        <ul className="list-group list-group-flush">
+                            {deadlines.map((rfq) => (
+                                <li
+                                    key={rfq.id}
+                                    className="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center"
+                                >
+                                    <div>
+                                        <strong className="text-light">{rfq.product_name}</strong>
+                                        <br />
+                                        <small className="text-secondary">
+                                            {rfq.rfq_number} · {formatDate(rfq.deadline)}
+                                        </small>
+                                    </div>
+                                    <span className="badge text-bg-warning">
+                                        {rfq.days_left} days left
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
                     <div className="buyer-deadline-empty">
 
                         <i className="bi bi-calendar3"></i>
@@ -330,6 +418,7 @@ function BuyerDashboard() {
                         </span>
 
                     </div>
+                    )}
 
                 </article>
 
@@ -487,6 +576,19 @@ function BuyerDashboard() {
                     </div>
 
 
+                    {trend.length > 0 ? (
+                        <ul className="list-group list-group-flush">
+                            {trend.map((item) => (
+                                <li
+                                    key={item.month}
+                                    className="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between"
+                                >
+                                    <span>{item.month}</span>
+                                    <strong>{item.quotation_count} quotations</strong>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
                     <div className="buyer-line-chart-placeholder">
 
                         <div className="chart-empty-icon">
@@ -503,6 +605,7 @@ function BuyerDashboard() {
                         </span>
 
                     </div>
+                    )}
 
                 </article>
 

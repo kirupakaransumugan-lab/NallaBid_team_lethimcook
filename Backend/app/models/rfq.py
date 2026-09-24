@@ -12,7 +12,7 @@ from sqlalchemy import (
     Integer,
     func,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
@@ -56,8 +56,9 @@ class RFQ(Base):
     # users.id
     # --------------------------------------------------
 
+    # Must match users.id (INT) or MySQL rejects the foreign key.
     buyer_id: Mapped[int] = mapped_column(
-        BigInteger,
+        Integer,
         ForeignKey("users.id"),
         nullable=False,
         index=True
@@ -137,6 +138,11 @@ class RFQ(Base):
         nullable=True,
         server_default=func.now(),
         onupdate=func.now()
+    )
+
+    quotations = relationship(
+        "Quotation",
+        back_populates="rfq"
     )
 
     # --------------------------------------------------

@@ -1,11 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { logout } from "../services/authService";
 
 import sidebarCard from "../assets/sidebar-card.png.png";
 
 
 function Navbar({ children }) {
     const [active, setActive] = useState("Home");
+    const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
+
+    async function handleLogout() {
+        setMenuOpen(false);
+        await logout().catch(() => {});
+        navigate("/login");
+    }
 
     const menuItems = [
         {
@@ -185,9 +195,13 @@ function Navbar({ children }) {
                         <div className="profileDivider"></div>
 
 
+                        <div className="dropdown">
+
                         <button
                             type="button"
                             className="profileButton"
+                            onClick={() => setMenuOpen(!menuOpen)}
+                            aria-expanded={menuOpen}
                         >
 
                             <div className="profileImage">
@@ -209,6 +223,24 @@ function Navbar({ children }) {
                             <i className="bi bi-chevron-down"></i>
 
                         </button>
+
+                        <ul
+                            className={`dropdown-menu dropdown-menu-end${menuOpen ? " show" : ""}`}
+                            style={{ right: 0 }}
+                        >
+                            <li>
+                                <button
+                                    type="button"
+                                    className="dropdown-item text-danger"
+                                    onClick={handleLogout}
+                                >
+                                    <i className="bi bi-box-arrow-right me-2"></i>
+                                    Logout
+                                </button>
+                            </li>
+                        </ul>
+
+                        </div>
 
                     </div>
 

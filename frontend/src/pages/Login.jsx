@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { loginUser } from "../services/authService";
 
 import "./Login.css";
 
@@ -15,12 +17,28 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    function handleSubmit(event) {
+    const navigate = useNavigate();
+
+
+    async function handleSubmit(event) {
         event.preventDefault();
 
-        // Backend login will be connected later.
-        console.log("Login UI submitted");
+        setError("");
+        setLoading(true);
+
+        try {
+            const user = await loginUser(email.trim(), password);
+
+            navigate(user.role === "BUYER" ? "/buyer" : "/");
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     }
 
 
@@ -460,15 +478,24 @@ function Login() {
                             </div>
 
 
+                            {error && (
+                                <div className="login-error" role="alert">
+                                    <i className="bi bi-exclamation-circle"></i>
+                                    {error}
+                                </div>
+                            )}
+
+
                             {/* SIGN IN */}
 
                             <button
                                 type="submit"
                                 className="sign-in-button"
+                                disabled={loading}
                             >
 
                                 <span>
-                                    Sign In
+                                    {loading ? "Signing In..." : "Sign In"}
                                 </span>
 
                                 <i className="bi bi-arrow-right"></i>
