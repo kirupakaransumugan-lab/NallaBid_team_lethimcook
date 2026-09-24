@@ -75,7 +75,10 @@ def login(
         select(User).where(User.email == email)
     )
 
-    if not user:
+    if not user or not verify_password(
+        form_data.password,
+        user.password_hash
+    ):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
@@ -88,18 +91,6 @@ def login(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Your account is inactive."
-        )
-
-    if not verify_password(
-        form_data.password,
-        user.password_hash
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password",
-            headers={
-                "WWW-Authenticate": "Bearer"
-            }
         )
 
     access_token = create_access_token(
