@@ -3,9 +3,11 @@ import {
     Routes,
     Route
 } from "react-router-dom";
-
-import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Navbar from "./components/Navbar";
+
+
 
 function Home() {
     return (
@@ -21,13 +23,13 @@ function App() {
             <Routes>
 
                 <Route
+                    path="/login"
+                    element={<Login />}
+                />
+
+                 <Route
                     path="/register"
-                    element={
-                        <>
-                            <Navbar />
-                            <Register />
-                        </>
-                    }
+                    element={<Register />}
                 />
 
                 <Route
@@ -41,6 +43,9 @@ function App() {
                 />
 
             </Routes>
+
+
+          
 
         </BrowserRouter>
     );
