@@ -85,17 +85,6 @@ function EmptyPage() {
 }
 
 
-// Temporary until pages/supplier/SupplierDashboard.jsx is finished.
-function SupplierDashboardPlaceholder() {
-    return (
-        <main className="pageArea p-4">
-            <h1>Supplier Dashboard</h1>
-            <p>The supplier dashboard is coming soon.</p>
-        </main>
-    );
-}
-
-
 function App() {
     return (
         <BrowserRouter>
