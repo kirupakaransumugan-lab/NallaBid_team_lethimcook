@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import registerLaptop from "../assets/procurement-illustration.png";
 import { registerUser } from "../services/authService";
 
-import "./Register.css";
+import "./register.css";
 
 
 function Register() {
