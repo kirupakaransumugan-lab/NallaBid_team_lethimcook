@@ -1,0 +1,186 @@
+/* Comparison - selectable eligible quotation cards. */
+
+.nallabid-compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    min-width: 0;
+    margin: 0 0 20px;
+    padding: 0;
+    border: 0;
+}
+
+.nallabid-compare-option {
+    position: relative;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    padding: 18px;
+
+    border: 1px solid #123d61;
+    border-radius: 13px;
+
+    background: #061d32;
+
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nallabid-compare-option:hover {
+    border-color: #1c5d99;
+}
+
+.nallabid-compare-option.is-selected {
+    border-color: #087cff;
+    box-shadow: 0 0 0 3px rgba(8, 124, 255, 0.25);
+}
+
+/* Native radio stays accessible (keyboard + screen reader) but visually hidden. */
+.nallabid-compare-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.nallabid-compare-option:focus-within {
+    outline: 2px solid #5aa9ff;
+    outline-offset: 2px;
+}
+
+.nallabid-compare-option-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.nallabid-compare-option-head strong {
+    display: block;
+    color: #ffffff;
+    font-size: 16px;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-compare-option-head small {
+    color: #7794b0;
+    font-size: 12px;
+}
+
+.nallabid-compare-radio {
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #1c4c7a;
+    border-radius: 50%;
+
+    color: #ffffff;
+}
+
+.is-selected .nallabid-compare-radio {
+    border-color: #087cff;
+    background: #087cff;
+}
+
+.nallabid-compare-amount {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-compare-amount small {
+    display: block;
+    color: #7794b0;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.nallabid-compare-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0;
+}
+
+.nallabid-compare-specs div {
+    padding: 10px 12px;
+    border-radius: 9px;
+    background: rgba(8, 124, 255, 0.07);
+}
+
+.nallabid-compare-specs dt {
+    color: #7794b0;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.nallabid-compare-specs dd {
+    margin: 2px 0 0;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.nallabid-compare-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.nallabid-compare-tags span {
+    padding: 3px 9px;
+    border: 1px solid #1c4c7a;
+    border-radius: 999px;
+    color: #91a9c4;
+    font-size: 11px;
+}
+
+.nallabid-compare-notes {
+    margin: 0;
+    color: #91a9c4;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+/* Sticky action bar */
+
+.nallabid-compare-bar {
+    position: sticky;
+    bottom: 12px;
+    z-index: 5;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 14px 18px;
+
+    border: 1px solid #1c4c7a;
+    border-radius: 13px;
+
+    background: rgba(6, 29, 50, 0.96);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+    color: #91a9c4;
+    font-size: 14px;
+}
+
+.nallabid-compare-bar strong {
+    color: #ffffff;
+}
+
+@media (max-width: 600px) {
+    .nallabid-compare-bar .nallabid-flow-button {
+        width: 100%;
+    }
+}

@@ -34,7 +34,7 @@ class Quotation(Base):
 
     supplier = relationship("Supplier", back_populates="quotations")
     rfq = relationship("RFQ", back_populates="quotations")
-    # Re-enable once models/evaluation.py and models/award.py define these classes;
-    # an unresolved relationship breaks every ORM query, including login.
-    # evaluation = relationship("Evaluation", back_populates="quotation", uselist=False)
-    # award = relationship("Award", back_populates="quotation", uselist=False)
+    # Evaluation and Award must be imported before the first query (app.models
+    # imports them); an unresolved relationship breaks every ORM query, including login.
+    evaluation = relationship("Evaluation", back_populates="quotation", uselist=False)
+    award = relationship("Award", back_populates="quotation", uselist=False)

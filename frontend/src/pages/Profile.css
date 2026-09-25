@@ -1,0 +1,175 @@
+/* Profile page - namespaced .nallabid-profile-*; panels/buttons come from awardFlow.css. */
+
+.nallabid-profile-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+    padding: 22px;
+
+    border: 1px solid #123d61;
+    border-radius: 16px;
+
+    background:
+        radial-gradient(circle at 0% 0%, rgba(8, 124, 255, 0.16), transparent 50%),
+        #061d32;
+}
+
+.nallabid-profile-avatar {
+    flex: 0 0 68px;
+    width: 68px;
+    height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: linear-gradient(135deg, #e7f0fa, #7196bd);
+    color: #07315b;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.nallabid-profile-hero-text {
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.nallabid-profile-hero-text h1 {
+    margin: 0 0 2px;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-profile-hero-text p {
+    margin: 0 0 10px;
+    color: #91a9c4;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-profile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.nallabid-profile-since {
+    color: #7794b0;
+    font-size: 12px;
+}
+
+.nallabid-profile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 20px;
+    align-items: start;
+}
+
+.nallabid-profile-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.nallabid-profile-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nallabid-profile-field {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nallabid-profile-field label {
+    color: #c3d4e8;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nallabid-profile-field input,
+.nallabid-profile-field textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 12px;
+
+    border: 1px solid #174674;
+    border-radius: 9px;
+    outline: 0;
+
+    background: #08223e;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.nallabid-profile-field textarea {
+    resize: vertical;
+}
+
+.nallabid-profile-field input:focus,
+.nallabid-profile-field textarea:focus {
+    border-color: #087cff;
+    box-shadow: 0 0 0 3px rgba(8, 124, 255, 0.2);
+}
+
+.nallabid-profile-field input:disabled {
+    color: #7794b0;
+    cursor: not-allowed;
+}
+
+.nallabid-profile-field small {
+    color: #7794b0;
+    font-size: 12px;
+}
+
+.nallabid-profile-field small.nallabid-profile-error {
+    color: #f87171;
+}
+
+.nallabid-profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.nallabid-profile-fields .nallabid-flow-alert {
+    margin-bottom: 0;
+}
+
+@media (min-width: 700px) {
+    .nallabid-profile-fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Address, messages and buttons span the full form width. */
+    .nallabid-profile-fields .nallabid-profile-field:has(textarea),
+    .nallabid-profile-wide {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (min-width: 1100px) {
+    .nallabid-profile-grid {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .nallabid-profile-actions .nallabid-flow-button {
+        width: 100%;
+    }
+}

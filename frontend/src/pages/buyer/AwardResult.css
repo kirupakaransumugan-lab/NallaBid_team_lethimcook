@@ -1,0 +1,180 @@
+/* Award Result card. */
+
+.nallabid-award-card {
+    max-width: 960px;
+    overflow: hidden;
+
+    border: 1px solid #123d61;
+    border-radius: 16px;
+
+    background: #061d32;
+}
+
+.nallabid-award-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+
+    padding: 24px;
+
+    border-bottom: 1px solid #123d61;
+
+    background:
+        radial-gradient(circle at 0% 0%, rgba(245, 158, 11, 0.14), transparent 45%),
+        linear-gradient(180deg, #082443, #061d32);
+}
+
+.nallabid-award-trophy {
+    width: 60px;
+    height: 60px;
+    flex: 0 0 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background: rgba(245, 158, 11, 0.16);
+    color: #fbbf24;
+
+    font-size: 28px;
+}
+
+.nallabid-award-hero-text {
+    flex: 1 1 220px;
+    min-width: 0;
+}
+
+.nallabid-award-hero-text h1 {
+    margin: 0 0 4px;
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-award-hero-text p:last-child {
+    margin: 0;
+    color: #91a9c4;
+    font-size: 14px;
+}
+
+.nallabid-award-amount {
+    padding: 22px 24px;
+    border-bottom: 1px solid #123d61;
+}
+
+.nallabid-award-amount span {
+    display: block;
+    color: #7794b0;
+    font-size: 13px;
+}
+
+.nallabid-award-amount strong {
+    display: block;
+    margin: 4px 0;
+    color: #ffffff;
+    font-size: 34px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-award-amount small {
+    color: #7794b0;
+    font-size: 13px;
+}
+
+.nallabid-award-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.nallabid-award-section {
+    min-width: 0;
+    padding: 20px 24px;
+    border-bottom: 1px solid #123d61;
+}
+
+.nallabid-award-section + .nallabid-award-section {
+    border-left: 1px solid #123d61;
+}
+
+.nallabid-award-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px;
+    color: #5aa9ff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.nallabid-award-section dl {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+}
+
+.nallabid-award-section dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+}
+
+.nallabid-award-section dt {
+    color: #7794b0;
+    font-weight: 500;
+}
+
+.nallabid-award-section dd {
+    margin: 0;
+    color: #ffffff;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-award-section dd small {
+    color: #7794b0;
+}
+
+.nallabid-award-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 18px 24px;
+}
+
+.nallabid-award-footer p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: #91a9c4;
+    font-size: 14px;
+}
+
+.nallabid-award-footer .bi-check2-circle {
+    color: #34d399;
+    font-size: 18px;
+}
+
+/* When sections wrap to one column, borders go horizontal only. */
+@media (max-width: 800px) {
+    .nallabid-award-section + .nallabid-award-section {
+        border-left: 0;
+    }
+
+    .nallabid-award-amount strong {
+        font-size: 28px;
+    }
+
+    .nallabid-award-footer .nallabid-flow-button {
+        width: 100%;
+    }
+}

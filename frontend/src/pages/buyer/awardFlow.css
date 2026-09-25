@@ -1,0 +1,509 @@
+/* =========================================================
+   Shared styles for RFQ Details, Comparison and Award Result.
+   Everything is namespaced under .nallabid-flow-* to avoid
+   collisions with existing generic class names.
+   ========================================================= */
+
+.nallabid-flow-page {
+    width: 100%;
+    min-width: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px;
+    color: #d8e6f5;
+}
+
+.nallabid-flow-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+
+    color: #5aa9ff;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.nallabid-flow-back:hover {
+    color: #ffffff;
+}
+
+.nallabid-flow-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.nallabid-flow-eyebrow {
+    margin: 0 0 6px;
+    color: #5aa9ff;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.nallabid-flow-header h1 {
+    margin: 0 0 6px;
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-flow-header p {
+    margin: 0;
+    color: #7894af;
+    font-size: 14px;
+}
+
+.nallabid-flow-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Panels */
+
+.nallabid-flow-panel {
+    min-width: 0;
+    margin-bottom: 20px;
+
+    border: 1px solid #123d61;
+    border-radius: 13px;
+
+    background: #061d32;
+}
+
+.nallabid-flow-panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 18px 20px;
+
+    border-bottom: 1px solid #123d61;
+}
+
+.nallabid-flow-panel-head h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.nallabid-flow-panel-head p {
+    margin: 4px 0 0;
+    color: #7894af;
+    font-size: 13px;
+}
+
+.nallabid-flow-panel-body {
+    padding: 20px;
+}
+
+/* Key facts grid */
+
+.nallabid-flow-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.nallabid-flow-fact {
+    min-width: 0;
+    padding: 16px 18px;
+
+    border: 1px solid #123d61;
+    border-radius: 12px;
+
+    background: #061d32;
+}
+
+.nallabid-flow-fact span {
+    display: block;
+    margin-bottom: 6px;
+    color: #7794b0;
+    font-size: 12px;
+}
+
+.nallabid-flow-fact strong {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* Buttons */
+
+.nallabid-flow-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 42px;
+    padding: 10px 18px;
+
+    border: 1px solid transparent;
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.nallabid-flow-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.nallabid-flow-button-primary {
+    background: #087cff;
+    color: #ffffff;
+}
+
+.nallabid-flow-button-primary:hover:not(:disabled) {
+    background: #006de0;
+    color: #ffffff;
+}
+
+.nallabid-flow-button-success {
+    background: #10b981;
+    color: #03172f;
+}
+
+.nallabid-flow-button-success:hover:not(:disabled) {
+    background: #34d399;
+    color: #03172f;
+}
+
+.nallabid-flow-button-ghost {
+    border-color: #1c4c7a;
+    background: transparent;
+    color: #d8e6f5;
+}
+
+.nallabid-flow-button-ghost:hover:not(:disabled) {
+    background: rgba(8, 124, 255, 0.12);
+    color: #ffffff;
+}
+
+/* Badges */
+
+.nallabid-flow-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 4px 10px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.nallabid-flow-badge-draft { background: rgba(139, 92, 246, 0.14); color: #a78bfa; }
+.nallabid-flow-badge-open { background: rgba(16, 185, 129, 0.14); color: #34d399; }
+.nallabid-flow-badge-closed { background: rgba(148, 163, 184, 0.14); color: #94a3b8; }
+.nallabid-flow-badge-awarded { background: rgba(245, 158, 11, 0.14); color: #fbbf24; }
+.nallabid-flow-badge-completed { background: rgba(59, 130, 246, 0.14); color: #60a5fa; }
+.nallabid-flow-badge-eligible { background: rgba(16, 185, 129, 0.14); color: #34d399; }
+.nallabid-flow-badge-ineligible { background: rgba(239, 68, 68, 0.14); color: #f87171; }
+.nallabid-flow-badge-pending,
+.nallabid-flow-badge-submitted { background: rgba(148, 163, 184, 0.14); color: #cbd5e1; }
+
+/* Alerts */
+
+.nallabid-flow-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 13px 16px;
+
+    border: 1px solid;
+    border-radius: 10px;
+
+    font-size: 14px;
+}
+
+.nallabid-flow-alert i {
+    font-size: 17px;
+    line-height: 1.2;
+}
+
+.nallabid-flow-alert-error { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); color: #fecaca; }
+.nallabid-flow-alert-success { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); color: #a7f3d0; }
+.nallabid-flow-alert-info { border-color: rgba(8, 124, 255, 0.4); background: rgba(8, 124, 255, 0.1); color: #bfdbfe; }
+
+/* Tables (horizontally scrollable on small screens) */
+
+.nallabid-flow-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nallabid-flow-table {
+    width: 100%;
+    min-width: 820px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.nallabid-flow-table th {
+    padding: 12px 16px;
+
+    border-bottom: 1px solid #123d61;
+
+    color: #7794b0;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.nallabid-flow-table td {
+    padding: 14px 16px;
+
+    border-bottom: 1px solid rgba(18, 61, 97, 0.6);
+
+    color: #d8e6f5;
+    vertical-align: top;
+}
+
+.nallabid-flow-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.nallabid-flow-table tbody tr:hover td {
+    background: rgba(8, 124, 255, 0.05);
+}
+
+.nallabid-flow-table .nallabid-flow-num {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.nallabid-flow-muted {
+    color: #7794b0;
+    font-size: 13px;
+}
+
+/* Confirmation dialog */
+
+.nallabid-flow-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 16px;
+
+    background: rgba(1, 10, 22, 0.75);
+}
+
+.nallabid-flow-modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+
+    padding: 24px;
+
+    border: 1px solid #1c4c7a;
+    border-radius: 14px;
+
+    background: #061d32;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.nallabid-flow-modal h3 {
+    margin: 0 0 8px;
+    color: #ffffff;
+    font-size: 20px;
+}
+
+.nallabid-flow-modal p {
+    color: #91a9c4;
+    font-size: 14px;
+}
+
+.nallabid-flow-modal dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    margin: 16px 0;
+    padding: 14px 16px;
+
+    border-radius: 10px;
+    background: rgba(8, 124, 255, 0.08);
+    font-size: 14px;
+}
+
+.nallabid-flow-modal dt {
+    color: #7794b0;
+    font-weight: 500;
+}
+
+.nallabid-flow-modal dd {
+    margin: 0;
+    color: #ffffff;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-flow-modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .nallabid-flow-page {
+        padding: 20px 16px 40px;
+    }
+
+    .nallabid-flow-header h1 {
+        font-size: 24px;
+    }
+
+    .nallabid-flow-actions,
+    .nallabid-flow-actions .nallabid-flow-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .nallabid-flow-facts {
+        grid-template-columns: 1fr;
+    }
+
+    .nallabid-flow-modal-actions .nallabid-flow-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 639px) {
+    .nallabid-flow-button {
+        min-width: 0;
+        white-space: normal;
+        text-align: center;
+    }
+}
+
+/* Search + filter toolbar (Quotations and Suppliers tabs) */
+
+.nallabid-flow-toolbar {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #123d61;
+}
+
+.nallabid-flow-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    height: 42px;
+    padding: 0 12px;
+
+    border: 1px solid #174674;
+    border-radius: 9px;
+
+    background: #08223e;
+    color: #7794b0;
+}
+
+.nallabid-flow-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.nallabid-flow-search input::placeholder {
+    color: #7794b0;
+}
+
+.nallabid-flow-select {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 12px;
+
+    border: 1px solid #174674;
+    border-radius: 9px;
+    outline: 0;
+
+    background: #08223e;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.nallabid-flow-search:focus-within,
+.nallabid-flow-select:focus {
+    border-color: #087cff;
+}
+
+.nallabid-flow-link {
+    color: #5aa9ff;
+    text-decoration: none;
+}
+
+.nallabid-flow-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.nallabid-flow-sub {
+    display: block;
+    margin-top: 2px;
+    color: #7794b0;
+    font-size: 12px;
+}
+
+@media (min-width: 768px) {
+    .nallabid-flow-toolbar {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .nallabid-flow-panel-head,
+    .nallabid-flow-panel-body,
+    .nallabid-flow-toolbar {
+        padding: 14px 12px;
+    }
+
+    .nallabid-flow-panel-head > div {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+}

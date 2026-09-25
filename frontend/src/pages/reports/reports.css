@@ -1,0 +1,703 @@
+/* =========================================================
+   Reports & Analytics - all classes namespaced .nallabid-report*
+   Mobile-first: single column by default, grids from 640px up.
+   ========================================================= */
+
+.nallabid-reports-page {
+    width: 100%;
+    min-width: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+    color: #d8e6f5;
+}
+
+.nallabid-report-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: #5aa9ff;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.nallabid-report-back:hover {
+    color: #ffffff;
+}
+
+/* Header */
+
+.nallabid-report-header {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.nallabid-report-header h1 {
+    margin: 0 0 6px;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.nallabid-report-header p {
+    margin: 0;
+    color: #7894af;
+    font-size: 14px;
+}
+
+.nallabid-report-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.nallabid-report-header-actions .nallabid-report-button {
+    flex: 1 1 140px;
+}
+
+.nallabid-report-section-title {
+    margin: 8px 0 14px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Buttons */
+
+.nallabid-report-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 40px;
+    padding: 9px 14px;
+
+    border: 1px solid #1c4c7a;
+    border-radius: 9px;
+
+    background: transparent;
+    color: #d8e6f5;
+
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.nallabid-report-button:hover:not(:disabled) {
+    background: rgba(8, 124, 255, 0.12);
+    color: #ffffff;
+}
+
+.nallabid-report-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.nallabid-report-button-primary {
+    border-color: #087cff;
+    background: #087cff;
+    color: #ffffff;
+}
+
+.nallabid-report-button-primary:hover:not(:disabled) {
+    background: #006de0;
+}
+
+/* Summary stat cards */
+
+.nallabid-report-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.nallabid-report-stat {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 16px 18px;
+
+    border: 1px solid #123d61;
+    border-radius: 13px;
+
+    background: #061d32;
+}
+
+.nallabid-report-stat > div:last-child {
+    min-width: 0;
+}
+
+.nallabid-report-stat span {
+    display: block;
+    margin-bottom: 4px;
+    color: #7794b0;
+    font-size: 12px;
+}
+
+.nallabid-report-stat strong {
+    display: block;
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-report-stat-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    font-size: 18px;
+}
+
+/* Tones: primary data hue + reserved status colors (always paired with a label). */
+
+.nallabid-report-stat-icon.nallabid-report-tone-primary { background: rgba(14, 116, 255, 0.15); color: #2991ff; }
+.nallabid-report-stat-icon.nallabid-report-tone-good { background: rgba(16, 185, 129, 0.14); color: #34d399; }
+.nallabid-report-stat-icon.nallabid-report-tone-warning { background: rgba(245, 158, 11, 0.14); color: #fbbf24; }
+
+.nallabid-report-bar-fill.nallabid-report-tone-primary { background: #2991ff; }
+.nallabid-report-bar-fill.nallabid-report-tone-good { background: #34d399; }
+.nallabid-report-bar-fill.nallabid-report-tone-critical { background: #f87171; }
+.nallabid-report-bar-fill.nallabid-report-tone-neutral { background: #7b8ea5; }
+
+/* Panels */
+
+.nallabid-report-charts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.nallabid-report-panel {
+    min-width: 0;
+    margin-bottom: 16px;
+    padding: 18px;
+
+    border: 1px solid #123d61;
+    border-radius: 13px;
+
+    background: #061d32;
+}
+
+.nallabid-report-charts .nallabid-report-panel {
+    margin-bottom: 0;
+}
+
+.nallabid-report-panel-head {
+    margin-bottom: 16px;
+}
+
+.nallabid-report-panel-head h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.nallabid-report-panel-head p {
+    margin: 4px 0 0;
+    color: #7894af;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+/* Hover tooltip shared by bars and columns */
+
+.nallabid-reports-page [data-tip] {
+    position: relative;
+}
+
+.nallabid-reports-page [data-tip]:hover::after {
+    content: attr(data-tip);
+
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    z-index: 10;
+
+    padding: 6px 10px;
+
+    border: 1px solid #1c4c7a;
+    border-radius: 7px;
+
+    background: #020f1f;
+    color: #ffffff;
+
+    font-size: 12px;
+    white-space: nowrap;
+
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+/* Horizontal bar list */
+
+.nallabid-report-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nallabid-report-bar-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "label value"
+        "track track";
+    gap: 6px 10px;
+    align-items: center;
+}
+
+.nallabid-report-bar-label {
+    grid-area: label;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    overflow: hidden;
+    color: #c3d4e8;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nallabid-report-bar-value {
+    grid-area: value;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.nallabid-report-bar-track {
+    grid-area: track;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: rgba(18, 61, 97, 0.55);
+}
+
+.nallabid-report-bar-fill {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+/* Vertical column chart */
+
+.nallabid-report-columns-wrap {
+    display: flex;
+    gap: 8px;
+    height: 190px;
+}
+
+.nallabid-report-columns-scale {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 22px;
+    color: #5e7fa3;
+    font-size: 11px;
+    text-align: right;
+}
+
+.nallabid-report-columns {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+
+    border-bottom: 1px solid #123d61;
+}
+
+.nallabid-report-column {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nallabid-report-column-track {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+}
+
+.nallabid-report-column-fill {
+    width: 100%;
+    max-width: 28px;
+    margin: 0 auto;
+    border-radius: 4px 4px 0 0;
+    background: #2991ff;
+    transition: height 0.4s ease;
+}
+
+.nallabid-report-column:hover .nallabid-report-column-fill {
+    background: #5aa9ff;
+}
+
+.nallabid-report-column-label {
+    height: 16px;
+    overflow: hidden;
+    color: #7794b0;
+    font-size: 10px;
+    text-align: center;
+}
+
+.nallabid-report-chart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 140px;
+    color: #5e7fa3;
+    font-size: 13px;
+}
+
+.nallabid-report-chart-empty i {
+    font-size: 28px;
+}
+
+/* Report cards */
+
+.nallabid-report-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.nallabid-report-card {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 20px;
+
+    border: 1px solid #123d61;
+    border-radius: 13px;
+
+    background: #061d32;
+}
+
+.nallabid-report-card-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: rgba(14, 116, 255, 0.15);
+    color: #2991ff;
+
+    font-size: 20px;
+}
+
+.nallabid-report-card h3 {
+    margin: 4px 0 0;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.nallabid-report-card p {
+    flex: 1;
+    margin: 0;
+    color: #91a9c4;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.nallabid-report-card-hint,
+.nallabid-report-card-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.nallabid-report-card-hint {
+    color: #7794b0;
+}
+
+.nallabid-report-card-error {
+    color: #f87171;
+}
+
+.nallabid-report-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.nallabid-report-card-actions .nallabid-report-button {
+    flex: 1 1 120px;
+}
+
+/* Filters */
+
+.nallabid-report-filters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 16px;
+
+    border: 1px solid #123d61;
+    border-radius: 13px;
+
+    background: #061d32;
+}
+
+.nallabid-report-field {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nallabid-report-field span {
+    color: #7794b0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.nallabid-report-field select,
+.nallabid-report-field input {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 12px;
+
+    border: 1px solid #174674;
+    border-radius: 9px;
+    outline: 0;
+
+    background: #08223e;
+    color: #ffffff;
+
+    font-size: 14px;
+    color-scheme: dark;
+}
+
+.nallabid-report-field select:focus,
+.nallabid-report-field input:focus {
+    border-color: #087cff;
+}
+
+/* Summary tiles */
+
+.nallabid-report-tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.nallabid-report-tile {
+    min-width: 0;
+    padding: 14px 16px;
+
+    border: 1px solid #123d61;
+    border-radius: 12px;
+
+    background: #061d32;
+}
+
+.nallabid-report-tile span {
+    display: block;
+    margin-bottom: 4px;
+    color: #7794b0;
+    font-size: 12px;
+}
+
+.nallabid-report-tile strong {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* Table (always horizontally scrollable, never overflows the page) */
+
+.nallabid-report-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nallabid-report-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.nallabid-report-table th {
+    padding: 11px 12px;
+    border-bottom: 1px solid #123d61;
+    color: #7794b0;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.nallabid-report-table td {
+    max-width: 320px;
+    padding: 12px;
+    border-bottom: 1px solid rgba(18, 61, 97, 0.6);
+    color: #d8e6f5;
+    vertical-align: top;
+}
+
+.nallabid-report-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.nallabid-report-table tbody tr:hover td {
+    background: rgba(8, 124, 255, 0.05);
+}
+
+.nallabid-report-table .nallabid-report-num {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.nallabid-report-badge {
+    display: inline-flex;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.nallabid-report-badge-eligible { background: rgba(16, 185, 129, 0.14); color: #34d399; }
+.nallabid-report-badge-ineligible { background: rgba(239, 68, 68, 0.14); color: #f87171; }
+.nallabid-report-badge-pending { background: rgba(148, 163, 184, 0.14); color: #cbd5e1; }
+.nallabid-report-badge-awarded { background: rgba(245, 158, 11, 0.14); color: #fbbf24; }
+.nallabid-report-badge-completed { background: rgba(59, 130, 246, 0.14); color: #60a5fa; }
+
+.nallabid-report-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 12px 14px;
+
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 10px;
+
+    background: rgba(239, 68, 68, 0.1);
+    color: #fecaca;
+    font-size: 14px;
+}
+
+
+/* ---------- Tablet ---------- */
+
+@media (min-width: 640px) {
+    .nallabid-reports-page {
+        padding: 24px;
+    }
+
+    .nallabid-report-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .nallabid-report-filters {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .nallabid-report-tiles {
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    }
+
+    .nallabid-report-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .nallabid-report-header-actions .nallabid-report-button {
+        flex: 0 0 auto;
+    }
+}
+
+/* ---------- Desktop ---------- */
+
+@media (min-width: 1024px) {
+    .nallabid-reports-page {
+        padding: 28px;
+    }
+
+    .nallabid-report-header {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    .nallabid-report-header h1 {
+        font-size: 28px;
+    }
+
+    .nallabid-report-stats {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .nallabid-report-charts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .nallabid-report-cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Let button labels wrap in very narrow content areas instead of overflowing. */
+@media (max-width: 639px) {
+    .nallabid-report-button {
+        min-width: 0;
+        white-space: normal;
+        text-align: center;
+    }
+}

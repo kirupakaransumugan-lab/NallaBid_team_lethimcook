@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.user import User
-from app.schemas.auth import UserResponse
-from app.schemas.user import ProfileResponse, ProfileUpdate
+from app.schemas.user import PasswordChange, ProfileResponse, ProfileUpdate, UserMeResponse
 from app.security.auth import get_current_user
+from app.services.profile_service import change_password, get_profile, update_profile
 
 
 router = APIRouter(
@@ -14,22 +14,7 @@ router = APIRouter(
 )
 
 
-def get_profile_record(current_user: User):
-    if current_user.role == "BUYER":
-        profile = current_user.company
-    else:
-        profile = current_user.supplier
-
-    if profile is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Profile not found for this user"
-        )
-
-    return profile
-
-
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=UserMeResponse)
 def get_me(
     current_user: User = Depends(get_current_user)
 ):
@@ -37,52 +22,30 @@ def get_me(
 
 
 @router.get("/me/profile", response_model=ProfileResponse)
-def get_profile(
-    current_user: User = Depends(get_current_user)
+def read_profile(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
-    profile = get_profile_record(current_user)
-
-    if current_user.role == "BUYER":
-        profile_email = profile.company_email
-    else:
-        profile_email = profile.email
-
-    return {
-        "full_name": current_user.full_name,
-        "email": current_user.email,
-        "role": current_user.role,
-        "company_name": profile.company_name,
-        "company_email": profile_email,
-        "phone": profile.phone,
-        "address": profile.address,
-    }
+    return get_profile(db, current_user)
 
 
-@router.put("/me/profile")
-def update_profile(
+@router.put("/me/profile", response_model=ProfileResponse)
+def save_profile(
     profile_data: ProfileUpdate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    if len(profile_data.company_name.strip()) < 2:
-        raise HTTPException(
-            status_code=400,
-            detail="Company name is required"
-        )
+    return update_profile(db, current_user, profile_data)
 
-    profile = get_profile_record(current_user)
 
-    if current_user.role == "BUYER":
-        profile.company_email = profile_data.company_email
-    else:
-        profile.email = profile_data.company_email
-
-    profile.company_name = profile_data.company_name.strip()
-    profile.phone = profile_data.phone
-    profile.address = profile_data.address
-
-    db.commit()
+@router.put("/me/password")
+def update_password(
+    data: PasswordChange,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    change_password(db, current_user, data.current_password, data.new_password)
 
     return {
-        "message": "Profile updated"
+        "message": "Password updated successfully."
     }

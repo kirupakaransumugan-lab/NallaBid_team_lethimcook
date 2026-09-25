@@ -1,0 +1,28 @@
+/* Quotations tab - small accents on top of awardFlow.css. */
+
+.nallabid-quotes-good {
+    color: #34d399 !important;
+}
+
+.nallabid-quotes-bad {
+    color: #f87171 !important;
+}
+
+.nallabid-quotes-award {
+    color: #fbbf24 !important;
+}
+
+.nallabid-quotes-reason {
+    max-width: 240px;
+    white-space: normal;
+}
+
+.nallabid-quotes-action {
+    min-height: 34px;
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.nallabid-quotes-page .nallabid-flow-facts {
+    grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+}

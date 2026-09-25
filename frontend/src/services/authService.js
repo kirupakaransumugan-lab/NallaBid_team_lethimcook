@@ -112,3 +112,13 @@ export function getErrorMessage(data, fallback) {
 
     return fallback;
 }
+
+
+// Keeps the cached user (shown in the Navbar) in sync after a profile edit.
+export function updateStoredUser(changes) {
+    const user = getCurrentUser();
+
+    if (user) {
+        localStorage.setItem(USER_KEY, JSON.stringify({ ...user, ...changes }));
+    }
+}

@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
+import { getMyAwardResult } from "../../services/awardService";
+import { formatDate, formatLKR } from "../../utils/format";
+
+const OUTCOME_DISPLAY = {
+    AWARDED: { label: "Awarded to you", icon: "bi-trophy text-warning" },
+    NOT_AWARDED: { label: "Not awarded", icon: "bi-x-circle text-secondary" }
+};
+
 function AwardResult() {
     const { rfqId } = useParams();
 
@@ -9,8 +17,23 @@ function AwardResult() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        // Award API will be connected when the backend endpoint is ready.
-        setLoading(false);
+        let active = true;
+
+        getMyAwardResult(rfqId)
+            .then((result) => {
+                // PENDING falls through to the "not available" state below.
+                if (active) setAward(result.outcome === "PENDING" ? null : result);
+            })
+            .catch((requestError) => {
+                if (active) setError(requestError.message);
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
     }, [rfqId]);
 
     if (loading) {
@@ -121,7 +144,7 @@ function AwardResult() {
                                 <div className="d-flex align-items-center gap-3 mb-4">
 
                                     <div className="fs-1">
-                                        <i className="bi bi-trophy text-warning"></i>
+                                        <i className={`bi ${OUTCOME_DISPLAY[award.outcome].icon}`}></i>
                                     </div>
 
                                     <div>
@@ -130,7 +153,7 @@ function AwardResult() {
                                         </small>
 
                                         <h4 className="text-white mb-0">
-                                            {award.status}
+                                            {OUTCOME_DISPLAY[award.outcome].label}
                                         </h4>
                                     </div>
 
@@ -146,33 +169,52 @@ function AwardResult() {
                                         </small>
 
                                         <p className="text-white mt-1 mb-0">
-                                            {award.rfq_id}
+                                            {award.rfq_number} · {award.product_name}
                                         </p>
                                     </div>
 
                                     <div className="col-md-6">
                                         <small className="text-secondary">
-                                            Quotation
+                                            Your Quotation
                                         </small>
 
                                         <p className="text-white mt-1 mb-0">
-                                            {award.quotation_id}
+                                            {award.quotation_number}
                                         </p>
                                     </div>
 
                                     <div className="col-md-6">
                                         <small className="text-secondary">
-                                            Awarded At
+                                            Your Quoted Amount
                                         </small>
 
                                         <p className="text-white mt-1 mb-0">
-                                            {award.awarded_at
-                                                ? new Date(
-                                                    award.awarded_at
-                                                ).toLocaleString()
-                                                : "-"}
+                                            {formatLKR(award.total_price)}
                                         </p>
                                     </div>
+
+                                    <div className="col-md-6">
+                                        <small className="text-secondary">
+                                            Delivery / Warranty
+                                        </small>
+
+                                        <p className="text-white mt-1 mb-0">
+                                            {award.delivery_days} days / {award.warranty_months} months
+                                        </p>
+                                    </div>
+
+                                    {award.outcome === "AWARDED" && (
+                                        <div className="col-md-6">
+                                            <small className="text-secondary">
+                                                Awarded On
+                                            </small>
+
+                                            <p className="text-white mt-1 mb-0">
+                                                {formatDate(award.awarded_at)}
+                                                {award.award_status === "COMPLETED" && " · Completed"}
+                                            </p>
+                                        </div>
+                                    )}
 
                                 </div>
 

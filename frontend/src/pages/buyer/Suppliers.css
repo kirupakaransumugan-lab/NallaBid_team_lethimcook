@@ -1,0 +1,169 @@
+/* Suppliers tab - directory cards and profile layout. */
+
+.nallabid-supplier-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px;
+}
+
+.nallabid-supplier-card {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    padding: 18px;
+
+    border: 1px solid #123d61;
+    border-radius: 13px;
+
+    background: #04182d;
+}
+
+.nallabid-supplier-card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nallabid-supplier-avatar {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: linear-gradient(135deg, #0b3d73, #087cff);
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.nallabid-supplier-card-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.nallabid-supplier-card-title h3 {
+    margin: 0;
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nallabid-supplier-card-title span {
+    display: block;
+    color: #7794b0;
+    overflow-wrap: anywhere;
+    font-size: 12px;
+}
+
+.nallabid-supplier-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+}
+
+.nallabid-supplier-contact li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 0;
+    color: #91a9c4;
+}
+
+.nallabid-supplier-contact i {
+    color: #5e7fa3;
+}
+
+.nallabid-supplier-contact a,
+.nallabid-supplier-contact span {
+    min-width: 0;
+    color: #c3d4e8;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+}
+
+.nallabid-supplier-contact a:hover {
+    color: #5aa9ff;
+}
+
+.nallabid-supplier-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+}
+
+.nallabid-supplier-metrics div {
+    min-width: 0;
+    padding: 10px;
+    border-radius: 9px;
+    background: rgba(8, 124, 255, 0.07);
+}
+
+.nallabid-supplier-metrics dt {
+    color: #7794b0;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.nallabid-supplier-metrics dd {
+    margin: 2px 0 0;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-supplier-card-link {
+    margin-top: auto;
+}
+
+.nallabid-supplier-profile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 20px;
+}
+
+@media (min-width: 640px) {
+    .nallabid-supplier-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1100px) {
+    .nallabid-supplier-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .nallabid-supplier-profile-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+}
+
+@media (max-width: 420px) {
+    .nallabid-supplier-metrics {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .nallabid-supplier-grid {
+        padding: 12px;
+    }
+}

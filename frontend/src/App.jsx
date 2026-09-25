@@ -2,7 +2,8 @@ import {
     BrowserRouter,
     Navigate,
     Routes,
-    Route
+    Route,
+    useParams
 } from "react-router-dom";
 
 import Login from "./pages/Login";
@@ -12,6 +13,15 @@ import CreateRFQ from "./pages/buyer/CreateRFQ";
 import MyRFQs from "./pages/buyer/myRFQs";
 
 import BuyerDashboard from "./pages/buyer/BuyerDashboard";
+import RFQDetails from "./pages/buyer/RFQDetails";
+import Comparison from "./pages/buyer/Comparison";
+import AwardResult from "./pages/buyer/AwardResult";
+import Quotations from "./pages/buyer/Quotations";
+import Suppliers from "./pages/buyer/Suppliers";
+import SupplierProfile from "./pages/buyer/SupplierProfile";
+import Profile from "./pages/Profile";
+import Reports from "./pages/reports/Reports";
+import ReportDetail from "./pages/reports/ReportDetail";
 import { getCurrentUser, getToken } from "./services/authService";
 
 
@@ -60,28 +70,19 @@ function RequireRole({ role, children }) {
 }
 
 
-function RequireLogin({ children }) {
-    if (!getToken() || !getCurrentUser()) {
-        return <Navigate to="/login" replace />;
-    }
-
-    return children;
-}
-
-
-// Empty pages for sidebar tabs whose UI is still being built.
-const EMPTY_TAB_PATHS = [
-    "/quotations",
-    "/reports",
-    "/suppliers",
-    "/profile"
-];
+// The Buyer Dashboard links to /buyer/... paths; the pages live at the sidebar paths.
+const BUYER_PATH_ALIASES = {
+    "/buyer/rfqs": "/rfqs",
+    "/buyer/suppliers": "/suppliers",
+    "/buyer/reports": "/reports",
+    "/buyer/profile": "/profile"
+};
 
 
-function EmptyPage() {
-    return (
-        <main className="pageArea"></main>
-    );
+function BuyerRFQRedirect() {
+    const { rfqId } = useParams();
+
+    return <Navigate to={`/rfqs/${rfqId}`} replace />;
 }
 
 
@@ -186,19 +187,31 @@ function App() {
                     element={<Home />}
                 />
 
-                {EMPTY_TAB_PATHS.map((path) => (
-                    <Route
-                        key={path}
-                        path={path}
-                        element={
-                            <RequireLogin>
-                                <Navbar>
-                                    <EmptyPage />
-                                </Navbar>
-                            </RequireLogin>
-                        }
-                    />
-                ))}
+                {/* =========================
+                    PROFILE (same page; each role at its own sidebar path)
+                ========================= */}
+
+                <Route
+                    path="/profile"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <Profile />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+                <Route
+                    path="/supplier/profile"
+                    element={
+                        <RequireRole role="SUPPLIER">
+                            <Navbar>
+                                <Profile />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
 
                 <Route
                     path="/buyer/rfqs/create"
@@ -215,6 +228,151 @@ function App() {
                         <RequireRole role="BUYER">
                             <Navbar>
                                 <MyRFQs />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+
+                {/* =========================
+                    AWARD WORKFLOW (BUYER)
+                ========================= */}
+
+                {Object.entries(BUYER_PATH_ALIASES).map(([from, to]) => (
+                    <Route
+                        key={from}
+                        path={from}
+                        element={<Navigate to={to} replace />}
+                    />
+                ))}
+
+                {/* Dashboard "View" button; /buyer/rfqs/create above is more specific and wins. */}
+                <Route
+                    path="/buyer/rfqs/:rfqId"
+                    element={<BuyerRFQRedirect />}
+                />
+
+                {/* My RFQs links here; without it /rfqs/:rfqId would treat "create" as an id. */}
+                <Route
+                    path="/rfqs/create"
+                    element={<Navigate to="/buyer/rfqs/create" replace />}
+                />
+
+                <Route
+                    path="/rfqs/:rfqId"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <RFQDetails />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+                <Route
+                    path="/rfqs/:rfqId/compare"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <Comparison />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+                <Route
+                    path="/awards/:rfqId"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <AwardResult />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+
+                {/* =========================
+                    QUOTATIONS & SUPPLIERS TABS (BUYER)
+                ========================= */}
+
+                <Route
+                    path="/quotations"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <Quotations />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+                <Route
+                    path="/suppliers"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <Suppliers />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+                <Route
+                    path="/suppliers/:supplierId"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <SupplierProfile />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+
+                {/* =========================
+                    REPORTS (role-aware; backend enforces access)
+                ========================= */}
+
+                <Route
+                    path="/reports"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <Reports />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+                <Route
+                    path="/reports/:reportType"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <ReportDetail />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+                <Route
+                    path="/supplier/reports"
+                    element={
+                        <RequireRole role="SUPPLIER">
+                            <Navbar>
+                                <Reports />
+                            </Navbar>
+                        </RequireRole>
+                    }
+                />
+
+                <Route
+                    path="/supplier/reports/:reportType"
+                    element={
+                        <RequireRole role="SUPPLIER">
+                            <Navbar>
+                                <ReportDetail />
                             </Navbar>
                         </RequireRole>
                     }
