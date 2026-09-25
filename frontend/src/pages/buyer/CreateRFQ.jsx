@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { API_URL, getToken } from "../../services/authService";
 import "./CreateRFQ.css";
 
 function CreateRFQ() {
@@ -34,9 +35,9 @@ function CreateRFQ() {
         setLoading(true);
 
         try {
-            const token = localStorage.getItem("access_token");
+            const token = getToken();
 
-            const response = await fetch("http://127.0.0.1:8000/api/rfqs", {
+            const response = await fetch(`${API_URL}/rfqs/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

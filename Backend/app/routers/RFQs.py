@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func
@@ -61,6 +61,11 @@ def create_rfq(
     current_user: User = Depends(get_current_user)
 ):
     require_buyer(current_user)
+
+    # The browser sends a UTC timestamp ("...Z"); the DB column and utcnow()
+    # are naive UTC, so drop the tzinfo before comparing and storing.
+    if data.deadline.tzinfo is not None:
+        data.deadline = data.deadline.astimezone(timezone.utc).replace(tzinfo=None)
 
     if data.deadline <= datetime.utcnow():
         raise HTTPException(

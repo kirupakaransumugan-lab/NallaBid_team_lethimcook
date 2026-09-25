@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { API_URL, getToken } from "../../services/authService";
 import "./myRFQs.css";
-
-const API_URL = "http://127.0.0.1:8000/api";
 
 function MyRFQs() {
     const navigate = useNavigate();
@@ -20,7 +19,7 @@ function MyRFQs() {
         setError("");
 
         try {
-            const token = localStorage.getItem("access_token");
+            const token = getToken();
 
             if (!token) {
                 setError("You are not logged in.");
