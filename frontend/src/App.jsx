@@ -37,6 +37,7 @@ const DASHBOARD_BY_ROLE = {
 // =========================
 
 import SupplierDashboard from "./pages/supplier/SupplierDashboard";
+import AvailableRFQs from "./pages/supplier/AvailableRFQs";
 import SupplierRFQDetails from "./pages/supplier/SupplierRFQDetails";
 import QuotationForm from "./pages/supplier/QuotationForm";
 import MyQuotations from "./pages/supplier/MyQuotations";
@@ -132,6 +133,15 @@ function App() {
                     element={
                         <Navbar>
                             <SupplierDashboard />
+                        </Navbar>
+                    }
+                />
+
+                <Route
+                    path="/supplier/rfqs"
+                    element={
+                        <Navbar>
+                            <AvailableRFQs />
                         </Navbar>
                     }
                 />

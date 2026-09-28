@@ -10,6 +10,7 @@ import sidebarCard from "../assets/sidebar-card2.png";
 
 function Navbar({ children }) {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -79,7 +80,7 @@ function Navbar({ children }) {
         {
             name: "Available RFQs",
             icon: "bi-file-earmark-text",
-            path: "/supplier"
+            path: "/supplier/rfqs"
         },
         {
             name: "My Quotations",
@@ -138,17 +139,18 @@ function Navbar({ children }) {
     // ==============================
 
     function isActive(item) {
-        return location.pathname === item.path;
+        return location.pathname === item.path ||
+            (item.path === "/supplier/rfqs" && location.pathname.startsWith("/supplier/rfqs/"));
     }
 
     return (
-        <div className="appLayout">
+        <div className={`appLayout${userRole === "SUPPLIER" ? " supplierLayout" : ""}${sidebarOpen ? " sidebarOpen" : ""}`}>
 
             {/* =========================================
                 SIDEBAR
             ========================================= */}
 
-            <aside className="sidebar">
+            <aside className="sidebar" id="app-sidebar">
 
                 {/* BRAND */}
                 <div className="sidebarHeader">
@@ -181,6 +183,9 @@ function Navbar({ children }) {
                         <Link
                             key={item.name}
                             to={item.path}
+                            aria-label={item.name}
+                            aria-current={isActive(item) ? "page" : undefined}
+                            onClick={() => setSidebarOpen(false)}
                             className={
                                 isActive(item)
                                     ? "navItem active"
@@ -273,6 +278,10 @@ function Navbar({ children }) {
                     <button
                         type="button"
                         className="menuButton"
+                        aria-label="Toggle navigation"
+                        aria-controls="app-sidebar"
+                        aria-expanded={sidebarOpen}
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
                     >
 
                         <i className="bi bi-list"></i>
