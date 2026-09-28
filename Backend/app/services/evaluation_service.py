@@ -4,13 +4,14 @@ from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models.award import Award
+from app.models.award import ACTIVE_AWARD, Award
 from app.models.evaluation import Evaluation, EvaluationStatus
 from app.models.quotation import Quotation, QuotationStatus
 from app.models.rfq import RFQ, RFQStatus
 from app.models.supplier import Supplier
 from app.models.supplier_catalogue import SupplierCatalogue
 from app.models.user import User
+from app.services.rfq_lifecycle import is_sealed
 
 
 # =========================================================
@@ -167,7 +168,27 @@ def run_rfq_evaluation(db: Session, rfq_id: int, buyer: User) -> dict:
 # =========================================================
 
 def get_rfq_evaluation_overview(db: Session, rfq_id: int, buyer: User) -> dict:
+    # award_service imports this module, so import its helper here to avoid a cycle.
+    from app.services.award_service import list_cancelled_awards
+
     rfq = get_owned_rfq(db, rfq_id, buyer)
+
+    # Sealed bids: while the RFQ is still DRAFT/OPEN the buyer only learns how many
+    # quotations arrived, never the prices or suppliers.
+    if is_sealed(rfq):
+        total = db.scalar(select(func.count(Quotation.id)).where(Quotation.rfq_id == rfq.id)) or 0
+
+        return {
+            "rfq": rfq,
+            "sealed": True,
+            "total_quotations": total,
+            "evaluated_quotations": 0,
+            "eligible_quotations": 0,
+            "ineligible_quotations": 0,
+            "quotations": [],
+            "award": None,
+            "award_history": [],
+        }
 
     rows = db.execute(
         select(Quotation, Supplier.company_name, Evaluation)
@@ -177,7 +198,9 @@ def get_rfq_evaluation_overview(db: Session, rfq_id: int, buyer: User) -> dict:
         .order_by(Quotation.total_price.asc(), Quotation.id.asc())
     ).all()
 
-    award = db.scalar(select(Award).where(Award.rfq_id == rfq.id))
+    award = db.scalar(select(Award).where(Award.rfq_id == rfq.id, ACTIVE_AWARD))
+    award_history = list_cancelled_awards(db, rfq.id)
+    cancelled_quotation_ids = {item["quotation_id"] for item in award_history}
 
     quotations = []
     eligible = ineligible = 0
@@ -203,14 +226,17 @@ def get_rfq_evaluation_overview(db: Session, rfq_id: int, buyer: User) -> dict:
             "submitted_at": quotation.submitted_at,
             "evaluation": evaluation,
             "is_awarded": award is not None and award.quotation_id == quotation.id,
+            "award_cancelled": quotation.id in cancelled_quotation_ids,
         })
 
     return {
         "rfq": rfq,
+        "sealed": False,
         "total_quotations": len(quotations),
         "evaluated_quotations": eligible + ineligible,
         "eligible_quotations": eligible,
         "ineligible_quotations": ineligible,
         "quotations": quotations,
         "award": award,
+        "award_history": award_history,
     }

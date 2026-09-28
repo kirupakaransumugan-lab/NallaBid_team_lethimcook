@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
-from app.models.award import Award
+from app.models.award import ACTIVE_AWARD, Award
 from app.models.evaluation import Evaluation, EvaluationStatus
 from app.models.quotation import Quotation, QuotationStatus
 from app.models.rfq import RFQ
@@ -15,6 +15,7 @@ from app.models.supplier_catalogue import SupplierCatalogue
 from app.models.user import User
 from app.services.evaluation_service import get_owned_rfq
 from app.services.reports import list_rfq_options
+from app.services.rfq_lifecycle import SEALED_STATUSES
 
 
 def _eligibility(evaluation: Evaluation | None) -> str:
@@ -36,8 +37,8 @@ def get_received_quotations(
         .join(RFQ, RFQ.id == Quotation.rfq_id)
         .join(Supplier, Supplier.id == Quotation.supplier_id)
         .outerjoin(Evaluation, Evaluation.quotation_id == Quotation.id)
-        .outerjoin(Award, Award.quotation_id == Quotation.id)
-        .where(RFQ.buyer_id == buyer.id)
+        .outerjoin(Award, (Award.quotation_id == Quotation.id) & ACTIVE_AWARD)
+        .where(RFQ.buyer_id == buyer.id, RFQ.status.not_in(SEALED_STATUSES))
         .order_by(Quotation.submitted_at.desc())
     )
 
@@ -72,7 +73,14 @@ def get_received_quotations(
             "is_awarded": award_id is not None,
         })
 
-    # Stats always describe all of the buyer's quotations, not just the filtered page.
+    # Stats always describe all of the buyer's visible quotations, not just the filtered page;
+    # quotations on OPEN RFQs are sealed and only counted.
+    sealed = db.scalar(
+        select(func.count(Quotation.id))
+        .join(RFQ, RFQ.id == Quotation.rfq_id)
+        .where(RFQ.buyer_id == buyer.id, RFQ.status.in_(SEALED_STATUSES))
+    ) or 0
+
     counts = db.execute(
         select(
             func.count(Quotation.id),
@@ -85,8 +93,8 @@ def get_received_quotations(
         .select_from(Quotation)
         .join(RFQ, RFQ.id == Quotation.rfq_id)
         .outerjoin(Evaluation, Evaluation.quotation_id == Quotation.id)
-        .outerjoin(Award, Award.quotation_id == Quotation.id)
-        .where(RFQ.buyer_id == buyer.id)
+        .outerjoin(Award, (Award.quotation_id == Quotation.id) & ACTIVE_AWARD)
+        .where(RFQ.buyer_id == buyer.id, RFQ.status.not_in(SEALED_STATUSES))
     ).one()
 
     total, pending, eligible, ineligible, awarded, rfq_count = counts
@@ -99,6 +107,7 @@ def get_received_quotations(
             "ineligible": ineligible or 0,
             "awarded": awarded or 0,
             "rfqs_with_quotations": rfq_count or 0,
+            "sealed": sealed,
         },
         "rfq_options": list_rfq_options(db, buyer),
         "quotations": quotations,
@@ -133,7 +142,7 @@ def _engagement_by_supplier(db: Session, buyer: User, supplier_id: int | None = 
         .select_from(Award)
         .join(Quotation, Quotation.id == Award.quotation_id)
         .join(RFQ, RFQ.id == Award.rfq_id)
-        .where(RFQ.buyer_id == buyer.id)
+        .where(RFQ.buyer_id == buyer.id, ACTIVE_AWARD)
         .group_by(Quotation.supplier_id)
     )
 
@@ -278,8 +287,12 @@ def get_supplier_profile(db: Session, buyer: User, supplier_id: int) -> dict:
         select(Quotation, RFQ, Evaluation, Award.id)
         .join(RFQ, RFQ.id == Quotation.rfq_id)
         .outerjoin(Evaluation, Evaluation.quotation_id == Quotation.id)
-        .outerjoin(Award, Award.quotation_id == Quotation.id)
-        .where(Quotation.supplier_id == supplier.id, RFQ.buyer_id == buyer.id)
+        .outerjoin(Award, (Award.quotation_id == Quotation.id) & ACTIVE_AWARD)
+        .where(
+            Quotation.supplier_id == supplier.id,
+            RFQ.buyer_id == buyer.id,
+            RFQ.status.not_in(SEALED_STATUSES),
+        )
         .order_by(Quotation.submitted_at.desc())
     ).all()
 

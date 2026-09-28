@@ -180,6 +180,7 @@ function Filters({ type, report, params, onChange }) {
                             <option value="">All</option>
                             <option value="AWARDED">Awarded</option>
                             <option value="COMPLETED">Completed</option>
+                            <option value="CANCELLED">Cancelled</option>
                         </select>
                     </label>
                 </>

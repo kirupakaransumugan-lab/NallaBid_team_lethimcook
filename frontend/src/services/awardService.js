@@ -19,6 +19,16 @@ export function completeAward(rfqId) {
 }
 
 
+// Keeps the award as history (CANCELLED) and reopens the RFQ for a new winner.
+export function cancelAward(rfqId, reason) {
+    return apiRequest(`/awards/${rfqId}/cancel`, {
+        method: "POST",
+        body: { reason },
+        fallback: "Could not cancel this award."
+    });
+}
+
+
 export function getAward(rfqId) {
     return apiRequest(`/awards/${rfqId}`, {
         fallback: "Could not load the award result."

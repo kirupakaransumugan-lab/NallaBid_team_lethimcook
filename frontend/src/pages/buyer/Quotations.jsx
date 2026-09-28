@@ -152,6 +152,16 @@ function Quotations() {
                 </div>
             </div>
 
+            {stats.sealed > 0 && (
+                <div className="nallabid-flow-alert nallabid-flow-alert-info">
+                    <i className="bi bi-lock"></i>
+                    <span>
+                        {stats.sealed} more quotation{stats.sealed === 1 ? " is" : "s are"} sealed on RFQs that are still open.
+                        They appear here automatically once each RFQ's deadline passes.
+                    </span>
+                </div>
+            )}
+
             <section className="nallabid-flow-panel">
                 <div className="nallabid-flow-panel-head">
                     <div>

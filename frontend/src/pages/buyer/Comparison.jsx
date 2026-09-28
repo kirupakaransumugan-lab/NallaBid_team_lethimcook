@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import EmptyState from "../../components/EmptyState";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -44,6 +44,8 @@ function highlightTags(quotation, eligible) {
 function Comparison() {
     const { rfqId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const awardCancelled = Boolean(location.state?.awardCancelled);
 
     const [overview, setOverview] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -73,12 +75,15 @@ function Comparison() {
         loadOverview();
     }, [loadOverview]);
 
+    // A quotation whose award was cancelled stays eligible on paper but cannot win again.
     const eligible = useMemo(
         () => (overview?.quotations ?? []).filter(
-            (quotation) => quotation.evaluation?.overall_status === "ELIGIBLE"
+            (quotation) => quotation.evaluation?.overall_status === "ELIGIBLE" && !quotation.award_cancelled
         ),
         [overview]
     );
+
+    const excluded = (overview?.quotations ?? []).filter((quotation) => quotation.award_cancelled);
 
     const ineligible = useMemo(
         () => (overview?.quotations ?? []).filter(
@@ -142,6 +147,23 @@ function Comparison() {
                 </div>
             </div>
 
+            {awardCancelled && (
+                <div className="nallabid-flow-alert nallabid-flow-alert-success" role="status">
+                    <i className="bi bi-check-circle"></i>
+                    <span>The award was cancelled and kept in the history. Choose another eligible quotation.</span>
+                </div>
+            )}
+
+            {excluded.length > 0 && (
+                <div className="nallabid-flow-alert nallabid-flow-alert-info">
+                    <i className="bi bi-slash-circle"></i>
+                    <span>
+                        Not shown because their award was cancelled:{" "}
+                        {excluded.map((quotation) => `${quotation.supplier_name} (${quotation.quotation_number})`).join(", ")}
+                    </span>
+                </div>
+            )}
+
             {awardError && (
                 <div className="nallabid-flow-alert nallabid-flow-alert-error" role="alert">
                     <i className="bi bi-exclamation-circle"></i>
@@ -186,7 +208,11 @@ function Comparison() {
                     <EmptyState
                         icon="bi-x-octagon"
                         title="No eligible quotations"
-                        message="None of the quotations met all the RFQ requirements, so there is nothing to award."
+                        message={
+                            excluded.length > 0
+                                ? "No other quotation met all the RFQ requirements, so there is nothing left to award."
+                                : "None of the quotations met all the RFQ requirements, so there is nothing to award."
+                        }
                     />
                 </section>
             ) : (

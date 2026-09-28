@@ -3,9 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.user import User
-from app.schemas.award import AwardCreate, AwardDetailResponse, AwardResponse, SupplierAwardResult
+from app.schemas.award import AwardCancel, AwardCreate, AwardDetailResponse, AwardResponse, SupplierAwardResult
 from app.security.auth import get_current_user, require_buyer
 from app.services.award_service import (
+    cancel_award,
     complete_award,
     create_award,
     get_award_detail,
@@ -43,6 +44,19 @@ def complete_rfq_award(
     current_user: User = Depends(require_buyer)
 ):
     return complete_award(db, rfq_id, current_user)
+
+
+@router.post(
+    "/{rfq_id}/cancel",
+    response_model=AwardResponse
+)
+def cancel_rfq_award(
+    rfq_id: int,
+    data: AwardCancel,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_buyer)
+):
+    return cancel_award(db, rfq_id, data.reason, current_user)
 
 
 @router.get(
