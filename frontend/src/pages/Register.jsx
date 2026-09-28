@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import registerLaptop from "../assets/procurement-illustration.png";
+import registerLaptop from "../assets/procurement-illustration2.png";
 import { registerUser } from "../services/authService";
 
 import "./register.css";
 
-
 function Register() {
     const navigate = useNavigate();
 
+    // Form data
     const [formData, setFormData] = useState({
         full_name: "",
         email: "",
@@ -26,7 +26,7 @@ function Register() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-
+    // Handle form input
     function handleChange(event) {
         const { name, value, type, checked } = event.target;
 
@@ -36,7 +36,7 @@ function Register() {
         }));
     }
 
-
+    // Select user role
     function selectRole(role) {
         setFormData((previous) => ({
             ...previous,
@@ -44,28 +44,32 @@ function Register() {
         }));
     }
 
-
+    // Submit registration
     async function handleSubmit(event) {
         event.preventDefault();
 
         setError("");
         setSuccess("");
 
+        // Validate name
         if (!formData.full_name.trim()) {
             setError("Please enter your full name.");
             return;
         }
 
+        // Validate password length
         if (formData.password.length < 8) {
             setError("Password must contain at least 8 characters.");
             return;
         }
 
+        // Validate passwords
         if (formData.password !== formData.confirm_password) {
             setError("Passwords do not match.");
             return;
         }
 
+        // Validate terms
         if (!formData.terms_accepted) {
             setError(
                 "Please accept the Terms of Service and Privacy Policy."
@@ -76,6 +80,7 @@ function Register() {
         setLoading(true);
 
         try {
+            // Existing backend registration call
             const result = await registerUser({
                 full_name: formData.full_name.trim(),
                 email: formData.email.trim(),
@@ -86,6 +91,7 @@ function Register() {
 
             setSuccess(result.message);
 
+            // Redirect to login
             setTimeout(() => {
                 navigate("/login");
             }, 1200);
@@ -97,36 +103,42 @@ function Register() {
         }
     }
 
-
     return (
-        <main className="register-page">
+        <main
+            className="register-page"
+            style={{
+                backgroundImage: `url(${registerLaptop})`
+            }}
+        >
 
-            {/* LEFT SECTION */}
+            {/* Page overlay */}
+            <div className="page-overlay"></div>
 
-            <section className="register-intro">
 
-                <div className="brand">
-                    <span className="brand-main">
+            {/* =====================================
+                LEFT CONTENT
+            ====================================== */}
+
+            <section className="register-left">
+
+                {/* Brand */}
+                <div className="register-brand">
+
+                    <div className="brand-name">
                         Nalla<span>Bid</span>
-                    </span>
+                    </div>
 
-                    <small>
+                    <div className="brand-subtitle">
                         Smart Procurement Platform
-                    </small>
+                    </div>
+
                 </div>
 
 
-                <nav className="register-nav">
-                    <span>Request</span>
-                    <span>Compare</span>
-                    <span>Choose</span>
-                    <span>Grow</span>
-                </nav>
+                {/* Intro */}
+                <div className="register-intro-content">
 
-
-                <div className="intro-content">
-
-                    <div className="intro-line"></div>
+                    {/* <div className="register-line"></div> */}
 
                     <h1>
                         Join a Transparent
@@ -140,104 +152,34 @@ function Register() {
                         ecosystem.
                     </p>
 
-
-                    <div className="feature-grid">
-
-                        <div className="feature">
-                            <div className="feature-icon">
-                                <i className="bi bi-people"></i>
-                            </div>
-
-                            <div>
-                                <h3>For Buyers</h3>
-                                <p>
-                                    Create RFQs, compare quotations
-                                    and choose the best suppliers.
-                                </p>
-                            </div>
-                        </div>
-
-
-                        <div className="feature">
-                            <div className="feature-icon">
-                                <i className="bi bi-handshake"></i>
-                            </div>
-
-                            <div>
-                                <h3>For Suppliers</h3>
-                                <p>
-                                    Discover opportunities and grow
-                                    your business with trusted buyers.
-                                </p>
-                            </div>
-                        </div>
-
-
-                        <div className="feature">
-                            <div className="feature-icon">
-                                <i className="bi bi-shield-check"></i>
-                            </div>
-
-                            <div>
-                                <h3>Secure & Reliable</h3>
-                                <p>
-                                    Your data is protected and kept
-                                    confidential.
-                                </p>
-                            </div>
-                        </div>
-
-
-                        <div className="feature">
-                            <div className="feature-icon">
-                                <i className="bi bi-bar-chart"></i>
-                            </div>
-
-                            <div>
-                                <h3>Efficient Process</h3>
-                                <p>
-                                    Save time, reduce costs and make
-                                    better decisions.
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <img
-                        src={registerLaptop}
-                        alt="NallaBid procurement illustration"
-                        className="register-laptop"
-                    />
-
-
-                    <div className="trusted-text">
-                        Trusted Partnerships.
-                        <br />
-                        Stronger Tomorrows.
-                    </div>
-
                 </div>
 
             </section>
 
 
-            {/* RIGHT SECTION */}
+            {/* =====================================
+                RIGHT CONTENT
+            ====================================== */}
 
-            <section className="register-card-section">
+            <section className="register-right">
 
                 <div className="register-card">
 
+                    {/* Card brand */}
                     <div className="card-brand">
-                        Nalla<span>Bid</span>
 
-                        <small>
+                        <div className="card-brand-name">
+                            Nalla<span>Bid</span>
+                        </div>
+
+                        <div className="card-brand-subtitle">
                             Smart Procurement Platform
-                        </small>
+                        </div>
+
                     </div>
 
 
+                    {/* Heading */}
                     <div className="register-heading">
 
                         <h2>
@@ -245,17 +187,16 @@ function Register() {
                         </h2>
 
                         <p>
-                            Join as a Buyer or Supplier and get
-                            started today.
+                            Join as a Buyer or Supplier and get started today.
                         </p>
 
                     </div>
 
 
+                    {/* Registration form */}
                     <form onSubmit={handleSubmit}>
 
-                        {/* FULL NAME */}
-
+                        {/* Full name */}
                         <div className="form-group">
 
                             <label htmlFor="full_name">
@@ -282,8 +223,7 @@ function Register() {
                         </div>
 
 
-                        {/* EMAIL */}
-
+                        {/* Email */}
                         <div className="form-group">
 
                             <label htmlFor="email">
@@ -310,111 +250,127 @@ function Register() {
                         </div>
 
 
-                        {/* PASSWORD */}
+                        {/* Password row */}
+                        <div className="password-row">
 
-                        <div className="form-group">
+                            {/* Password */}
+                            <div className="form-group">
 
-                            <label htmlFor="password">
-                                Password
-                            </label>
+                                <label htmlFor="password">
+                                    Password
+                                </label>
 
-                            <div className="input-wrapper">
+                                <div className="input-wrapper">
 
-                                <i className="bi bi-lock"></i>
+                                    <i className="bi bi-lock"></i>
 
-                                <input
-                                    id="password"
-                                    type={showPassword ? "text" : "password"}
-                                    name="password"
-                                    placeholder="Create a strong password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    autoComplete="new-password"
-                                    required
-                                />
-
-                                <button
-                                    type="button"
-                                    className="password-toggle"
-                                    onClick={() =>
-                                        setShowPassword(!showPassword)
-                                    }
-                                >
-                                    <i
-                                        className={
+                                    <input
+                                        id="password"
+                                        type={
                                             showPassword
-                                                ? "bi bi-eye-slash"
-                                                : "bi bi-eye"
+                                                ? "text"
+                                                : "password"
                                         }
-                                    ></i>
-                                </button>
+                                        name="password"
+                                        placeholder="Create a strong password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        autoComplete="new-password"
+                                        required
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="password-toggle"
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                        aria-label={
+                                            showPassword
+                                                ? "Hide password"
+                                                : "Show password"
+                                        }
+                                    >
+                                        <i
+                                            className={
+                                                showPassword
+                                                    ? "bi bi-eye-slash"
+                                                    : "bi bi-eye"
+                                            }
+                                        ></i>
+                                    </button>
+
+                                </div>
 
                             </div>
 
-                        </div>
 
+                            {/* Confirm password */}
+                            <div className="form-group">
 
-                        {/* CONFIRM PASSWORD */}
+                                <label htmlFor="confirm_password">
+                                    Confirm Password
+                                </label>
 
-                        <div className="form-group">
+                                <div className="input-wrapper">
 
-                            <label htmlFor="confirm_password">
-                                Confirm Password
-                            </label>
+                                    <i className="bi bi-lock"></i>
 
-                            <div className="input-wrapper">
-
-                                <i className="bi bi-lock"></i>
-
-                                <input
-                                    id="confirm_password"
-                                    type={
-                                        showConfirmPassword
-                                            ? "text"
-                                            : "password"
-                                    }
-                                    name="confirm_password"
-                                    placeholder="Confirm your password"
-                                    value={formData.confirm_password}
-                                    onChange={handleChange}
-                                    autoComplete="new-password"
-                                    required
-                                />
-
-                                <button
-                                    type="button"
-                                    className="password-toggle"
-                                    onClick={() =>
-                                        setShowConfirmPassword(
-                                            !showConfirmPassword
-                                        )
-                                    }
-                                >
-                                    <i
-                                        className={
+                                    <input
+                                        id="confirm_password"
+                                        type={
                                             showConfirmPassword
-                                                ? "bi bi-eye-slash"
-                                                : "bi bi-eye"
+                                                ? "text"
+                                                : "password"
                                         }
-                                    ></i>
-                                </button>
+                                        name="confirm_password"
+                                        placeholder="Confirm your password"
+                                        value={formData.confirm_password}
+                                        onChange={handleChange}
+                                        autoComplete="new-password"
+                                        required
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="password-toggle"
+                                        onClick={() =>
+                                            setShowConfirmPassword(
+                                                !showConfirmPassword
+                                            )
+                                        }
+                                        aria-label={
+                                            showConfirmPassword
+                                                ? "Hide password"
+                                                : "Show password"
+                                        }
+                                    >
+                                        <i
+                                            className={
+                                                showConfirmPassword
+                                                    ? "bi bi-eye-slash"
+                                                    : "bi bi-eye"
+                                            }
+                                        ></i>
+                                    </button>
+
+                                </div>
 
                             </div>
 
                         </div>
 
 
-                        {/* ROLE */}
-
-                        <div className="form-group">
+                        {/* Role selection */}
+                        <div className="form-group role-group">
 
                             <label>
                                 I am a
                             </label>
 
-
                             <div className="role-selection">
 
+                                {/* Buyer */}
                                 <button
                                     type="button"
                                     className={
@@ -433,19 +389,16 @@ function Register() {
 
                                     <i className="bi bi-building"></i>
 
-                                    <div>
+                                    <div className="role-content">
                                         <strong>
                                             Buyer / Company
                                         </strong>
-
-                                        <small>
-                                            Create RFQs and find suppliers
-                                        </small>
                                     </div>
 
                                 </button>
 
 
+                                {/* Supplier */}
                                 <button
                                     type="button"
                                     className={
@@ -464,15 +417,10 @@ function Register() {
 
                                     <i className="bi bi-truck"></i>
 
-                                    <div>
+                                    <div className="role-content">
                                         <strong>
                                             Supplier
                                         </strong>
-
-                                        <small>
-                                            Find opportunities and submit
-                                            quotations
-                                        </small>
                                     </div>
 
                                 </button>
@@ -482,8 +430,7 @@ function Register() {
                         </div>
 
 
-                        {/* TERMS */}
-
+                        {/* Terms */}
                         <label className="terms">
 
                             <input
@@ -494,11 +441,11 @@ function Register() {
                             />
 
                             <span>
-                                I agree to the
+                                I agree to the{" "}
                                 <a href="#terms">
                                     Terms of Service
-                                </a>
-                                and
+                                </a>{" "}
+                                and{" "}
                                 <a href="#privacy">
                                     Privacy Policy
                                 </a>
@@ -507,39 +454,40 @@ function Register() {
                         </label>
 
 
-                        {/* ERROR */}
-
+                        {/* Error */}
                         {error && (
-                            <div className="register-message error">
+                            <div
+                                className="register-message error"
+                                role="alert"
+                            >
                                 <i className="bi bi-exclamation-circle"></i>
                                 {error}
                             </div>
                         )}
 
 
-                        {/* SUCCESS */}
-
+                        {/* Success */}
                         {success && (
-                            <div className="register-message success">
+                            <div
+                                className="register-message success"
+                                role="status"
+                            >
                                 <i className="bi bi-check-circle"></i>
                                 {success}
                             </div>
                         )}
 
 
-                        {/* SUBMIT */}
-
+                        {/* Create account */}
                         <button
                             type="submit"
                             className="create-account-btn"
                             disabled={loading}
                         >
+
                             {loading ? (
                                 <>
-                                    <span
-                                        className="spinner-border spinner-border-sm"
-                                    ></span>
-
+                                    <span className="spinner-border spinner-border-sm"></span>
                                     Creating Account...
                                 </>
                             ) : (
@@ -548,20 +496,25 @@ function Register() {
                                     <i className="bi bi-arrow-right"></i>
                                 </>
                             )}
+
                         </button>
 
 
-                        {/* DIVIDER */}
-
+                        {/* Divider */}
                         <div className="or-divider">
+
                             <span></span>
-                            <small>OR</small>
+
+                            <small>
+                                OR
+                            </small>
+
                             <span></span>
+
                         </div>
 
 
-                        {/* SOCIAL BUTTONS */}
-
+                        {/* Social buttons */}
                         <div className="social-buttons">
 
                             <button
@@ -572,7 +525,9 @@ function Register() {
                                     G
                                 </strong>
 
-                                Continue with Google
+                                <span>
+                                    Continue with Google
+                                </span>
                             </button>
 
 
@@ -581,26 +536,31 @@ function Register() {
                                 className="social-btn"
                             >
                                 <strong className="microsoft-icon">
+
                                     <span></span>
                                     <span></span>
                                     <span></span>
                                     <span></span>
+
                                 </strong>
 
-                                Continue with Microsoft
+                                <span>
+                                    Continue with Microsoft
+                                </span>
                             </button>
 
                         </div>
 
 
-                        {/* LOGIN */}
-
+                        {/* Login link */}
                         <p className="login-link">
+
                             Already have an account?
 
                             <Link to="/login">
                                 Sign In
                             </Link>
+
                         </p>
 
                     </form>
@@ -612,6 +572,5 @@ function Register() {
         </main>
     );
 }
-
 
 export default Register;

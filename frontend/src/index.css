@@ -5,14 +5,17 @@
 html,
 body,
 #root {
+    width: 100%;
     min-height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     margin: 0;
     font-family: "Inter", sans-serif;
-    background: #03172f;
-    color: #ffffff;
+    background: #faffb6;
+    color: #fffde0;
 }
 
 button,

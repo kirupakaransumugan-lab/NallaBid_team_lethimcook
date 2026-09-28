@@ -1,506 +1,1288 @@
-:root {
-    --navy: #03172f;
-    --navyLight: #061d39;
-    --border: #12385d;
-    --blue: #087cff;
-    --text: #d8e6f5;
-    --muted: #91a9c4;
-}
+/* =========================================================
+   NALLABID NAVBAR / APP LAYOUT
+========================================================= */
 
-body {
-    background: var(--navy);
-}
 
-.mainContent {
-    margin-left: 238px;
-    padding-top: 80px;
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.appLayout {
+    width: 100%;
     min-height: 100vh;
-    background: #031a30;
+
+    display: flex;
+
+    background: #f7f9f8;
+
+    overflow: hidden;
 }
-/* Sidebar */
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
 
 .sidebar {
     position: fixed;
+
     top: 0;
     left: 0;
 
-    width: 243px;
+    width: 212px;
+    min-width: 212px;
+
     height: 100vh;
+
+    background: #202c31;
 
     display: flex;
     flex-direction: column;
 
-    background: linear-gradient(
-        180deg,
-        #061d39,
-        #03172f
-    );
-
-    border-right: 1px solid var(--border);
-
     z-index: 1000;
-}
 
-.sidebarHeader {
-    height: 132px;
-    padding: 20px 30px;
-
-    border-bottom: 1px solid var(--border);
-}
-
-.brand {
     color: #ffffff;
 
-    font-size: 40px;
-    font-weight: 700;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   SIDEBAR HEADER
+========================================================= */
+
+.sidebarHeader {
+    width: 100%;
+
+    height: 100px;
+
+    flex-shrink: 0;
+
+    background: #ffffff;
+
+    padding: 20px 28px;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    border-bottom: 1px solid #e2e7e5;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BRAND LINK
+========================================================= */
+
+.brandLink {
+    display: block;
+
+    width: 100%;
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   NALLABID LOGO
+========================================================= */
+
+.brand {
+    display: block;
+
+    width: max-content;
+
+    white-space: nowrap;
+
+    margin: 0;
+
+    font-size: 28px;
 
     line-height: 1;
 
-    letter-spacing: -2px;
+    font-weight: 700;
+
+    letter-spacing: -1.3px;
+
+    color: #16243a;
 }
 
 .brand span {
-    color: var(--blue);
+    color: #087b57;
 }
 
-.brandText {
-    margin-top: 5px;
 
-    color: #d5e1ee;
-
-    font-size: 12px;
-}
+/* =========================================================
+   SIDEBAR NAVIGATION
+========================================================= */
 
 .sidebarNav {
-    padding-top: 50px;
+    width: 100%;
+
+    padding: 12px 10px 0;
+
+    box-sizing: border-box;
 }
 
+
+/* =========================================================
+   NAV ITEM
+========================================================= */
+
 .navItem {
-    height: 58px;
+    width: 100%;
+
+    height: 46px;
 
     display: flex;
+
     align-items: center;
 
-    gap: 18px;
+    gap: 17px;
 
-    padding: 0 28px;
+    padding: 0 17px;
 
-    color: var(--text);
+    margin: 0 0 3px;
+
+    box-sizing: border-box;
+
+    border-radius: 7px;
 
     text-decoration: none;
 
-    font-size: 16px;
+    color: #f2f5f5;
 
-    border-right: 2px solid transparent;
+    font-size: 15px;
 
-    transition: 0.2s;
+    font-weight: 500;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
+
+
+/* =========================================================
+   NAV ICON
+========================================================= */
 
 .navItem i {
-    font-size: 21px;
-}
+    width: 22px;
 
-.navItem:hover {
-    color: #ffffff;
-
-    background: rgba(
-        8,
-        124,
-        255,
-        0.12
-    );
-}
-
-.navItem.active {
-    color: #ffffff;
-
-    background: rgba(
-        8,
-        124,
-        255,
-        0.32
-    );
-
-    border-right-color: var(--blue);
-}
-
-.sidebarBottom {
-    margin-top: auto;
-
-    padding: 20px 18px 25px;
-}
-
-.sidebarCard {
-    width: 100%;
-
-    display: block;
-
-    border: 1px solid #0755a9;
-
-    border-radius: 10px;
-}
-
-.therivu {
-    margin-top: 20px;
-
-    padding-left: 10px;
-
-    color: #ffffff;
-
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.therivu span {
-    color: var(--blue);
-}
-
-
-/* Topbar */
-
-.topbar {
-    position: fixed;
-    top: 0;
-    left: 243px;
-    right: 0;
-
-    height: 83px;
+    min-width: 22px;
 
     display: flex;
+
     align-items: center;
-    justify-content: space-between;
 
-    padding: 0 27px;
+    justify-content: center;
 
-    background: rgba(
-        3,
-        23,
-        47,
-        0.96
-    );
+    font-size: 19px;
 
-    border-bottom: 1px solid var(--border);
+    color: #f4f7f7;
+}
+
+
+/* =========================================================
+   NAV TEXT
+========================================================= */
+
+.navItem span {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   NAV HOVER
+========================================================= */
+
+.navItem:hover {
+    background: rgba(255, 255, 255, 0.045);
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   ACTIVE NAV ITEM
+========================================================= */
+
+.navItem.active {
+    background: #a9ddc7;
+
+    color: #102d28;
+}
+
+.navItem.active i {
+    color: #087054;
+}
+
+
+/* =========================================================
+   NON ACTIVE NAV ITEMS
+========================================================= */
+
+.sidebarNav .navItem:not(.active) {
+    background: transparent;
+}
+
+
+/* =========================================================
+   SYSTEM SECTION
+========================================================= */
+
+.systemSection {
+    width: calc(100% - 42px);
+
+    margin: 8px 21px 0;
+
+    padding-top: 12px;
+
+    border-top: 1px solid #465257;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SYSTEM TITLE
+========================================================= */
+
+.systemTitle {
+    margin: 0 0 5px;
+
+    font-size: 11px;
+
+    line-height: 1;
+
+    color: #9ba8aa;
+
+    letter-spacing: 0.3px;
+}
+
+
+/* =========================================================
+   SYSTEM NAV ITEMS
+========================================================= */
+
+.systemSection .navItem {
+    width: calc(100% + 26px);
+
+    margin-left: -13px;
+
+    margin-right: -13px;
+
+    padding-left: 13px;
+
+    padding-right: 13px;
+
+    gap: 17px;
+}
+
+
+/* =========================================================
+   SYSTEM ARROW
+========================================================= */
+
+.systemArrow {
+    width: auto !important;
+
+    min-width: auto !important;
+
+    margin-left: auto;
+
+    font-size: 12px !important;
+}
+
+
+/* =========================================================
+   SIDEBAR BOTTOM
+========================================================= */
+
+.sidebarBottom {
+    width: 100%;
+
+    margin-top: auto;
+
+    padding: 10px 21px 18px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SIDEBAR CARD
+========================================================= */
+
+.sidebarCard {
+    display: block;
+
+    width: 100%;
+
+    max-width: 170px;
+
+    height: auto;
+
+    margin: 0 auto;
+
+    border-radius: 12px;
+
+    object-fit: cover;
+
+    object-position: center;
+}
+
+
+/* =========================================================
+   MAIN AREA
+========================================================= */
+
+.mainArea {
+    width: calc(100% - 212px);
+
+    min-height: 100vh;
+
+    margin-left: 212px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: #f7f9f8;
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar {
+    width: 100%;
+
+    height: 74px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 22px;
+
+    padding: 0 25px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e2e7e5;
+
+    position: sticky;
+
+    top: 0;
 
     z-index: 900;
 }
 
 
-/* Search */
+/* =========================================================
+   HAMBURGER BUTTON
+========================================================= */
 
-.searchBox {
-    width: 527px;
-    height: 44px;
+.menuButton {
+    width: 32px;
 
-    display: flex;
-    align-items: center;
+    height: 40px;
 
-    gap: 12px;
+    flex-shrink: 0;
 
-    padding: 0 14px;
-
-    background: rgba(
-        8,
-        34,
-        62,
-        0.85
-    );
-
-    border: 1px solid #174674;
-
-    border-radius: 10px;
-
-    color: #9db5d0;
-}
-
-.searchBox i {
-    font-size: 20px;
-}
-
-.searchBox input {
-    width: 100%;
-
-    border: 0;
-    outline: 0;
+    border: none;
 
     background: transparent;
 
-    color: #ffffff;
-
-    font-size: 14px;
-}
-
-.searchBox input::placeholder {
-    color: #9db5d0;
-}
-
-
-/* Topbar right */
-
-.topbarRight {
-    height: 100%;
-
     display: flex;
+
     align-items: center;
 
-    gap: 16px;
-}
-
-.iconButton {
-    position: relative;
-
-    width: 38px;
-    height: 38px;
-
-    display: flex;
-    align-items: center;
     justify-content: center;
 
-    border: 0;
+    color: #172536;
+
+    font-size: 27px;
+
+    cursor: pointer;
+
+    padding: 0;
+}
+
+.menuButton:hover {
+    color: #087b57;
+}
+
+
+/* =========================================================
+   SEARCH BOX
+========================================================= */
+
+.searchBox {
+    height: 44px;
+
+    max-width: 640px;
+
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    background: #ffffff;
+
+    border: 1px solid #dfe5e2;
+
+    border-radius: 11px;
+
+    overflow: hidden;
+
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.04);
+}
+
+
+/* SEARCH ICON */
+
+.searchBox > i {
+    margin-left: 16px;
+
+    font-size: 17px;
+
+    color: #506070;
+
+    flex-shrink: 0;
+}
+
+
+/* SEARCH INPUT */
+
+.searchBox input {
+    height: 100%;
+
+    flex: 1;
+
+    min-width: 0;
+
+    border: none;
+
+    outline: none;
+
+    padding: 0 12px;
+
+    font-size: 14px;
+
+    color: #263442;
 
     background: transparent;
+}
+
+
+/* SEARCH PLACEHOLDER */
+
+.searchBox input::placeholder {
+    color: #9aa5b1;
+}
+
+
+/* SEARCH BUTTON */
+
+.searchButton {
+    width: 52px;
+
+    height: 100%;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    background: #087a53;
 
     color: #ffffff;
+
+    font-size: 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
     cursor: pointer;
 }
 
-.iconButton i {
-    font-size: 22px;
+.searchButton:hover {
+    background: #066a48;
 }
 
-.iconButton:hover {
-    color: var(--blue);
-}
 
-.notification {
-    position: absolute;
+/* =========================================================
+   TOPBAR RIGHT
+========================================================= */
 
-    top: 0;
-    right: -1px;
-
-    width: 18px;
-    height: 18px;
+.topbarRight {
+    margin-left: auto;
 
     display: flex;
-    align-items: center;
-    justify-content: center;
 
-    background: #ff3944;
+    align-items: center;
+
+    gap: 6px;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   ICON BUTTON
+========================================================= */
+
+.iconButton {
+    position: relative;
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #182638;
 
     border-radius: 50%;
 
+    font-size: 21px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    padding: 0;
+}
+
+.iconButton:hover {
+    background: #f1f4f3;
+}
+
+
+/* =========================================================
+   NOTIFICATION
+========================================================= */
+
+.notificationButton {
+    position: relative;
+}
+
+
+/* =========================================================
+   NOTIFICATION BADGE
+========================================================= */
+
+.notificationBadge {
+    position: absolute;
+
+    top: 4px;
+
+    right: 3px;
+
+    width: 14px;
+
+    height: 14px;
+
+    border-radius: 50%;
+
+    background: #ef4444;
+
     color: #ffffff;
 
-    font-size: 10px;
+    font-size: 8px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
     font-weight: 700;
+
+    border: 1px solid #ffffff;
 }
+
+
+/* =========================================================
+   PROFILE DIVIDER
+========================================================= */
 
 .profileDivider {
     width: 1px;
-    height: 83px;
 
-    background: var(--border);
+    height: 34px;
 
-    margin-left: 4px;
+    background: #e2e6e4;
+
+    margin: 0 8px;
 }
 
+
+/* =========================================================
+   PROFILE DROPDOWN
+========================================================= */
+
+.profileDropdown {
+    position: relative;
+}
+
+
+/* =========================================================
+   PROFILE BUTTON
+========================================================= */
+
 .profileButton {
-    height: 100%;
+    min-height: 48px;
+
+    border: none;
+
+    background: transparent;
 
     display: flex;
+
     align-items: center;
 
     gap: 11px;
 
-    border: 0;
+    cursor: pointer;
 
-    background: transparent;
-
-    color: #ffffff;
+    padding: 4px 0;
 }
+
+
+/* =========================================================
+   PROFILE IMAGE
+========================================================= */
 
 .profileImage {
     width: 39px;
+
     height: 39px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-shrink: 0;
 
     border-radius: 50%;
 
-    background: linear-gradient(
-        135deg,
-        #e7f0fa,
-        #7196bd
-    );
+    background: #6fa98e;
 
-    color: #07315b;
+    color: #ffffff;
 
-    font-size: 11px;
-    font-weight: 700;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 16px;
+
+    font-weight: 600;
 }
+
+
+/* =========================================================
+   PROFILE INFORMATION
+========================================================= */
 
 .profileInfo {
     display: flex;
+
     flex-direction: column;
 
     align-items: flex-start;
 
-    min-width: 130px;
+    min-width: 95px;
 }
+
+
+/* PROFILE NAME */
 
 .profileInfo strong {
+    color: #182334;
+
     font-size: 14px;
+
+    line-height: 1.3;
+
+    font-weight: 600;
 }
+
+
+/* PROFILE ROLE */
 
 .profileInfo small {
+    color: #687582;
+
+    font-size: 11px;
+
+    line-height: 1.3;
+
     margin-top: 2px;
-
-    color: var(--muted);
-
-    font-size: 12px;
 }
 
 
-/* Main page */
+/* PROFILE ARROW */
 
-.pageArea {
-    min-height: 100vh;
+.profileButton > i {
+    font-size: 13px;
 
-    margin-left: 243px;
+    color: #182334;
 
-    padding-top: 83px;
-
-    background:
-        radial-gradient(
-            circle at 75% 20%,
-            rgba(
-                0,
-                96,
-                200,
-                0.08
-            ),
-            transparent 35%
-        );
+    margin-left: 5px;
 }
 
 
-/* Responsive */
+/* =========================================================
+   PROFILE MENU
+========================================================= */
 
-@media (max-width: 1000px) {
+.profileMenu {
+    position: absolute;
+
+    top: 53px;
+
+    right: 0;
+
+    width: 170px;
+
+    background: #ffffff;
+
+    border: 1px solid #e0e6e3;
+
+    border-radius: 9px;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+
+    padding: 7px;
+
+    z-index: 2000;
+}
+
+
+/* LOGOUT BUTTON */
+
+.profileMenu button {
+    width: 100%;
+
+    border: none;
+
+    background: transparent;
+
+    border-radius: 6px;
+
+    padding: 10px 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #dc2626;
+
+    font-size: 14px;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+/* LOGOUT HOVER */
+
+.profileMenu button:hover {
+    background: #fef2f2;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.mainContent {
+    width: 100%;
+
+    flex: 1;
+
+    min-height: calc(100vh - 74px);
+
+    padding: 0;
+
+    background: #f7f9f8;
+
+    overflow-y: auto;
+}
+
+
+/* =========================================================
+   MAIN CONTENT SCROLLBAR
+========================================================= */
+
+.mainContent::-webkit-scrollbar {
+    width: 7px;
+}
+
+.mainContent::-webkit-scrollbar-track {
+    background: #f7f9f8;
+}
+
+.mainContent::-webkit-scrollbar-thumb {
+    background: #cbd5d1;
+
+    border-radius: 10px;
+}
+
+.mainContent::-webkit-scrollbar-thumb:hover {
+    background: #aebbb6;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
 
     .sidebar {
-        width: 220px;
+        width: 190px;
+
+        min-width: 190px;
     }
 
-    .topbar {
-        left: 220px;
+
+    .mainArea {
+        width: calc(100% - 190px);
+
+        margin-left: 190px;
     }
 
-    .pageArea {
-        margin-left: 220px;
-    }
-
-    .searchBox {
-        width: 380px;
-    }
-
-    .profileInfo {
-        min-width: auto;
-    }
-}
-
-
-@media (max-width: 800px) {
-
-    .sidebar {
-        width: 76px;
-    }
 
     .sidebarHeader {
-        padding: 20px 10px;
+        padding-left: 23px;
 
-        text-align: center;
+        padding-right: 23px;
     }
+
 
     .brand {
-        font-size: 23px;
+        font-size: 26px;
     }
 
-    .brandText {
+
+    .topbar {
+        padding-left: 18px;
+
+        padding-right: 18px;
+
+        gap: 14px;
+    }
+
+
+    .searchBox {
+        max-width: none;
+    }
+
+
+    .profileInfo {
+        min-width: 85px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL LAPTOP
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .profileInfo {
         display: none;
     }
 
-    .sidebarNav {
-        padding-top: 30px;
+
+    .profileButton > i {
+        display: none;
     }
+
+
+    .profileDivider {
+        margin: 0 3px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    /* SIDEBAR */
+
+    .sidebar {
+        width: 72px;
+
+        min-width: 72px;
+    }
+
+
+    /* MAIN */
+
+    .mainArea {
+        width: calc(100% - 72px);
+
+        margin-left: 72px;
+    }
+
+
+    /* SIDEBAR HEADER */
+
+    .sidebarHeader {
+        height: 74px;
+
+        padding: 18px 8px;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: flex-start;
+    }
+
+
+    /* LOGO */
+
+    .brand {
+        font-size: 19px;
+
+        text-align: center;
+
+        letter-spacing: -0.8px;
+    }
+
+
+    /* SIDEBAR NAV */
+
+    .sidebarNav {
+        padding-left: 8px;
+
+        padding-right: 8px;
+
+        padding-top: 12px;
+    }
+
+
+    /* NAV ITEM */
 
     .navItem {
         justify-content: center;
 
         padding: 0;
+
+        gap: 0;
+
+        height: 46px;
     }
+
+
+    /* NAV TEXT */
 
     .navItem span {
         display: none;
     }
 
-    .sidebarBottom {
-        padding: 10px;
+
+    /* NAV ICON */
+
+    .navItem i {
+        font-size: 20px;
     }
 
-    .sidebarCard {
+
+    /* SYSTEM */
+
+    .systemSection {
+        margin-left: 8px;
+
+        margin-right: 8px;
+
+        width: calc(100% - 16px);
+    }
+
+
+    .systemTitle {
         display: none;
     }
 
-    .therivu {
-        padding: 0;
 
-        text-align: center;
+    .systemSection .navItem {
+        width: 100%;
+
+        margin-left: 0;
+
+        margin-right: 0;
+
+        padding: 0;
+    }
+
+
+    .systemArrow {
+        display: none;
+    }
+
+
+    /* SIDEBAR CARD */
+
+    .sidebarBottom {
+        padding: 0 8px 10px;
+    }
+
+
+    .sidebarCard {
+        border-radius: 9px;
+    }
+
+
+    /* TOPBAR */
+
+    .topbar {
+        height: 64px;
+
+        padding: 0 12px;
+
+        gap: 8px;
+    }
+
+
+    /* HAMBURGER */
+
+    .menuButton {
+        display: none;
+    }
+
+
+    /* SEARCH */
+
+    .searchBox {
+        height: 40px;
+
+        max-width: none;
+    }
+
+
+    .searchBox > i {
+        margin-left: 12px;
 
         font-size: 15px;
     }
 
-    .topbar {
-        left: 76px;
 
-        padding: 0 15px;
+    .searchBox input {
+        font-size: 12px;
+
+        padding-left: 8px;
+
+        padding-right: 6px;
     }
 
-    .pageArea {
-        margin-left: 76px;
+
+    .searchButton {
+        width: 43px;
+
+        font-size: 15px;
     }
 
-    .searchBox {
-        width: 300px;
+
+    /* TOPBAR RIGHT */
+
+    .topbarRight {
+        gap: 0;
     }
 
-    .profileInfo {
+
+    .iconButton {
+        width: 37px;
+
+        height: 37px;
+
+        font-size: 19px;
+    }
+
+
+    .profileDivider {
         display: none;
     }
+
+
+    .profileImage {
+        width: 34px;
+
+        height: 34px;
+
+        font-size: 14px;
+    }
+
+
+    /* MAIN */
+
+    .mainContent {
+        min-height: calc(100vh - 64px);
+    }
+
 }
 
 
-@media (max-width: 600px) {
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    /* SIDEBAR */
 
     .sidebar {
+        width: 60px;
+
+        min-width: 60px;
+    }
+
+
+    /* MAIN */
+
+    .mainArea {
+        width: calc(100% - 60px);
+
+        margin-left: 60px;
+    }
+
+
+    /* SIDEBAR HEADER */
+
+    .sidebarHeader {
+        height: 64px;
+
+        padding: 17px 5px;
+    }
+
+
+    /* LOGO */
+
+    .brand {
+        font-size: 16px;
+
+        letter-spacing: -0.6px;
+    }
+
+
+    /* SIDEBAR CARD */
+
+    .sidebarBottom {
         display: none;
     }
+
+
+    /* TOPBAR */
 
     .topbar {
-        left: 0;
+        height: 60px;
+
+        padding: 0 8px;
     }
 
-    .pageArea {
-        margin-left: 0;
-    }
+
+    /* SEARCH */
 
     .searchBox {
-        width: 100%;
+        height: 38px;
     }
 
-    .topbarRight {
+
+    .searchBox input {
+        font-size: 11px;
+    }
+
+
+    .searchButton {
+        width: 38px;
+    }
+
+
+    /* NOTIFICATION */
+
+    .notificationBadge {
+        top: 3px;
+
+        right: 1px;
+    }
+
+
+    /* MAIN */
+
+    .mainContent {
+        min-height: calc(100vh - 60px);
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .sidebar {
+        width: 55px;
+
+        min-width: 55px;
+    }
+
+
+    .mainArea {
+        width: calc(100% - 55px);
+
+        margin-left: 55px;
+    }
+
+
+    .brand {
+        font-size: 14px;
+    }
+
+
+    .navItem i {
+        font-size: 18px;
+    }
+
+
+    .searchBox > i {
         display: none;
     }
+
+
+    .searchBox input {
+        padding-left: 8px;
+    }
+
 }
