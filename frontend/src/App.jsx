@@ -217,7 +217,9 @@ function App() {
                     path="/buyer/rfqs/create"
                     element={
                         <RequireRole role="BUYER">
-                            <CreateRFQ />
+                            <Navbar>
+                                <CreateRFQ />
+                            </Navbar>
                         </RequireRole>
                     }
                 />

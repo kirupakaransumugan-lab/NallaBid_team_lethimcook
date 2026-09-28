@@ -4,15 +4,16 @@
     display: flex;
     gap: 6px;
     margin: 0 0 22px;
-    padding: 16px 18px;
+    padding: 20px 18px;
     overflow-x: auto;
 
     list-style: none;
 
-    border: 1px solid #123d61;
-    border-radius: 13px;
+    border: 1px solid #e4eae7;
+    border-radius: 12px;
 
-    background: #061d32;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(17, 45, 35, 0.05);
 }
 
 .nallabid-rfq-step {
@@ -24,8 +25,9 @@
     align-items: center;
     gap: 8px;
 
-    color: #5e7fa3;
+    color: #8a95a5;
     font-size: 12px;
+    font-weight: 600;
     text-align: center;
 }
 
@@ -33,55 +35,58 @@
 .nallabid-rfq-step:not(:first-child)::before {
     content: "";
     position: absolute;
-    top: 15px;
+    top: 16px;
     right: calc(50% + 20px);
     width: calc(100% - 34px);
-    height: 2px;
+    height: 3px;
+    border-radius: 3px;
 
-    background: #123d61;
+    background: #e5ebe8;
 }
 
 .nallabid-rfq-step.is-done:not(:first-child)::before,
 .nallabid-rfq-step.is-current:not(:first-child)::before {
-    background: #087cff;
+    background: #57a980;
 }
 
 .nallabid-rfq-step-dot {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: 2px solid #123d61;
+    border: 2px solid #dfe5e2;
     border-radius: 50%;
 
-    background: #03172f;
-    font-weight: 600;
+    background: #ffffff;
+    color: #8a95a5;
+    font-weight: 800;
 }
 
 .nallabid-rfq-step.is-done .nallabid-rfq-step-dot {
-    border-color: #087cff;
-    background: #087cff;
+    border-color: #0c7b55;
+    background: #0c7b55;
     color: #ffffff;
 }
 
 .nallabid-rfq-step.is-current .nallabid-rfq-step-dot {
-    border-color: #087cff;
-    color: #ffffff;
-    box-shadow: 0 0 0 4px rgba(8, 124, 255, 0.2);
+    border-color: #0c7b55;
+    background: #e3f3eb;
+    color: #0c7b55;
+    box-shadow: 0 0 0 5px rgba(12, 123, 85, 0.12);
 }
 
 .nallabid-rfq-step.is-current .nallabid-rfq-step-label,
 .nallabid-rfq-step.is-done .nallabid-rfq-step-label {
-    color: #d8e6f5;
+    color: #142238;
 }
 
 .nallabid-rfq-good {
-    color: #34d399 !important;
+    color: #0a7c54 !important;
 }
 
 .nallabid-rfq-bad {
-    color: #f87171 !important;
+    color: #c64545 !important;
 }

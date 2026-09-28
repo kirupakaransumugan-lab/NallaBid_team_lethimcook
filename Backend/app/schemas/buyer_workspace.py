@@ -65,6 +65,12 @@ class SupplierEngagement(BaseModel):
     eligibility_rate: float | None = None
 
 
+# How well a supplier's catalogue matches the buyer's own RFQ product names.
+class SupplierRelevance(BaseModel):
+    matching_rfqs: int = 0
+    matched_keywords: list[str] = []
+
+
 class SupplierDirectoryItem(BaseModel):
     id: int
     company_name: str
@@ -74,6 +80,7 @@ class SupplierDirectoryItem(BaseModel):
     joined_at: datetime
     catalogue_items: int
     engagement: SupplierEngagement
+    relevance: SupplierRelevance
 
 
 class SupplierDirectoryStats(BaseModel):
@@ -81,6 +88,8 @@ class SupplierDirectoryStats(BaseModel):
     engaged_suppliers: int
     suppliers_awarded: int
     catalogue_items: int
+    relevant_suppliers: int
+    buyer_has_rfqs: bool
 
 
 class SupplierDirectoryResponse(BaseModel):
@@ -88,13 +97,15 @@ class SupplierDirectoryResponse(BaseModel):
     suppliers: list[SupplierDirectoryItem]
 
 
+# Buyer-facing catalogue row. Unit price is stored but deliberately not exposed,
+# so buyers cannot anchor on a supplier's list price during sealed bidding.
 class CatalogueItem(BaseModel):
     id: int
     product_name: str
     description: str | None = None
-    unit_price: Decimal | None = None
     available_quantity: int | None = None
     updated_at: datetime | None = None
+    matching_rfqs: list[str] = []
 
 
 class SupplierQuotationHistoryItem(BaseModel):

@@ -11,6 +11,8 @@ function isEmpty(items) {
 function ChartEmpty({ message }) {
     return (
         <div className="nallabid-report-chart-empty">
+            <span className="nallabid-report-leaf nallabid-report-leaf-left" aria-hidden="true"></span>
+            <span className="nallabid-report-leaf nallabid-report-leaf-right" aria-hidden="true"></span>
             <i className="bi bi-bar-chart"></i>
             <span>{message}</span>
         </div>

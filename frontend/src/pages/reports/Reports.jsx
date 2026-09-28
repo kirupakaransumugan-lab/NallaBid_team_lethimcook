@@ -7,6 +7,7 @@ import { getCurrentUser } from "../../services/authService";
 import { downloadReport, getReportDashboard, REPORT_TYPES, reportsBasePath } from "../../services/reportService";
 import { formatLKR, formatNumber } from "../../utils/format";
 import { BarList, ColumnChart } from "./ReportCharts";
+import eligibilityIllustration from "../../assets/eligibility-illustration.png";
 
 import "./reports.css";
 
@@ -19,6 +20,44 @@ const ELIGIBILITY_TONES = {
 
 
 
+// Accent tone and illustration for each report card.
+// tone: "green" | "blue" | "purple" | "orange"; badge: Bootstrap icon shown on the drawn document.
+// image (optional) replaces the drawn document with a picture.
+const REPORT_VISUALS = {
+    // TODO(human)
+};
+
+const DEFAULT_VISUAL = { tone: "green", badge: "bi-file-earmark-text" };
+
+
+// Small drawn scene: a document with a round badge, framed by leaves.
+function ReportIllustration({ visual }) {
+    if (visual.image) {
+        return (
+            <div className="nallabid-report-illustration">
+                <img src={visual.image} alt="" />
+            </div>
+        );
+    }
+
+    return (
+        <div className={`nallabid-report-illustration nallabid-report-tone-${visual.tone}`} aria-hidden="true">
+            <span className="nallabid-report-leaf nallabid-report-leaf-left"></span>
+            <span className="nallabid-report-leaf nallabid-report-leaf-right"></span>
+            <span className="nallabid-report-doc">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+            <span className="nallabid-report-doc-badge">
+                <i className={`bi ${visual.badge}`}></i>
+            </span>
+        </div>
+    );
+}
+
+
 function ReportCard({ type, basePath }) {
     const report = REPORT_TYPES[type];
     const [busy, setBusy] = useState("");
@@ -26,6 +65,7 @@ function ReportCard({ type, basePath }) {
 
     // RFQ comparison is per-RFQ, so its exports need an RFQ picked in the report view.
     const needsRFQ = type === "rfq-comparison";
+    const visual = { ...DEFAULT_VISUAL, ...REPORT_VISUALS[type] };
 
     async function handleDownload(format) {
         setBusy(format);
@@ -42,12 +82,18 @@ function ReportCard({ type, basePath }) {
 
     return (
         <article className="nallabid-report-card">
-            <div className="nallabid-report-card-icon">
-                <i className={`bi ${report.icon}`}></i>
+            <div className="nallabid-report-card-head">
+                <div className={`nallabid-report-card-icon nallabid-report-tone-${visual.tone}`}>
+                    <i className={`bi ${report.icon}`}></i>
+                </div>
+
+                <div>
+                    <h3>{report.title}</h3>
+                    <p>{report.description}</p>
+                </div>
             </div>
 
-            <h3>{report.title}</h3>
-            <p>{report.description}</p>
+            <ReportIllustration visual={visual} />
 
             {needsRFQ && (
                 <small className="nallabid-report-card-hint">
@@ -76,7 +122,7 @@ function ReportCard({ type, basePath }) {
 
                 <button
                     type="button"
-                    className="nallabid-report-button"
+                    className="nallabid-report-button nallabid-report-button-wide"
                     disabled={needsRFQ || Boolean(busy)}
                     onClick={() => handleDownload("csv")}
                 >
@@ -85,6 +131,31 @@ function ReportCard({ type, basePath }) {
                 </button>
             </div>
         </article>
+    );
+}
+
+
+function PanelHead({ icon, tone, title, subtitle, period }) {
+    return (
+        <header className="nallabid-report-panel-head">
+            <div className="nallabid-report-panel-title">
+                <div className={`nallabid-report-panel-icon nallabid-report-tone-${tone}`}>
+                    <i className={`bi ${icon}`}></i>
+                </div>
+
+                <div>
+                    <h2>{title}</h2>
+                    <p>{subtitle}</p>
+                </div>
+            </div>
+
+            {period && (
+                <span className="nallabid-report-period">
+                    <i className="bi bi-calendar3"></i>
+                    {period}
+                </span>
+            )}
+        </header>
     );
 }
 
@@ -148,26 +219,31 @@ function BuyerDashboard() {
         <>
             <div className="nallabid-report-stats">
                 <SummaryCard icon="bi-file-earmark-text" tone="primary" label="Total RFQs" value={formatNumber(dashboard.total_rfqs)} />
-                <SummaryCard icon="bi-file-earmark-check" tone="primary" label="Total Quotations" value={formatNumber(dashboard.total_quotations)} />
+                <SummaryCard icon="bi-file-earmark-check" tone="orange" label="Total Quotations" value={formatNumber(dashboard.total_quotations)} />
                 <SummaryCard icon="bi-shield-check" tone="good" label="Eligible Quotations" value={formatNumber(dashboard.eligible_quotations)} />
-                <SummaryCard icon="bi-trophy" tone="warning" label="Awards" value={formatNumber(dashboard.total_awards)} />
-                <SummaryCard icon="bi-cash-stack" tone="primary" label="Awarded Value" value={formatLKR(dashboard.total_awarded_value)} />
+                <SummaryCard icon="bi-trophy" tone="purple" label="Awards" value={formatNumber(dashboard.total_awards)} />
+                <SummaryCard icon="bi-cash-stack" tone="blue" label="Awarded Value" value={formatLKR(dashboard.total_awarded_value)} />
             </div>
 
             <div className="nallabid-report-charts">
                 <section className="nallabid-report-panel">
-                    <header className="nallabid-report-panel-head">
-                        <h2>RFQ Status</h2>
-                        <p>How many of your RFQs are in each stage.</p>
-                    </header>
+                    <PanelHead
+                        icon="bi-pie-chart"
+                        tone="green"
+                        title="RFQ Status"
+                        subtitle="How many of your RFQs are in each stage."
+                    />
                     <BarList items={dashboard.rfq_status_distribution} emptyMessage="No RFQs yet" />
                 </section>
 
                 <section className="nallabid-report-panel">
-                    <header className="nallabid-report-panel-head">
-                        <h2>Quotation Trend</h2>
-                        <p>Quotations received per month, last 12 months.</p>
-                    </header>
+                    <PanelHead
+                        icon="bi-graph-up-arrow"
+                        tone="blue"
+                        title="Quotation Trend"
+                        subtitle="Quotations received per month."
+                        period="Last 12 Months"
+                    />
                     <ColumnChart
                         items={dashboard.monthly_quotation_count}
                         seriesLabel="Quotations"
@@ -176,10 +252,12 @@ function BuyerDashboard() {
                 </section>
 
                 <section className="nallabid-report-panel">
-                    <header className="nallabid-report-panel-head">
-                        <h2>Eligibility Analysis</h2>
-                        <p>Evaluation outcome of quotations on your RFQs.</p>
-                    </header>
+                    <PanelHead
+                        icon="bi-shield-check"
+                        tone="green"
+                        title="Eligibility Analysis"
+                        subtitle="Evaluation outcome of quotations on your RFQs."
+                    />
                     <BarList
                         items={dashboard.eligibility_distribution.map((item) => ({
                             ...item,
@@ -190,10 +268,12 @@ function BuyerDashboard() {
                 </section>
 
                 <section className="nallabid-report-panel">
-                    <header className="nallabid-report-panel-head">
-                        <h2>Award Analysis</h2>
-                        <p>Total awarded value by supplier.</p>
-                    </header>
+                    <PanelHead
+                        icon="bi-trophy"
+                        tone="orange"
+                        title="Award Analysis"
+                        subtitle="Total awarded value by supplier."
+                    />
                     <BarList
                         items={dashboard.awards_by_supplier.map((item) => ({
                             label: `${item.supplier_name} (${item.award_count})`,
@@ -233,7 +313,10 @@ function Reports() {
 
             {isBuyer && <BuyerDashboard />}
 
-            <h2 className="nallabid-report-section-title">Reports</h2>
+            <div className="nallabid-report-section">
+                <h2 className="nallabid-report-section-title">Reports</h2>
+                <p>Generate and download detailed reports from your procurement data.</p>
+            </div>
 
             <div className="nallabid-report-cards">
                 {reportTypes.map((type) => (

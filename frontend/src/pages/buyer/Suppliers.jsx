@@ -13,6 +13,7 @@ import "./Suppliers.css";
 
 const ENGAGEMENT_FILTERS = [
     ["ALL", "All suppliers"],
+    ["RELEVANT", "Relevant to my RFQs"],
     ["QUOTED", "Quoted on my RFQs"],
     ["AWARDED", "Awarded by me"],
     ["NEW", "Not worked with yet"]
@@ -22,6 +23,7 @@ const ENGAGEMENT_FILTERS = [
 function matchesEngagement(supplier, filter) {
     const { quotations, awards } = supplier.engagement;
 
+    if (filter === "RELEVANT") return supplier.relevance.matching_rfqs > 0;
     if (filter === "QUOTED") return quotations > 0;
     if (filter === "AWARDED") return awards > 0;
     if (filter === "NEW") return quotations === 0;
@@ -41,7 +43,7 @@ function initials(name) {
 
 
 function SupplierCard({ supplier }) {
-    const { engagement } = supplier;
+    const { engagement, relevance } = supplier;
 
     return (
         <article className="nallabid-supplier-card">
@@ -62,6 +64,18 @@ function SupplierCard({ supplier }) {
                     </span>
                 )}
             </header>
+
+            {relevance.matching_rfqs > 0 && (
+                <div className="nallabid-supplier-relevance">
+                    <i className="bi bi-bullseye"></i>
+                    <div>
+                        <strong>
+                            Matches {relevance.matching_rfqs} of your RFQ{relevance.matching_rfqs === 1 ? "" : "s"}
+                        </strong>
+                        <span>{relevance.matched_keywords.join(", ")}</span>
+                    </div>
+                </div>
+            )}
 
             <ul className="nallabid-supplier-contact">
                 <li>
@@ -108,7 +122,7 @@ function Suppliers() {
 
     const [search, setSearch] = useState("");
     const [engagementFilter, setEngagementFilter] = useState("ALL");
-    const [sortBy, setSortBy] = useState("NAME");
+    const [sortBy, setSortBy] = useState("RELEVANCE");
 
     // setState only runs in promise callbacks, never synchronously inside the effect.
     const loadSuppliers = useCallback(() => getSupplierDirectory()
@@ -139,8 +153,12 @@ function Suppliers() {
             return matchesText && matchesEngagement(supplier, engagementFilter);
         });
 
+        const byName = (a, b) => a.company_name.localeCompare(b.company_name);
+
         const sorters = {
-            NAME: (a, b) => a.company_name.localeCompare(b.company_name),
+            // Most relevant first; equally relevant suppliers stay alphabetical.
+            RELEVANCE: (a, b) => b.relevance.matching_rfqs - a.relevance.matching_rfqs || byName(a, b),
+            NAME: byName,
             QUOTATIONS: (a, b) => b.engagement.quotations - a.engagement.quotations,
             AWARDS: (a, b) => Number(b.engagement.awarded_value) - Number(a.engagement.awarded_value)
         };
@@ -190,10 +208,23 @@ function Suppliers() {
                     <strong>{stats.suppliers_awarded}</strong>
                 </div>
                 <div className="nallabid-flow-fact">
+                    <span>Relevant to your RFQs</span>
+                    <strong>{stats.relevant_suppliers}</strong>
+                </div>
+                <div className="nallabid-flow-fact">
                     <span>Catalogue items</span>
                     <strong>{stats.catalogue_items}</strong>
                 </div>
             </div>
+
+            {!stats.buyer_has_rfqs && (
+                <div className="nallabid-flow-alert nallabid-flow-alert-info">
+                    <i className="bi bi-lightbulb"></i>
+                    <span>
+                        Create an RFQ and we will highlight suppliers whose catalogue matches what you buy.
+                    </span>
+                </div>
+            )}
 
             <section className="nallabid-flow-panel">
                 <div className="nallabid-flow-toolbar">
@@ -225,6 +256,7 @@ function Suppliers() {
                         onChange={(event) => setSortBy(event.target.value)}
                         aria-label="Sort suppliers"
                     >
+                        <option value="RELEVANCE">Sort: Most relevant</option>
                         <option value="NAME">Sort: Name</option>
                         <option value="QUOTATIONS">Sort: Most quotations</option>
                         <option value="AWARDS">Sort: Highest awarded value</option>

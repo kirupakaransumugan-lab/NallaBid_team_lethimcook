@@ -16,10 +16,18 @@
 
     padding: 18px;
 
-    border: 1px solid #123d61;
-    border-radius: 13px;
+    border: 1px solid #e4eae7;
+    border-radius: 12px;
 
-    background: #04182d;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(17, 45, 35, 0.05);
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.nallabid-supplier-card:hover {
+    border-color: #b9dcca;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(17, 45, 35, 0.08);
 }
 
 .nallabid-supplier-card-head {
@@ -29,21 +37,21 @@
 }
 
 .nallabid-supplier-avatar {
-    flex: 0 0 44px;
-    width: 44px;
-    height: 44px;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 12px;
+    border-radius: 50%;
 
-    background: linear-gradient(135deg, #0b3d73, #087cff);
-    color: #ffffff;
+    background: #e3f3eb;
+    color: #0a7b55;
 
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .nallabid-supplier-card-title {
@@ -54,16 +62,16 @@
 .nallabid-supplier-card-title h3 {
     margin: 0;
     overflow: hidden;
-    color: #ffffff;
+    color: #142238;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 800;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .nallabid-supplier-card-title span {
     display: block;
-    color: #7794b0;
+    color: #768295;
     overflow-wrap: anywhere;
     font-size: 12px;
 }
@@ -83,23 +91,23 @@
     align-items: flex-start;
     gap: 8px;
     min-width: 0;
-    color: #91a9c4;
+    color: #647186;
 }
 
 .nallabid-supplier-contact i {
-    color: #5e7fa3;
+    color: #57a980;
 }
 
 .nallabid-supplier-contact a,
 .nallabid-supplier-contact span {
     min-width: 0;
-    color: #c3d4e8;
+    color: #334055;
     overflow-wrap: anywhere;
     text-decoration: none;
 }
 
 .nallabid-supplier-contact a:hover {
-    color: #5aa9ff;
+    color: #0a7a53;
 }
 
 .nallabid-supplier-metrics {
@@ -113,20 +121,20 @@
     min-width: 0;
     padding: 10px;
     border-radius: 9px;
-    background: rgba(8, 124, 255, 0.07);
+    background: #f3f9f6;
 }
 
 .nallabid-supplier-metrics dt {
-    color: #7794b0;
+    color: #718095;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .nallabid-supplier-metrics dd {
     margin: 2px 0 0;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
+    color: #142238;
+    font-size: 15px;
+    font-weight: 800;
     overflow-wrap: anywhere;
 }
 
@@ -166,4 +174,75 @@
     .nallabid-supplier-grid {
         padding: 12px;
     }
+}
+
+/* Relevance: supplier catalogue matches the buyer's RFQ product names. */
+
+.nallabid-supplier-relevance {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #cfe7da;
+    border-radius: 9px;
+    background: #eef8f3;
+}
+
+.nallabid-supplier-relevance > i {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #0c7b55;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.nallabid-supplier-relevance div {
+    min-width: 0;
+}
+
+.nallabid-supplier-relevance strong {
+    display: block;
+    color: #0a6b49;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.nallabid-supplier-relevance span {
+    display: block;
+    color: #4d7a66;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.nallabid-supplier-relevance-inline {
+    display: inline-flex;
+    margin-top: 12px;
+}
+
+.nallabid-flow-table .nallabid-supplier-match-row td {
+    background: #f3faf6;
+}
+
+.nallabid-flow-table .nallabid-supplier-match-row td:first-child {
+    box-shadow: inset 3px 0 0 #57a980;
+}
+
+.nallabid-supplier-match-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.nallabid-supplier-match-tags span {
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #e2f3eb;
+    color: #0a7c54;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
 }

@@ -1,16 +1,19 @@
 /* =========================================================
-   Shared styles for RFQ Details, Comparison and Award Result.
+   Shared styles for RFQ Details, Comparison, Award Result,
+   Quotations, Suppliers and Profile.
    Everything is namespaced under .nallabid-flow-* to avoid
    collisions with existing generic class names.
+   Palette matches BuyerDashboard.css (white cards, NallaBid green).
    ========================================================= */
 
 .nallabid-flow-page {
     width: 100%;
     min-width: 0;
-    max-width: 1400px;
+    min-height: 100%;
     margin: 0 auto;
-    padding: 28px;
-    color: #d8e6f5;
+    padding: 28px 30px 40px;
+    background: #f7faf8;
+    color: #142238;
 }
 
 .nallabid-flow-back {
@@ -18,14 +21,22 @@
     align-items: center;
     gap: 8px;
     margin-bottom: 18px;
+    padding: 7px 12px;
 
-    color: #5aa9ff;
-    font-size: 14px;
+    border: 1px solid #e4eae7;
+    border-radius: 8px;
+    background: #ffffff;
+
+    color: #0a7a53;
+    font-size: 13px;
+    font-weight: 700;
     text-decoration: none;
+    transition: background 0.18s ease;
 }
 
 .nallabid-flow-back:hover {
-    color: #ffffff;
+    background: #e8f4ee;
+    color: #086947;
 }
 
 .nallabid-flow-header {
@@ -38,25 +49,31 @@
 }
 
 .nallabid-flow-eyebrow {
-    margin: 0 0 6px;
-    color: #5aa9ff;
-    font-size: 13px;
-    font-weight: 600;
+    display: inline-block;
+    margin: 0 0 8px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #e3f3eb;
+    color: #0a7b55;
+    font-size: 12px;
+    font-weight: 700;
     letter-spacing: 0.04em;
 }
 
 .nallabid-flow-header h1 {
-    margin: 0 0 6px;
-    color: #ffffff;
-    font-size: 28px;
-    font-weight: 700;
+    margin: 0 0 7px;
+    color: #111d31;
+    font-size: 34px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -1px;
     overflow-wrap: anywhere;
 }
 
 .nallabid-flow-header p {
     margin: 0;
-    color: #7894af;
-    font-size: 14px;
+    color: #6c788c;
+    font-size: 15px;
 }
 
 .nallabid-flow-actions {
@@ -70,11 +87,13 @@
 .nallabid-flow-panel {
     min-width: 0;
     margin-bottom: 20px;
+    overflow: hidden;
 
-    border: 1px solid #123d61;
-    border-radius: 13px;
+    border: 1px solid #e4eae7;
+    border-radius: 12px;
 
-    background: #061d32;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(17, 45, 35, 0.05);
 }
 
 .nallabid-flow-panel-head {
@@ -84,22 +103,23 @@
     justify-content: space-between;
     gap: 12px;
 
-    padding: 18px 20px;
+    min-height: 72px;
+    padding: 15px 20px;
 
-    border-bottom: 1px solid #123d61;
+    border-bottom: 1px solid #edf0ee;
 }
 
 .nallabid-flow-panel-head h2 {
     margin: 0;
-    color: #ffffff;
+    color: #142238;
     font-size: 17px;
-    font-weight: 600;
+    font-weight: 800;
 }
 
 .nallabid-flow-panel-head p {
-    margin: 4px 0 0;
-    color: #7894af;
-    font-size: 13px;
+    margin: 3px 0 0;
+    color: #718096;
+    font-size: 12px;
 }
 
 .nallabid-flow-panel-body {
@@ -111,31 +131,47 @@
 .nallabid-flow-facts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
-    gap: 14px;
+    gap: 16px;
     margin-bottom: 20px;
 }
 
 .nallabid-flow-fact {
+    position: relative;
     min-width: 0;
-    padding: 16px 18px;
+    padding: 18px 18px 18px 22px;
+    overflow: hidden;
 
-    border: 1px solid #123d61;
+    border: 1px solid #e4eae7;
     border-radius: 12px;
 
-    background: #061d32;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(17, 45, 35, 0.05);
+}
+
+/* Slim green accent on the left, echoing the dashboard stat cards. */
+.nallabid-flow-fact::before {
+    content: "";
+    position: absolute;
+    top: 16px;
+    bottom: 16px;
+    left: 0;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background: #57a980;
 }
 
 .nallabid-flow-fact span {
     display: block;
     margin-bottom: 6px;
-    color: #7794b0;
-    font-size: 12px;
+    color: #263449;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .nallabid-flow-fact strong {
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 600;
+    color: #111d30;
+    font-size: 22px;
+    font-weight: 800;
     overflow-wrap: anywhere;
 }
 
@@ -147,19 +183,19 @@
     justify-content: center;
     gap: 8px;
 
-    min-height: 42px;
+    min-height: 44px;
     padding: 10px 18px;
 
     border: 1px solid transparent;
     border-radius: 9px;
 
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
 
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
 .nallabid-flow-button:disabled {
@@ -168,34 +204,37 @@
 }
 
 .nallabid-flow-button-primary {
-    background: #087cff;
+    background: #0c7b55;
     color: #ffffff;
+    box-shadow: 0 7px 18px rgba(8, 123, 85, 0.16);
 }
 
 .nallabid-flow-button-primary:hover:not(:disabled) {
-    background: #006de0;
+    background: #086947;
     color: #ffffff;
+    transform: translateY(-1px);
 }
 
 .nallabid-flow-button-success {
-    background: #10b981;
-    color: #03172f;
+    background: #16a06f;
+    color: #ffffff;
 }
 
 .nallabid-flow-button-success:hover:not(:disabled) {
-    background: #34d399;
-    color: #03172f;
+    background: #0c7b55;
+    color: #ffffff;
 }
 
 .nallabid-flow-button-ghost {
-    border-color: #1c4c7a;
-    background: transparent;
-    color: #d8e6f5;
+    border-color: #dfe5e2;
+    background: #ffffff;
+    color: #253247;
 }
 
 .nallabid-flow-button-ghost:hover:not(:disabled) {
-    background: rgba(8, 124, 255, 0.12);
-    color: #ffffff;
+    border-color: #b9dcca;
+    background: #f1f8f4;
+    color: #0a7a53;
 }
 
 /* Badges */
@@ -205,24 +244,25 @@
     align-items: center;
     gap: 5px;
 
-    padding: 4px 10px;
+    padding: 5px 10px;
 
-    border-radius: 999px;
+    border-radius: 7px;
 
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
     white-space: nowrap;
 }
 
-.nallabid-flow-badge-draft { background: rgba(139, 92, 246, 0.14); color: #a78bfa; }
-.nallabid-flow-badge-open { background: rgba(16, 185, 129, 0.14); color: #34d399; }
-.nallabid-flow-badge-closed { background: rgba(148, 163, 184, 0.14); color: #94a3b8; }
-.nallabid-flow-badge-awarded { background: rgba(245, 158, 11, 0.14); color: #fbbf24; }
-.nallabid-flow-badge-completed { background: rgba(59, 130, 246, 0.14); color: #60a5fa; }
-.nallabid-flow-badge-eligible { background: rgba(16, 185, 129, 0.14); color: #34d399; }
-.nallabid-flow-badge-ineligible { background: rgba(239, 68, 68, 0.14); color: #f87171; }
+.nallabid-flow-badge-draft { background: #fff0d9; color: #c27a00; }
+.nallabid-flow-badge-open { background: #e2f3eb; color: #0a7c54; }
+.nallabid-flow-badge-closed { background: #eef1f4; color: #5b6778; }
+.nallabid-flow-badge-awarded { background: #eee6ff; color: #7350c7; }
+.nallabid-flow-badge-completed { background: #e6effd; color: #2d62c9; }
+.nallabid-flow-badge-eligible { background: #e2f3eb; color: #0a7c54; }
+.nallabid-flow-badge-ineligible { background: #fde9e9; color: #c64545; }
 .nallabid-flow-badge-pending,
-.nallabid-flow-badge-submitted { background: rgba(148, 163, 184, 0.14); color: #cbd5e1; }
+.nallabid-flow-badge-submitted { background: #fff5df; color: #b77800; }
 
 /* Alerts */
 
@@ -244,46 +284,62 @@
     line-height: 1.2;
 }
 
-.nallabid-flow-alert-error { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); color: #fecaca; }
-.nallabid-flow-alert-success { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); color: #a7f3d0; }
-.nallabid-flow-alert-info { border-color: rgba(8, 124, 255, 0.4); background: rgba(8, 124, 255, 0.1); color: #bfdbfe; }
+.nallabid-flow-alert-error { border-color: #f5c6c6; background: #fdf0f0; color: #b23b3b; }
+.nallabid-flow-alert-success { border-color: #bfe3d0; background: #eef8f3; color: #0a6b49; }
+.nallabid-flow-alert-info { border-color: #cfe3da; background: #f3f9f6; color: #2f5f4c; }
 
 /* Tables (horizontally scrollable on small screens) */
 
 .nallabid-flow-table-wrap {
     width: 100%;
     overflow-x: auto;
+    padding: 10px;
     -webkit-overflow-scrolling: touch;
 }
 
 .nallabid-flow-table {
     width: 100%;
     min-width: 820px;
-    border-collapse: collapse;
-    font-size: 14px;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: #29374a;
+    font-size: 13px;
 }
 
 .nallabid-flow-table th {
-    padding: 12px 16px;
+    padding: 13px 14px;
 
-    border-bottom: 1px solid #123d61;
+    background: #f3f5f4;
+    border-bottom: 1px solid #e5e9e7;
 
-    color: #7794b0;
-    font-size: 12px;
-    font-weight: 600;
+    color: #253247;
+    font-size: 11px;
+    font-weight: 800;
     text-align: left;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     white-space: nowrap;
 }
 
+.nallabid-flow-table th:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.nallabid-flow-table th:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
 .nallabid-flow-table td {
-    padding: 14px 16px;
+    padding: 14px;
 
-    border-bottom: 1px solid rgba(18, 61, 97, 0.6);
+    border-bottom: 1px solid #eef1ef;
 
-    color: #d8e6f5;
+    color: #29374a;
     vertical-align: top;
+}
+
+.nallabid-flow-table td strong {
+    color: #142238;
 }
 
 .nallabid-flow-table tbody tr:last-child td {
@@ -291,7 +347,7 @@
 }
 
 .nallabid-flow-table tbody tr:hover td {
-    background: rgba(8, 124, 255, 0.05);
+    background: #f6faf8;
 }
 
 .nallabid-flow-table .nallabid-flow-num {
@@ -300,7 +356,7 @@
 }
 
 .nallabid-flow-muted {
-    color: #7794b0;
+    color: #718095;
     font-size: 13px;
 }
 
@@ -317,7 +373,8 @@
 
     padding: 16px;
 
-    background: rgba(1, 10, 22, 0.75);
+    background: rgba(16, 29, 49, 0.45);
+    backdrop-filter: blur(2px);
 }
 
 .nallabid-flow-modal {
@@ -328,21 +385,22 @@
 
     padding: 24px;
 
-    border: 1px solid #1c4c7a;
+    border: 1px solid #e4eae7;
     border-radius: 14px;
 
-    background: #061d32;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    background: #ffffff;
+    box-shadow: 0 24px 60px rgba(17, 45, 35, 0.22);
 }
 
 .nallabid-flow-modal h3 {
     margin: 0 0 8px;
-    color: #ffffff;
+    color: #111d31;
     font-size: 20px;
+    font-weight: 800;
 }
 
 .nallabid-flow-modal p {
-    color: #91a9c4;
+    color: #647186;
     font-size: 14px;
 }
 
@@ -353,19 +411,21 @@
     margin: 16px 0;
     padding: 14px 16px;
 
+    border: 1px solid #e3efe9;
     border-radius: 10px;
-    background: rgba(8, 124, 255, 0.08);
+    background: #f3f9f6;
     font-size: 14px;
 }
 
 .nallabid-flow-modal dt {
-    color: #7794b0;
+    color: #647186;
     font-weight: 500;
 }
 
 .nallabid-flow-modal dd {
     margin: 0;
-    color: #ffffff;
+    color: #142238;
+    font-weight: 700;
     text-align: right;
     overflow-wrap: anywhere;
 }
@@ -378,15 +438,64 @@
     margin-top: 18px;
 }
 
+/* Shared loading / empty / error states, restyled for the light pages.
+   PageState.css keeps its original look; these only apply inside flow pages. */
+
+.nallabid-flow-page .nallabid-state {
+    color: #718095;
+}
+
+.nallabid-flow-page .nallabid-state > i {
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #e8f3ed;
+    color: #15805b;
+    font-size: 28px;
+}
+
+.nallabid-flow-page .nallabid-state h3 {
+    color: #142238;
+    font-weight: 800;
+}
+
+.nallabid-flow-page .nallabid-state-error > i {
+    background: #fde9e9;
+    color: #c64545;
+}
+
+.nallabid-flow-page .nallabid-state-locked > i {
+    background: #fff5df;
+    color: #e99b00;
+}
+
+.nallabid-flow-page .nallabid-state-spinner {
+    border-color: #dcefe5;
+    border-top-color: #0c7b55;
+}
+
+.nallabid-flow-page .nallabid-state-button {
+    border-color: #0c7b55;
+    background: #0c7b55;
+    color: #ffffff;
+}
+
+.nallabid-flow-page .nallabid-state-button:hover {
+    background: #086947;
+    color: #ffffff;
+}
+
 /* Responsive */
 
 @media (max-width: 768px) {
     .nallabid-flow-page {
-        padding: 20px 16px 40px;
+        padding: 20px 14px 40px;
     }
 
     .nallabid-flow-header h1 {
-        font-size: 24px;
+        font-size: 27px;
     }
 
     .nallabid-flow-actions,
@@ -420,7 +529,7 @@
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 16px 20px;
-    border-bottom: 1px solid #123d61;
+    border-bottom: 1px solid #edf0ee;
 }
 
 .nallabid-flow-search {
@@ -428,14 +537,14 @@
     align-items: center;
     gap: 10px;
     min-width: 0;
-    height: 42px;
-    padding: 0 12px;
+    height: 44px;
+    padding: 0 14px;
 
-    border: 1px solid #174674;
+    border: 1px solid #dfe5e2;
     border-radius: 9px;
 
-    background: #08223e;
-    color: #7794b0;
+    background: #ffffff;
+    color: #7b8798;
 }
 
 .nallabid-flow-search input {
@@ -444,48 +553,50 @@
     border: 0;
     outline: 0;
     background: transparent;
-    color: #ffffff;
+    color: #142238;
     font-size: 14px;
 }
 
 .nallabid-flow-search input::placeholder {
-    color: #7794b0;
+    color: #97a1af;
 }
 
 .nallabid-flow-select {
     width: 100%;
     min-width: 0;
-    height: 42px;
+    height: 44px;
     padding: 0 12px;
 
-    border: 1px solid #174674;
+    border: 1px solid #dfe5e2;
     border-radius: 9px;
     outline: 0;
 
-    background: #08223e;
-    color: #ffffff;
+    background: #ffffff;
+    color: #253247;
     font-size: 14px;
 }
 
 .nallabid-flow-search:focus-within,
 .nallabid-flow-select:focus {
-    border-color: #087cff;
+    border-color: #0c7b55;
+    box-shadow: 0 0 0 3px rgba(12, 123, 85, 0.12);
 }
 
 .nallabid-flow-link {
-    color: #5aa9ff;
+    color: #0a7a53;
+    font-weight: 700;
     text-decoration: none;
 }
 
 .nallabid-flow-link:hover {
-    color: #ffffff;
+    color: #086947;
     text-decoration: underline;
 }
 
 .nallabid-flow-sub {
     display: block;
     margin-top: 2px;
-    color: #7794b0;
+    color: #768295;
     font-size: 12px;
 }
 

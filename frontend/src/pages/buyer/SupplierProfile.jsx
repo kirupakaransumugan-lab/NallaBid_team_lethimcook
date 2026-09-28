@@ -54,7 +54,8 @@ function SupplierProfile() {
     }
 
     const { supplier, catalogue, quotation_history: history } = profile;
-    const { engagement } = supplier;
+    const { engagement, relevance } = supplier;
+    const matchingItems = catalogue.filter((item) => item.matching_rfqs.length > 0).length;
 
     return (
         <div className="nallabid-flow-page nallabid-suppliers-page">
@@ -69,6 +70,18 @@ function SupplierProfile() {
                     <p className="nallabid-flow-eyebrow">SUPPLIER PROFILE</p>
                     <h1>{supplier.company_name}</h1>
                     <p>Member since {formatDate(supplier.joined_at)}</p>
+
+                    {relevance.matching_rfqs > 0 && (
+                        <div className="nallabid-supplier-relevance nallabid-supplier-relevance-inline">
+                            <i className="bi bi-bullseye"></i>
+                            <div>
+                                <strong>
+                                    Relevant to {relevance.matching_rfqs} of your RFQ{relevance.matching_rfqs === 1 ? "" : "s"}
+                                </strong>
+                                <span>{relevance.matched_keywords.join(", ")}</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -122,7 +135,10 @@ function SupplierProfile() {
                 <div className="nallabid-flow-panel-head">
                     <div>
                         <h2>Product catalogue</h2>
-                        <p>{catalogue.length} item{catalogue.length === 1 ? "" : "s"} listed by this supplier.</p>
+                        <p>
+                            {catalogue.length} item{catalogue.length === 1 ? "" : "s"} listed by this supplier
+                            {matchingItems > 0 && ` · ${matchingItems} match your RFQs`}.
+                        </p>
                     </div>
                 </div>
 
@@ -135,19 +151,32 @@ function SupplierProfile() {
                                 <tr>
                                     <th>Product</th>
                                     <th>Description</th>
-                                    <th className="nallabid-flow-num">Unit price</th>
                                     <th className="nallabid-flow-num">Available qty</th>
                                     <th>Updated</th>
+                                    <th>Matches your RFQs</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {catalogue.map((item) => (
-                                    <tr key={item.id}>
+                                    <tr
+                                        key={item.id}
+                                        className={item.matching_rfqs.length > 0 ? "nallabid-supplier-match-row" : undefined}
+                                    >
                                         <td><strong>{item.product_name}</strong></td>
                                         <td className="nallabid-flow-muted">{item.description || "-"}</td>
-                                        <td className="nallabid-flow-num">{formatLKR(item.unit_price)}</td>
                                         <td className="nallabid-flow-num">{formatNumber(item.available_quantity)}</td>
                                         <td>{formatDate(item.updated_at)}</td>
+                                        <td>
+                                            {item.matching_rfqs.length > 0 ? (
+                                                <div className="nallabid-supplier-match-tags">
+                                                    {item.matching_rfqs.map((rfqNumber) => (
+                                                        <span key={rfqNumber}>{rfqNumber}</span>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <span className="nallabid-flow-muted">-</span>
+                                            )}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
