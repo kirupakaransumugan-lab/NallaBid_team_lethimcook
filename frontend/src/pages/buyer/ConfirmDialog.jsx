@@ -9,9 +9,12 @@ function ConfirmDialog({
     details = [],
     confirmLabel,
     confirmIcon = "bi-check2",
+    confirmDisabled = false,
+    danger = false,
     busy = false,
     onConfirm,
-    onCancel
+    onCancel,
+    children
 }) {
     useEffect(() => {
         function handleKey(event) {
@@ -50,6 +53,8 @@ function ConfirmDialog({
                     </dl>
                 )}
 
+                {children}
+
                 <div className="nallabid-flow-modal-actions">
                     <button
                         type="button"
@@ -62,9 +67,9 @@ function ConfirmDialog({
 
                     <button
                         type="button"
-                        className="nallabid-flow-button nallabid-flow-button-primary"
+                        className={`nallabid-flow-button ${danger ? "nallabid-flow-button-danger" : "nallabid-flow-button-primary"}`}
                         onClick={onConfirm}
-                        disabled={busy}
+                        disabled={busy || confirmDisabled}
                         autoFocus
                     >
                         {busy ? (

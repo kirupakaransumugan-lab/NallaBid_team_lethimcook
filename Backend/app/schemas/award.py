@@ -16,6 +16,24 @@ class AwardCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class AwardCancel(BaseModel):
+    # Required so the history always says why an award was undone.
+    reason: str = Field(min_length=5, max_length=500)
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+
+class CancelledAwardItem(BaseModel):
+    award_id: int
+    quotation_id: int
+    quotation_number: str
+    supplier_name: str
+    awarded_at: datetime
+    cancelled_at: datetime | None = None
+    cancelled_by_name: str | None = None
+    cancel_reason: str | None = None
+
+
 class AwardResponse(BaseModel):
     id: int
     rfq_id: int
@@ -23,6 +41,8 @@ class AwardResponse(BaseModel):
     awarded_by: int
     awarded_at: datetime
     status: AwardStatus
+    cancelled_at: datetime | None = None
+    cancel_reason: str | None = None
     model_config = ConfigDict(from_attributes=True)
 
 

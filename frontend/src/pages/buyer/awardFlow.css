@@ -618,3 +618,58 @@
         overflow-wrap: anywhere;
     }
 }
+
+/* Award cancellation */
+
+.nallabid-flow-badge-cancelled { background: #fde9e9; color: #c64545; }
+
+.nallabid-flow-button-danger {
+    background: #c64545;
+    color: #ffffff;
+}
+
+.nallabid-flow-button-danger:hover:not(:disabled) {
+    background: #a93838;
+    color: #ffffff;
+}
+
+.nallabid-award-cancel:hover:not(:disabled) {
+    border-color: #f5c6c6;
+    background: #fdf0f0;
+    color: #c64545;
+}
+
+.nallabid-flow-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 14px;
+}
+
+.nallabid-flow-field span {
+    color: #253247;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.nallabid-flow-field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dfe5e2;
+    border-radius: 9px;
+    outline: 0;
+    color: #142238;
+    font: inherit;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.nallabid-flow-field textarea:focus {
+    border-color: #0c7b55;
+    box-shadow: 0 0 0 3px rgba(12, 123, 85, 0.12);
+}
+
+.nallabid-flow-field small {
+    color: #768295;
+    font-size: 12px;
+}

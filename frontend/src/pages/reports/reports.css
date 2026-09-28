@@ -909,6 +909,7 @@
 .nallabid-report-badge-pending { background: #fff5df; color: #b77800; }
 .nallabid-report-badge-awarded { background: #eee6ff; color: #7350c7; }
 .nallabid-report-badge-completed { background: #e6effd; color: #2d62c9; }
+.nallabid-report-badge-cancelled { background: #fde9e9; color: #c64545; }
 
 .nallabid-report-alert {
     display: flex;

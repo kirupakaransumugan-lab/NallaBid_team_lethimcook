@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models.award import Award, AwardStatus
+from app.models.award import ACTIVE_AWARD, Award, AwardStatus
 from app.models.evaluation import Evaluation, EvaluationStatus
 from app.models.quotation import Quotation
 from app.models.rfq import RFQ, RFQStatus
@@ -181,6 +181,7 @@ def get_dashboard(db: Session, user: User) -> dict:
             .join(RFQ, RFQ.id == Award.rfq_id)
             .join(Quotation, Quotation.id == Award.quotation_id)
             .join(Supplier, Supplier.id == Quotation.supplier_id)
+            .where(ACTIVE_AWARD)
         )
     ).all()
 
@@ -423,6 +424,9 @@ def get_award_summary(
     if award_status:
         stmt = stmt.where(Award.status == award_status)
         filters["Status"] = award_status.value.title()
+    else:
+        # "All" means all real awards; cancelled ones only appear when asked for.
+        stmt = stmt.where(ACTIVE_AWARD)
 
     rows = []
     monthly = defaultdict(lambda: {"award_count": 0, "total_value": Decimal("0")})

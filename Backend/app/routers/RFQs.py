@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func
@@ -24,6 +24,7 @@ from app.schemas.rfq import (
 )
 
 from app.security.auth import get_current_user
+from app.services.rfq_lifecycle import to_utc_naive
 
 
 router = APIRouter(
@@ -46,6 +47,10 @@ def require_buyer(current_user: User):
     return current_user
 
 
+def _quotation_count(db: Session, rfq_id: int) -> int:
+    return db.query(func.count(Quotation.id)).filter(Quotation.rfq_id == rfq_id).scalar() or 0
+
+
 # =========================================================
 # CREATE RFQ
 # =========================================================
@@ -62,10 +67,7 @@ def create_rfq(
 ):
     require_buyer(current_user)
 
-    # The browser sends a UTC timestamp ("...Z"); the DB column and utcnow()
-    # are naive UTC, so drop the tzinfo before comparing and storing.
-    if data.deadline.tzinfo is not None:
-        data.deadline = data.deadline.astimezone(timezone.utc).replace(tzinfo=None)
+    data.deadline = to_utc_naive(data.deadline)
 
     if data.deadline <= datetime.utcnow():
         raise HTTPException(
@@ -487,6 +489,30 @@ def update_rfq(
         )
 
     if data.deadline is not None:
+        data.deadline = to_utc_naive(data.deadline)
+
+    # Once suppliers have quoted, the terms they quoted against are frozen:
+    # the only allowed change is giving them more time.
+    if _quotation_count(db, rfq.id) > 0:
+        changed_terms = [
+            field
+            for field, value in data.model_dump(exclude_unset=True).items()
+            if field != "deadline" and value is not None and value != getattr(rfq, field)
+        ]
+
+        if changed_terms:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Quotations have been received; only the deadline can be extended"
+            )
+
+        if data.deadline is not None and data.deadline < rfq.deadline:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Quotations have been received; the deadline can only be extended, not shortened"
+            )
+
+    if data.deadline is not None:
         if data.deadline <= datetime.utcnow():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -603,6 +629,14 @@ def close_rfq(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only open RFQs can be closed"
+        )
+
+    # Closing early is only fair while nobody has quoted yet; otherwise the RFQ
+    # stays open for everyone until its deadline, then closes automatically.
+    if rfq.deadline > datetime.utcnow() and _quotation_count(db, rfq.id) > 0:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Quotations have been received; this RFQ closes automatically at its deadline"
         )
 
     rfq.status = "CLOSED"

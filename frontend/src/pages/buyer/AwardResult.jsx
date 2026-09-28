@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import EmptyState from "../../components/EmptyState";
 import ErrorMessage from "../../components/ErrorMessage";
 import Loading from "../../components/Loading";
-import { completeAward, getAward } from "../../services/awardService";
+import { cancelAward, completeAward, getAward } from "../../services/awardService";
 import { formatDate, formatLKR } from "../../utils/format";
 import ConfirmDialog from "./ConfirmDialog";
 
@@ -15,6 +15,7 @@ import "./AwardResult.css";
 function AwardResult() {
     const { rfqId } = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
 
     const [award, setAward] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -24,6 +25,10 @@ function AwardResult() {
     const [completing, setCompleting] = useState(false);
     const [completeError, setCompleteError] = useState("");
     const [justCompleted, setJustCompleted] = useState(false);
+
+    const [cancelling, setCancelling] = useState(false);
+    const [cancelReason, setCancelReason] = useState("");
+    const [cancelBusy, setCancelBusy] = useState(false);
 
     const justAwarded = Boolean(location.state?.justAwarded);
 
@@ -60,6 +65,21 @@ function AwardResult() {
             setConfirming(false);
         } finally {
             setCompleting(false);
+        }
+    }
+
+    async function confirmCancel() {
+        setCancelBusy(true);
+        setCompleteError("");
+
+        try {
+            await cancelAward(rfqId, cancelReason.trim());
+            navigate(`/rfqs/${rfqId}/compare`, { state: { awardCancelled: true } });
+        } catch (requestError) {
+            setCompleteError(requestError.message);
+            setCancelling(false);
+        } finally {
+            setCancelBusy(false);
         }
     }
 
@@ -202,14 +222,24 @@ function AwardResult() {
                     ) : (
                         <>
                             <p>Mark the RFQ as completed once the goods have been delivered.</p>
-                            <button
-                                type="button"
-                                className="nallabid-flow-button nallabid-flow-button-success"
-                                onClick={() => setConfirming(true)}
-                            >
-                                <i className="bi bi-check2-all"></i>
-                                Complete RFQ
-                            </button>
+                            <div className="nallabid-flow-actions">
+                                <button
+                                    type="button"
+                                    className="nallabid-flow-button nallabid-flow-button-ghost nallabid-award-cancel"
+                                    onClick={() => setCancelling(true)}
+                                >
+                                    <i className="bi bi-x-circle"></i>
+                                    Cancel Award
+                                </button>
+                                <button
+                                    type="button"
+                                    className="nallabid-flow-button nallabid-flow-button-success"
+                                    onClick={() => setConfirming(true)}
+                                >
+                                    <i className="bi bi-check2-all"></i>
+                                    Complete RFQ
+                                </button>
+                            </div>
                         </>
                     )}
                 </footer>
@@ -230,6 +260,38 @@ function AwardResult() {
                     onConfirm={confirmComplete}
                     onCancel={() => setConfirming(false)}
                 />
+            )}
+
+            {cancelling && (
+                <ConfirmDialog
+                    title="Cancel this award?"
+                    message="Use this if you chose the wrong quotation or the supplier withdrew. The award is kept in the history as CANCELLED, the RFQ returns to CLOSED, and this quotation cannot be awarded again."
+                    details={[
+                        ["Supplier", award.supplier_name],
+                        ["Quotation", award.quotation_number],
+                        ["Amount", formatLKR(award.awarded_amount)]
+                    ]}
+                    confirmLabel="Cancel Award"
+                    confirmIcon="bi-x-circle"
+                    confirmDisabled={cancelReason.trim().length < 5}
+                    danger
+                    busy={cancelBusy}
+                    onConfirm={confirmCancel}
+                    onCancel={() => setCancelling(false)}
+                >
+                    <label className="nallabid-flow-field">
+                        <span>Reason (required)</span>
+                        <textarea
+                            rows="3"
+                            maxLength="500"
+                            placeholder="e.g. Supplier withdrew their quotation"
+                            value={cancelReason}
+                            onChange={(event) => setCancelReason(event.target.value)}
+                            autoFocus
+                        />
+                        <small>At least 5 characters. Saved with the award history.</small>
+                    </label>
+                </ConfirmDialog>
             )}
         </div>
     );

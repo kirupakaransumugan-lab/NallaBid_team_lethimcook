@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import Base, engine
@@ -8,6 +8,8 @@ from app.routers import awards, evaluations, reports, buyer_workspace, users
 
 from app.routers.auth import router as auth_router
 from app.routers import RFQs
+from app.security.auth import get_current_user
+from app.services.rfq_lifecycle import close_expired_rfqs
 
 
 # Routers above import every model, so all tables are known here.
@@ -34,39 +36,49 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# Buyer-side routers first close any OPEN RFQ whose deadline has passed.
+AUTO_CLOSE = [Depends(close_expired_rfqs)]
+
+
 app.include_router(
     auth_router,
     prefix="/api"
 )
 # Register Gideon routers
-app.include_router(suppliers.router)
+# Supplier contact details are not public: any logged-in user, but never anonymous.
+app.include_router(suppliers.router, dependencies=[Depends(get_current_user)])
 app.include_router(quotations.router)
 app.include_router(imports.router)
 
 
 app.include_router(
     RFQs.router,
-    prefix="/api"
+    prefix="/api",
+    dependencies=AUTO_CLOSE
 )
 
 app.include_router(
     evaluations.router,
-    prefix="/api"
+    prefix="/api",
+    dependencies=AUTO_CLOSE
 )
 
 app.include_router(
     awards.router,
-    prefix="/api"
+    prefix="/api",
+    dependencies=AUTO_CLOSE
 )
 
 app.include_router(
     reports.router,
-    prefix="/api"
+    prefix="/api",
+    dependencies=AUTO_CLOSE
 )
 
 app.include_router(
     buyer_workspace.router,
-    prefix="/api"
+    prefix="/api",
+    dependencies=AUTO_CLOSE
 )
 
 app.include_router(

@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict
 from app.models.award import AwardStatus
 from app.models.evaluation import EvaluationStatus
 from app.models.quotation import QuotationStatus
+from app.schemas.award import CancelledAwardItem
 from app.schemas.rfq import RFQResponse
 
 
@@ -35,6 +36,8 @@ class RFQQuotationItem(BaseModel):
     submitted_at: datetime
     evaluation: EvaluationResponse | None = None
     is_awarded: bool = False
+    # True when this quotation once won but that award was cancelled; it cannot win again.
+    award_cancelled: bool = False
 
 
 class RFQAwardBrief(BaseModel):
@@ -47,12 +50,15 @@ class RFQAwardBrief(BaseModel):
 
 class RFQEvaluationOverview(BaseModel):
     rfq: RFQResponse
+    # True while the RFQ is DRAFT/OPEN: quotations exist but are hidden until the deadline.
+    sealed: bool = False
     total_quotations: int
     evaluated_quotations: int
     eligible_quotations: int
     ineligible_quotations: int
     quotations: list[RFQQuotationItem]
     award: RFQAwardBrief | None = None
+    award_history: list[CancelledAwardItem] = []
 
 
 class EvaluationRunResponse(BaseModel):

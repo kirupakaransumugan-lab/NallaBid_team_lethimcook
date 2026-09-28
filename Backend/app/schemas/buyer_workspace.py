@@ -42,6 +42,8 @@ class ReceivedQuotationStats(BaseModel):
     ineligible: int
     awarded: int
     rfqs_with_quotations: int
+    # Quotations on RFQs still open: counted, but hidden until the deadline.
+    sealed: int = 0
 
 
 class ReceivedQuotationsResponse(BaseModel):

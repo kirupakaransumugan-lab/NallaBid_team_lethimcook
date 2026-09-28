@@ -38,8 +38,8 @@ const ACTION_CONFIRMATIONS = {
         icon: "bi-send"
     },
     close: {
-        title: "Close this RFQ?",
-        message: "Suppliers will no longer be able to submit or edit quotations. You can then evaluate the quotations received.",
+        title: "Close this RFQ early?",
+        message: "No quotations have been received yet. Closing now stops suppliers from quoting before the deadline.",
         label: "Close RFQ",
         icon: "bi-lock"
     },
@@ -160,7 +160,8 @@ function RFQDetails() {
                         </button>
                     )}
 
-                    {rfq.status === "OPEN" && (
+                    {/* Early close is only allowed before anyone has quoted; otherwise it closes at the deadline. */}
+                    {rfq.status === "OPEN" && overview.total_quotations === 0 && (
                         <button
                             type="button"
                             className="nallabid-flow-button nallabid-flow-button-primary"
@@ -219,6 +220,16 @@ function RFQDetails() {
                 <div className="nallabid-flow-alert nallabid-flow-alert-success" role="status">
                     <i className="bi bi-check-circle"></i>
                     <span>{actionSuccess}</span>
+                </div>
+            )}
+
+            {overview.sealed && rfq.status === "OPEN" && overview.total_quotations > 0 && (
+                <div className="nallabid-flow-alert nallabid-flow-alert-info">
+                    <i className="bi bi-lock"></i>
+                    <span>
+                        {overview.total_quotations} quotation{overview.total_quotations === 1 ? "" : "s"} received and sealed.
+                        This RFQ closes automatically on {formatDate(rfq.deadline)}; prices are revealed then.
+                    </span>
                 </div>
             )}
 
@@ -320,7 +331,13 @@ function RFQDetails() {
                     </div>
                 </div>
 
-                {quotations.length === 0 ? (
+                {overview.sealed && overview.total_quotations > 0 ? (
+                    <EmptyState
+                        icon="bi-lock"
+                        title="Quotations are sealed"
+                        message="To keep bidding fair, prices and suppliers stay hidden until the deadline passes."
+                    />
+                ) : quotations.length === 0 ? (
                     <EmptyState
                         icon="bi-file-earmark-text"
                         title="No quotations yet"
@@ -386,6 +403,48 @@ function RFQDetails() {
                     </div>
                 )}
             </section>
+
+            {overview.award_history.length > 0 && (
+                <section className="nallabid-flow-panel">
+                    <div className="nallabid-flow-panel-head">
+                        <div>
+                            <h2>Award history</h2>
+                            <p>Awards that were cancelled for this RFQ. They are kept for audit.</p>
+                        </div>
+                    </div>
+
+                    <div className="nallabid-flow-table-wrap">
+                        <table className="nallabid-flow-table">
+                            <thead>
+                                <tr>
+                                    <th>Supplier</th>
+                                    <th>Quotation</th>
+                                    <th>Awarded</th>
+                                    <th>Cancelled</th>
+                                    <th>Cancelled by</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {overview.award_history.map((item) => (
+                                    <tr key={item.award_id}>
+                                        <td><strong>{item.supplier_name}</strong></td>
+                                        <td>{item.quotation_number}</td>
+                                        <td>{formatDate(item.awarded_at)}</td>
+                                        <td>
+                                            <span className="nallabid-flow-badge nallabid-flow-badge-cancelled">
+                                                {formatDate(item.cancelled_at)}
+                                            </span>
+                                        </td>
+                                        <td>{item.cancelled_by_name || "-"}</td>
+                                        <td className="nallabid-flow-muted">{item.cancel_reason || "-"}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            )}
 
             {confirmation && (
                 <ConfirmDialog

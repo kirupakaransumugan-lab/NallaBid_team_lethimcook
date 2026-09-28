@@ -5,13 +5,18 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.models.award import Award, AwardStatus
+from app.models.award import ACTIVE_AWARD, Award, AwardStatus
 from app.models.evaluation import Evaluation, EvaluationStatus
 from app.models.quotation import Quotation, QuotationStatus
 from app.models.rfq import RFQ, RFQStatus
 from app.models.supplier import Supplier
 from app.models.user import User
 from app.services.evaluation_service import get_owned_rfq
+
+
+def get_active_award(db: Session, rfq_id: int) -> Award | None:
+    """The RFQ's current award; cancelled awards are history, not winners."""
+    return db.scalar(select(Award).where(Award.rfq_id == rfq_id, ACTIVE_AWARD))
 
 
 # =========================================================
@@ -26,9 +31,7 @@ def create_award(db: Session, rfq_id: int, quotation_id: int, buyer: User) -> Aw
     if rfq.status in (RFQStatus.AWARDED, RFQStatus.COMPLETED):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="This RFQ has already been awarded")
 
-    existing_award = db.scalar(select(Award).where(Award.rfq_id == rfq.id))
-
-    if existing_award is not None:
+    if get_active_award(db, rfq.id) is not None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="This RFQ has already been awarded")
 
     if rfq.status != RFQStatus.CLOSED:
@@ -46,6 +49,17 @@ def create_award(db: Session, rfq_id: int, quotation_id: int, buyer: User) -> Aw
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="This quotation does not belong to the selected RFQ",
+        )
+
+    # A quotation whose award was cancelled (e.g. the supplier withdrew) cannot win again.
+    previously_cancelled = db.scalar(
+        select(Award.id).where(Award.quotation_id == quotation.id, Award.status == AwardStatus.CANCELLED)
+    )
+
+    if previously_cancelled is not None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="This quotation's award was cancelled; choose another quotation",
         )
 
     evaluation = db.scalar(select(Evaluation).where(Evaluation.quotation_id == quotation.id))
@@ -78,7 +92,7 @@ def create_award(db: Session, rfq_id: int, quotation_id: int, buyer: User) -> Aw
     try:
         db.commit()
     except IntegrityError:
-        # UNIQUE(rfq_id) / UNIQUE(quotation_id) caught a race the lock did not.
+        # UNIQUE(active_rfq_id) caught a race the lock did not.
         db.rollback()
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="This RFQ has already been awarded")
 
@@ -93,7 +107,7 @@ def create_award(db: Session, rfq_id: int, quotation_id: int, buyer: User) -> Aw
 def complete_award(db: Session, rfq_id: int, buyer: User) -> Award:
     rfq = get_owned_rfq(db, rfq_id, buyer, lock=True)
 
-    award = db.scalar(select(Award).where(Award.rfq_id == rfq.id))
+    award = get_active_award(db, rfq.id)
 
     if award is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="This RFQ has no award")
@@ -114,6 +128,67 @@ def complete_award(db: Session, rfq_id: int, buyer: User) -> Award:
 
 
 # =========================================================
+# Cancel award (wrong choice, or the supplier withdrew)
+# =========================================================
+
+def cancel_award(db: Session, rfq_id: int, reason: str, buyer: User) -> Award:
+    rfq = get_owned_rfq(db, rfq_id, buyer, lock=True)
+
+    award = get_active_award(db, rfq.id)
+
+    if award is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="This RFQ has no active award")
+
+    # Completed means the goods were delivered; that is final.
+    if award.status == AwardStatus.COMPLETED:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="A completed award cannot be cancelled")
+
+    now = datetime.utcnow()
+
+    # The row is kept as history; only its status changes.
+    award.status = AwardStatus.CANCELLED
+    award.cancelled_at = now
+    award.cancelled_by = buyer.id
+    award.cancel_reason = reason
+
+    # The quotation still met the requirements, so it goes back to ELIGIBLE, but
+    # create_award refuses it; the RFQ returns to CLOSED so another can be chosen.
+    quotation = db.get(Quotation, award.quotation_id)
+    quotation.status = QuotationStatus.ELIGIBLE
+    rfq.status = RFQStatus.CLOSED
+    rfq.updated_at = now
+
+    db.commit()
+    db.refresh(award)
+    return award
+
+
+def list_cancelled_awards(db: Session, rfq_id: int) -> list[dict]:
+    rows = db.execute(
+        select(Award, Quotation.quotation_number, Supplier.company_name, User.full_name)
+        .join(Quotation, Quotation.id == Award.quotation_id)
+        .join(Supplier, Supplier.id == Quotation.supplier_id)
+        .outerjoin(User, User.id == Award.cancelled_by)
+        .where(Award.rfq_id == rfq_id, Award.status == AwardStatus.CANCELLED)
+        .order_by(Award.cancelled_at.desc())
+    ).all()
+
+    return [
+        {
+            "award_id": award.id,
+            "quotation_id": award.quotation_id,
+            "quotation_number": quotation_number,
+            "supplier_name": supplier_name,
+            "awarded_at": award.awarded_at,
+            "cancelled_at": award.cancelled_at,
+            "cancelled_by_name": cancelled_by_name,
+            "cancel_reason": award.cancel_reason,
+        }
+        for award, quotation_number, supplier_name, cancelled_by_name in rows
+    ]
+
+
+# =========================================================
 # Buyer: award detail
 # =========================================================
 
@@ -125,7 +200,7 @@ def get_award_detail(db: Session, rfq_id: int, buyer: User) -> dict:
         .join(Quotation, Quotation.id == Award.quotation_id)
         .join(Supplier, Supplier.id == Quotation.supplier_id)
         .join(User, User.id == Award.awarded_by)
-        .where(Award.rfq_id == rfq.id)
+        .where(Award.rfq_id == rfq.id, ACTIVE_AWARD)
     ).first()
 
     if row is None:
@@ -187,11 +262,16 @@ def get_supplier_award_result(db: Session, rfq_id: int, user: User) -> dict:
             detail="You did not submit a quotation for this RFQ",
         )
 
-    award = db.scalar(select(Award).where(Award.rfq_id == rfq.id))
+    award = get_active_award(db, rfq.id)
+
+    own_award_cancelled = db.scalar(
+        select(Award.id).where(Award.quotation_id == quotation.id, Award.status == AwardStatus.CANCELLED)
+    ) is not None
 
     # Only reveal whether *this* supplier won; the winner's identity and price stay private.
+    # A supplier whose own award was cancelled is no longer in the running.
     if award is None:
-        outcome = "PENDING"
+        outcome = "NOT_AWARDED" if own_award_cancelled else "PENDING"
     elif award.quotation_id == quotation.id:
         outcome = "AWARDED"
     else:
