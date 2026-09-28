@@ -105,17 +105,11 @@ function MyRFQs() {
 
     return (
         <div className="my-rfqs-page">
-
             {/* Page Header */}
-
             <div className="my-rfqs-header">
-
                 <div>
                     <h1>My RFQs</h1>
-
-                    <p>
-                        Manage and track your procurement requests.
-                    </p>
+                    <p>Manage and track your procurement requests.</p>
                 </div>
 
                 <button
@@ -125,151 +119,154 @@ function MyRFQs() {
                     <i className="bi bi-plus-lg"></i>
                     Create New RFQ
                 </button>
-
             </div>
 
             {/* Statistics */}
-
             <div className="rfq-stats">
-
-                <div className="rfq-stat-card">
-                    <div className="stat-icon blue">
+                <div className="rfq-stat-card total">
+                    <div className="stat-icon green">
                         <i className="bi bi-file-earmark-text"></i>
                     </div>
 
-                    <div>
+                    <div className="stat-content">
                         <span>Total RFQs</span>
                         <strong>{totalRFQs}</strong>
+                        <small>
+                            <i className="bi bi-arrow-up"></i>
+                            +2 this month
+                        </small>
                     </div>
+
+                    <div className="stat-mini-chart green-chart">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+
+                    <i className="bi bi-arrow-right stat-arrow"></i>
                 </div>
 
-                <div className="rfq-stat-card">
-                    <div className="stat-icon green">
-                        <i className="bi bi-unlock"></i>
+                <div className="rfq-stat-card open">
+                    <div className="stat-icon orange">
+                        <i className="bi bi-file-earmark-check"></i>
                     </div>
 
-                    <div>
+                    <div className="stat-content">
                         <span>Open</span>
                         <strong>{openRFQs}</strong>
+                        <small>Currently open</small>
                     </div>
+
+                    <div className="stat-mini-chart orange-chart">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+
+                    <i className="bi bi-arrow-right stat-arrow"></i>
                 </div>
 
-                <div className="rfq-stat-card">
-                    <div className="stat-icon purple">
+                <div className="rfq-stat-card draft">
+                    <div className="stat-icon yellow">
                         <i className="bi bi-file-earmark"></i>
                     </div>
 
-                    <div>
+                    <div className="stat-content">
                         <span>Draft</span>
                         <strong>{draftRFQs}</strong>
+                        <small>In draft stage</small>
                     </div>
+
+                    <div className="stat-mini-chart yellow-chart">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+
+                    <i className="bi bi-arrow-right stat-arrow"></i>
                 </div>
 
-                <div className="rfq-stat-card">
-                    <div className="stat-icon orange">
-                        <i className="bi bi-trophy"></i>
+                <div className="rfq-stat-card awarded">
+                    <div className="stat-icon purple">
+                        <i className="bi bi-award"></i>
                     </div>
 
-                    <div>
+                    <div className="stat-content">
                         <span>Awarded</span>
                         <strong>{awardedRFQs}</strong>
+                        <small>Successfully awarded</small>
                     </div>
-                </div>
 
+                    <div className="stat-mini-chart purple-chart">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+
+                    <i className="bi bi-arrow-right stat-arrow"></i>
+                </div>
             </div>
 
             {/* RFQ Table Card */}
-
             <div className="rfq-card">
-
                 <div className="rfq-card-header">
+                    <div className="rfq-card-title">
+                        <div className="rfq-card-icon">
+                            <i className="bi bi-file-earmark-text"></i>
+                        </div>
 
-                    <div>
-                        <h2>RFQ Requests</h2>
-
-                        <p>
-                            Your created procurement requests
-                        </p>
+                        <div>
+                            <h2>RFQ Requests</h2>
+                            <p>Your created procurement requests</p>
+                        </div>
                     </div>
 
-                </div>
+                    <div className="rfq-toolbar">
+                        <div className="rfq-search-box">
+                            <i className="bi bi-search"></i>
 
-                {/* Search / Filter */}
+                            <input
+                                type="text"
+                                placeholder="Search RFQ number or product..."
+                                value={search}
+                                onChange={(event) =>
+                                    setSearch(event.target.value)
+                                }
+                            />
+                        </div>
 
-                <div className="rfq-toolbar">
-
-                    <div className="rfq-search-box">
-                        <i className="bi bi-search"></i>
-
-                        <input
-                            type="text"
-                            placeholder="Search RFQ number or product..."
-                            value={search}
+                        <select
+                            value={statusFilter}
                             onChange={(event) =>
-                                setSearch(event.target.value)
+                                setStatusFilter(event.target.value)
                             }
-                        />
+                        >
+                            <option value="ALL">All Status</option>
+                            <option value="DRAFT">Draft</option>
+                            <option value="OPEN">Open</option>
+                            <option value="CLOSED">Closed</option>
+                            <option value="AWARDED">Awarded</option>
+                            <option value="COMPLETED">Completed</option>
+                        </select>
+
+                        <button
+                            type="button"
+                            className="rfq-filter-button"
+                            aria-label="Filter RFQs"
+                        >
+                            <i className="bi bi-funnel"></i>
+                        </button>
                     </div>
-
-                    <select
-                        value={statusFilter}
-                        onChange={(event) =>
-                            setStatusFilter(event.target.value)
-                        }
-                    >
-                        <option value="ALL">
-                            All Status
-                        </option>
-
-                        <option value="DRAFT">
-                            Draft
-                        </option>
-
-                        <option value="OPEN">
-                            Open
-                        </option>
-
-                        <option value="CLOSED">
-                            Closed
-                        </option>
-
-                        <option value="AWARDED">
-                            Awarded
-                        </option>
-
-                        <option value="COMPLETED">
-                            Completed
-                        </option>
-                    </select>
-
                 </div>
 
                 {/* Loading */}
-
                 {loading && (
                     <div className="rfq-message">
                         <div className="rfq-spinner"></div>
-
-                        <p>
-                            Loading your RFQs...
-                        </p>
+                        <p>Loading your RFQs...</p>
                     </div>
                 )}
 
                 {/* Error */}
-
                 {!loading && error && (
                     <div className="rfq-message">
-
                         <i className="bi bi-exclamation-circle"></i>
 
-                        <h3>
-                            Unable to load RFQs
-                        </h3>
+                        <h3>Unable to load RFQs</h3>
 
-                        <p>
-                            {error}
-                        </p>
+                        <p>{error}</p>
 
                         <button
                             onClick={fetchRFQs}
@@ -277,17 +274,14 @@ function MyRFQs() {
                         >
                             Try Again
                         </button>
-
                     </div>
                 )}
 
                 {/* Empty */}
-
                 {!loading &&
                     !error &&
                     filteredRFQs.length === 0 && (
                         <div className="rfq-message">
-
                             <i className="bi bi-file-earmark-text"></i>
 
                             <h3>
@@ -312,109 +306,146 @@ function MyRFQs() {
                                     Create Your First RFQ
                                 </button>
                             )}
-
                         </div>
                     )}
 
                 {/* RFQ Table */}
-
                 {!loading &&
                     !error &&
                     filteredRFQs.length > 0 && (
-
-                        <div className="rfq-table-container">
-
-                            <table className="rfq-table">
-
-                                <thead>
-                                    <tr>
-                                        <th>RFQ Number</th>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Deadline</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-
-                                    {filteredRFQs.map((rfq) => (
-
-                                        <tr key={rfq.id}>
-
-                                            <td>
-                                                <span className="rfq-number">
-                                                    {rfq.rfq_number}
-                                                </span>
-                                            </td>
-
-                                            <td>
-                                                <div className="product-info">
-
-                                                    <strong>
-                                                        {rfq.product_name}
-                                                    </strong>
-
-                                                    {rfq.description && (
-                                                        <small>
-                                                            {rfq.description}
-                                                        </small>
-                                                    )}
-
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                {rfq.quantity}
-                                            </td>
-
-                                            <td>
-                                                {formatDate(
-                                                    rfq.deadline
-                                                )}
-                                            </td>
-
-                                            <td>
-
-                                                <span
-                                                    className={`rfq-status ${rfq.status.toLowerCase()}`}
-                                                >
-                                                    {rfq.status}
-                                                </span>
-
-                                            </td>
-
-                                            <td>
-
-                                                <button
-                                                    className="view-button"
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/rfqs/${rfq.id}`
-                                                        )
-                                                    }
-                                                >
-                                                    View
-                                                    <i className="bi bi-arrow-right"></i>
-                                                </button>
-
-                                            </td>
-
+                        <>
+                            <div className="rfq-table-container">
+                                <table className="rfq-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>RFQ Number</th>
+                                            <th>Product</th>
+                                            <th>Quantity</th>
+                                            <th>Deadline</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
                                         </tr>
+                                    </thead>
 
-                                    ))}
+                                    <tbody>
+                                        {filteredRFQs.map((rfq, index) => (
+                                            <tr key={rfq.id}>
+                                                <td className="row-index">
+                                                    {index + 1}
+                                                </td>
 
-                                </tbody>
+                                                <td>
+                                                    <button
+                                                        type="button"
+                                                        className="rfq-number"
+                                                        onClick={() =>
+                                                            navigate(
+                                                                `/rfqs/${rfq.id}`
+                                                            )
+                                                        }
+                                                    >
+                                                        {rfq.rfq_number}
+                                                    </button>
+                                                </td>
 
-                            </table>
+                                                <td>
+                                                    <div className="product-info">
+                                                        <strong>
+                                                            {rfq.product_name}
+                                                        </strong>
 
-                        </div>
+                                                        {rfq.description && (
+                                                            <small>
+                                                                {rfq.description}
+                                                            </small>
+                                                        )}
+                                                    </div>
+                                                </td>
 
+                                                <td className="quantity-cell">
+                                                    {rfq.quantity}
+                                                </td>
+
+                                                <td>
+                                                    <span className="deadline-cell">
+                                                        <i className="bi bi-calendar3"></i>
+                                                        {formatDate(
+                                                            rfq.deadline
+                                                        )}
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    <span
+                                                        className={`rfq-status ${rfq.status.toLowerCase()}`}
+                                                    >
+                                                        {rfq.status}
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    <div className="action-group">
+                                                        <button
+                                                            className="view-button"
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/rfqs/${rfq.id}`
+                                                                )
+                                                            }
+                                                        >
+                                                            View
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            className="action-dropdown"
+                                                            aria-label="More actions"
+                                                        >
+                                                            <i className="bi bi-chevron-down"></i>
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            className="action-more"
+                                                            aria-label="More options"
+                                                        >
+                                                            <i className="bi bi-three-dots-vertical"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="rfq-table-footer">
+                                <span>
+                                    Showing 1 to {filteredRFQs.length} of{" "}
+                                    {filteredRFQs.length} RFQs
+                                </span>
+
+                                <div className="pagination">
+                                    <button type="button" disabled>
+                                        <i className="bi bi-chevron-left"></i>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="active-page"
+                                    >
+                                        1
+                                    </button>
+
+                                    <button type="button">
+                                        <i className="bi bi-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </>
                     )}
-
             </div>
-
         </div>
     );
 }

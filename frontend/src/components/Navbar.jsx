@@ -6,8 +6,7 @@ import {
     getCurrentUser
 } from "../services/authService";
 
-import sidebarCard from "../assets/sidebar-card.png.png";
-
+import sidebarCard from "../assets/sidebar-card2.png";
 
 function Navbar({ children }) {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -15,12 +14,12 @@ function Navbar({ children }) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Logged-in user
     const currentUser = getCurrentUser();
-
-    // BUYER or SUPPLIER
     const userRole = currentUser?.role;
 
+    // ==============================
+    // LOGOUT
+    // ==============================
 
     async function handleLogout() {
         setMenuOpen(false);
@@ -30,8 +29,10 @@ function Navbar({ children }) {
         navigate("/login");
     }
 
+    // ==============================
+    // BUYER MENU
+    // ==============================
 
-    // Buyer navigation
     const buyerMenuItems = [
         {
             name: "Dashboard",
@@ -65,8 +66,10 @@ function Navbar({ children }) {
         }
     ];
 
+    // ==============================
+    // SUPPLIER MENU
+    // ==============================
 
-    // Supplier navigation
     const supplierMenuItems = [
         {
             name: "Dashboard",
@@ -95,20 +98,22 @@ function Navbar({ children }) {
         }
     ];
 
+    // ==============================
+    // SELECT MENU BY ROLE
+    // ==============================
 
-    // Select menu according to role
     const menuItems =
         userRole === "SUPPLIER"
             ? supplierMenuItems
             : buyerMenuItems;
 
+    // ==============================
+    // USER INFORMATION
+    // ==============================
 
-    // Logged-in user's display name
     const displayName =
         currentUser?.full_name || "User";
 
-
-    // Show readable role
     const displayRole =
         userRole === "SUPPLIER"
             ? "Supplier"
@@ -116,8 +121,10 @@ function Navbar({ children }) {
                 ? "Procurement Manager"
                 : "User";
 
+    // ==============================
+    // CREATE INITIALS
+    // ==============================
 
-    // Create initials from full name
     const initials = displayName
         .split(" ")
         .filter(Boolean)
@@ -126,46 +133,47 @@ function Navbar({ children }) {
         .slice(0, 2)
         .toUpperCase();
 
+    // ==============================
+    // ACTIVE NAVIGATION
+    // ==============================
 
-    // Check which navigation item is active
     function isActive(item) {
-        if (item.name === "Dashboard") {
-            return location.pathname === item.path;
-        }
-
         return location.pathname === item.path;
     }
-
 
     return (
         <div className="appLayout">
 
-            {/* =================================
+            {/* =========================================
                 SIDEBAR
-            ================================== */}
+            ========================================= */}
 
             <aside className="sidebar">
 
+                {/* BRAND */}
                 <div className="sidebarHeader">
 
                     <Link
-                        to={userRole === "SUPPLIER" ? "/supplier" : "/buyer"}
-                        className="text-decoration-none"
+                        to={
+                            userRole === "SUPPLIER"
+                                ? "/supplier"
+                                : "/buyer"
+                        }
+                        className="brandLink"
                     >
 
                         <div className="brand">
                             Nalla<span>Bid</span>
                         </div>
 
-                        <div className="brandText">
-                            Smart Procurement Platform
-                        </div>
+                        
 
                     </Link>
 
                 </div>
 
 
+                {/* NAVIGATION */}
                 <nav className="sidebarNav">
 
                     {menuItems.map((item) => (
@@ -195,36 +203,84 @@ function Navbar({ children }) {
                 </nav>
 
 
+                {/* SYSTEM */}
+                <div className="systemSection">
+
+                    <div className="systemTitle">
+                        SYSTEM
+                    </div>
+
+                    <Link
+                        to="/settings"
+                        className="navItem systemItem"
+                    >
+
+                        <i className="bi bi-gear"></i>
+
+                        <span>
+                            Settings
+                        </span>
+
+                        <i className="bi bi-chevron-right systemArrow"></i>
+
+                    </Link>
+
+
+                    <Link
+                        to="/help"
+                        className="navItem"
+                    >
+
+                        <i className="bi bi-question-circle"></i>
+
+                        <span>
+                            Help Center
+                        </span>
+
+                    </Link>
+
+                </div>
+
+
+                {/* SIDEBAR CARD */}
                 <div className="sidebarBottom">
 
                     <img
                         src={sidebarCard}
-                        alt="Better Procurement A Brighter Tomorrow"
-                        className="img-fluid sidebarCard"
+                        alt="Stronger Suppliers Brighter Possibilities"
+                        className="sidebarCard"
                     />
-
-                    <div className="therivu">
-                        Therivu<span>X</span>
-                    </div>
 
                 </div>
 
             </aside>
 
 
-            {/* =================================
+            {/* =========================================
                 MAIN AREA
-            ================================== */}
+            ========================================= */}
 
             <div className="mainArea">
 
 
-                {/* =================================
+                {/* =====================================
                     TOPBAR
-                ================================== */}
+                ===================================== */}
 
                 <header className="topbar">
 
+                    {/* HAMBURGER */}
+                    <button
+                        type="button"
+                        className="menuButton"
+                    >
+
+                        <i className="bi bi-list"></i>
+
+                    </button>
+
+
+                    {/* SEARCH */}
                     <div className="searchBox">
 
                         <i className="bi bi-search"></i>
@@ -234,48 +290,75 @@ function Navbar({ children }) {
                             placeholder={
                                 userRole === "SUPPLIER"
                                     ? "Search RFQs, quotations..."
-                                    : "Search RFQs, suppliers, categories..."
+                                    : "Search RFQs, suppliers, categories or any request..."
                             }
                         />
+
+                        <button
+                            type="button"
+                            className="searchButton"
+                        >
+
+                            <i className="bi bi-search"></i>
+
+                        </button>
 
                     </div>
 
 
+                    {/* =================================
+                        TOPBAR RIGHT
+
+                        Buyer View ❌
+                        Training Guide ❌
+
+                        Only:
+                        Notification
+                        Help
+                        Profile
+                    ================================= */}
+
                     <div className="topbarRight">
 
+                        {/* NOTIFICATION */}
                         <button
                             type="button"
-                            className="iconButton"
+                            className="iconButton notificationButton"
                         >
+
                             <i className="bi bi-bell"></i>
+
+                            <span className="notificationBadge">
+                                1
+                            </span>
+
                         </button>
 
 
+                        {/* HELP */}
                         <button
                             type="button"
                             className="iconButton"
                         >
-                            <i className="bi bi-chat-square-text"></i>
-                        </button>
 
-
-                        <button
-                            type="button"
-                            className="iconButton"
-                        >
                             <i className="bi bi-question-circle"></i>
+
                         </button>
 
 
+                        {/* DIVIDER */}
                         <div className="profileDivider"></div>
 
 
-                        <div className="dropdown">
+                        {/* PROFILE */}
+                        <div className="profileDropdown">
 
                             <button
                                 type="button"
                                 className="profileButton"
-                                onClick={() => setMenuOpen(!menuOpen)}
+                                onClick={() =>
+                                    setMenuOpen(!menuOpen)
+                                }
                                 aria-expanded={menuOpen}
                             >
 
@@ -302,30 +385,25 @@ function Navbar({ children }) {
                             </button>
 
 
-                            <ul
-                                className={`dropdown-menu dropdown-menu-end${
-                                    menuOpen ? " show" : ""
-                                }`}
-                                style={{ right: 0 }}
-                            >
+                            {/* LOGOUT MENU */}
+                            {menuOpen && (
 
-                                <li>
+                                <div className="profileMenu">
 
                                     <button
                                         type="button"
-                                        className="dropdown-item text-danger"
                                         onClick={handleLogout}
                                     >
 
-                                        <i className="bi bi-box-arrow-right me-2"></i>
+                                        <i className="bi bi-box-arrow-right"></i>
 
                                         Logout
 
                                     </button>
 
-                                </li>
+                                </div>
 
-                            </ul>
+                            )}
 
                         </div>
 
@@ -334,9 +412,12 @@ function Navbar({ children }) {
                 </header>
 
 
-                {/* =================================
-                    PAGE CONTENT
-                ================================== */}
+                {/* =====================================
+                    MAIN CONTENT
+
+                    Your dashboard / RFQ / quotation
+                    page will appear here.
+                ===================================== */}
 
                 <main className="mainContent">
                     {children}
@@ -347,6 +428,5 @@ function Navbar({ children }) {
         </div>
     );
 }
-
 
 export default Navbar;
