@@ -1,0 +1,80 @@
+.supplierPage { max-width: 1560px; margin: 0 auto; padding: 32px; color: #182c43; }
+.supplierPageHeading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.supplierPage h1 { font-size: clamp(24px, 2.3vw, 32px); font-weight: 700; letter-spacing: -0.8px; margin: 0 0 8px; overflow-wrap: anywhere; }
+.supplierPage p { color: #687787; margin: 0; font-size: 14px; line-height: 1.6; }
+.supplierPage .supplierEyebrow { color: #087b57; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.supplierPage a { color: #087653; text-decoration: none; }
+.supplierPage a:hover { color: #045239; text-decoration: underline; }
+.supplierPage .supplierButton { display: inline-flex; align-items: center; justify-content: center; gap: 12px; background: #087b57; color: #fff; padding: 13px 18px; border-radius: 10px; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+.supplierPage .supplierButton:hover { background: #056244; color: #fff; text-decoration: none; }
+.supplierPage a:focus-visible, .supplierLayout button:focus-visible { outline: 3px solid #469e80; outline-offset: 4px; }
+.supplierMetrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; margin-bottom: 24px; }
+.supplierCard { background: #fff; border: 1px solid #e4eae7; border-radius: 16px; box-shadow: 0 4px 16px #182c4308; min-width: 0; }
+.supplierMetric { padding: 22px; }
+.supplierMetricTop { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.supplierMetric h2 { font-size: 14px; font-weight: 600; margin: 0; color: #526375; }
+.supplierMetricIcon, .supplierStatusIcon { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 11px; background: #edf7f2; color: #087b57; font-size: 19px; }
+.supplierMetric > strong { display: block; font-size: 34px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+.supplierMetric p { font-size: 12px; }
+.supplierOverviewGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 24px; align-items: stretch; }
+.supplierPanel { display: flex; flex-direction: column; }
+.supplierPanelHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px; min-height: 110px; border-bottom: 1px solid #edf0ee; }
+.supplierPanelHeading h2 { font-size: 17px; font-weight: 700; margin: 0 0 6px; line-height: 1.4; }
+.supplierPanelHeading p { font-size: 13px; }
+.supplierPanelHeading > a { font-size: 12px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+.supplierEmpty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 36px 24px; min-height: 280px; }
+.supplierEmptyIcon { width: 62px; height: 62px; border-radius: 18px; background: #f0f7f3; display: grid; place-items: center; font-size: 27px; color: #6b9e86; margin-bottom: 18px; }
+.supplierEmpty h3 { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+.supplierEmpty p { font-size: 13px; max-width: 320px; }
+.supplierStatuses { flex: 1; padding: 20px 24px; display: grid; gap: 10px; }
+.supplierStatus { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #f8faf9; border: 1px solid #eef2ef; border-radius: 10px; font-size: 14px; }
+.supplierStatusIcon { width: 32px; height: 32px; border-radius: 8px; font-size: 16px; }
+.supplierStatus strong { margin-left: auto; font-size: 18px; }
+.supplierStatusIcon.submitted { background: #edf3ff; color: #4776bc; }
+.supplierStatusIcon.awarded { background: #fff5dd; color: #926b11; }
+.supplierStatusIcon.ineligible { background: #fbeeed; color: #b85b55; }
+.supplierDeadlines .supplierEmpty { min-height: 220px; }
+.supplierCount { border-radius: 20px; padding: 6px 12px; background: #edf7f2; color: #087653; font-size: 12px; white-space: nowrap; }
+.supplierTextLink { font-size: 14px; flex-shrink: 0; }
+
+/* Supplier layout overrides leave the buyer workspace unchanged. */
+.supplierLayout .sidebarHeader { height: 74px; align-items: center; }
+.supplierLayout .sidebar { overflow-y: auto; }
+.supplierLayout .mainArea, .supplierLayout .searchBox { min-width: 0; }
+.supplierLayout .brand { max-width: 100%; }
+.supplierLayout .menuButton { display: none; }
+@media (min-width: 1200px) {
+    .supplierOverviewGrid { grid-template-rows: auto 1fr; }
+    .supplierOverviewGrid > .supplierPanel { grid-row: span 2; display: grid; grid-template-rows: subgrid; gap: 0; }
+}
+@media (max-width: 1199px) {
+    .supplierMetrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .supplierOverviewGrid { grid-template-columns: 1fr; }
+    .supplierPageHeading { align-items: flex-start; flex-wrap: wrap; }
+}
+@media (max-width: 768px) {
+    .supplierPage { padding: 24px 16px; }
+    .supplierLayout .sidebar { width: 212px; min-width: 212px; top: 64px; height: calc(100dvh - 64px); transform: translateX(-100%); visibility: hidden; }
+    .supplierLayout.sidebarOpen .sidebar { transform: translateX(0); visibility: visible; box-shadow: 12px 0 28px #182c4326; }
+    .supplierLayout .sidebarHeader { height: 64px; padding: 16px 24px; justify-content: flex-start; }
+    .supplierLayout .brand { font-size: 26px; }
+    .supplierLayout .navItem { justify-content: flex-start; gap: 12px; padding: 0 16px; }
+    .supplierLayout .navItem span { display: inline; }
+    .supplierLayout .mainArea { width: 100%; margin-left: 0; }
+    .supplierLayout .topbar { height: 64px; }
+    .supplierLayout .menuButton { display: flex; }
+    .supplierLayout .topbarRight > .iconButton { width: 30px; }
+    .supplierLayout .mainContent { min-height: calc(100vh - 64px); }
+    .supplierPanelHeading { padding: 20px; }
+    .supplierStatuses { padding: 20px; }
+    .supplierLayout .searchBox > i { display: none; }
+    .supplierLayout .searchButton { display: none; }
+}
+@media (max-width: 480px) {
+    .supplierMetrics { gap: 12px; }
+    .supplierMetric { padding: 16px; }
+    .supplierMetricTop { align-items: flex-start; flex-direction: column-reverse; }
+    .supplierMetric h2 { font-size: 13px; }
+    .supplierPage .supplierButton { width: 100%; }
+    .supplierPanelHeading { flex-wrap: wrap; gap: 10px; }
+}
