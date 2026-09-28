@@ -1,4 +1,5 @@
-from collections import defaultdict
+import re
+from collections import Counter, defaultdict
 from decimal import Decimal
 
 from fastapi import HTTPException, status
@@ -155,7 +156,58 @@ def _engagement_by_supplier(db: Session, buyer: User, supplier_id: int | None = 
     return engagement
 
 
-def _directory_item(supplier: Supplier, catalogue_items: int, engagement: dict) -> dict:
+# =========================================================
+# Relevance: match supplier catalogues to the buyer's RFQ product names.
+# No industry/category data exists, so the buyer's own RFQs describe
+# what they buy, and shared product keywords mark a supplier as relevant.
+# =========================================================
+
+# Words too generic to say anything about the product itself.
+_STOP_WORDS = {
+    "the", "and", "for", "with", "from", "new", "set", "pack", "box", "item", "unit",
+    "piece", "pcs", "type", "size", "each", "kit", "supply", "product",
+}
+
+
+def _singular(word: str) -> str:
+    """Rough English singular so "bags"/"bag" and "batteries"/"battery" match."""
+    if word.endswith("ies") and len(word) > 4:
+        return word[:-3] + "y"
+    if word.endswith(("sses", "shes", "ches", "xes")):
+        return word[:-2]
+    if word.endswith("s") and not word.endswith(("ss", "us", "is")) and len(word) > 3:
+        return word[:-1]
+    return word
+
+
+def product_keywords(text: str | None) -> set[str]:
+    """Meaningful lowercase words of a product name ("Portland Cement Bags" -> {portland, cement, bag})."""
+    words = re.findall(r"[a-z]+", (text or "").lower())
+    keywords = {_singular(word) for word in words if len(word) >= 3}
+    return keywords - _STOP_WORDS
+
+
+def _buyer_rfq_keywords(db: Session, buyer: User) -> list[tuple[str, set[str]]]:
+    """(rfq_number, keywords) for every RFQ this buyer created."""
+    rows = db.execute(select(RFQ.rfq_number, RFQ.product_name).where(RFQ.buyer_id == buyer.id)).all()
+    return [(number, product_keywords(name)) for number, name in rows]
+
+
+def _matching_rfqs(keywords: set[str], rfq_keywords: list[tuple[str, set[str]]]) -> list[str]:
+    """RFQ numbers that share at least one keyword with the given product keywords."""
+    return [number for number, words in rfq_keywords if keywords & words]
+
+
+def _relevance(catalogue_keywords: set[str], rfq_keywords: list[tuple[str, set[str]]]) -> dict:
+    all_rfq_words = set().union(*(words for _, words in rfq_keywords))
+
+    return {
+        "matching_rfqs": len(_matching_rfqs(catalogue_keywords, rfq_keywords)),
+        "matched_keywords": sorted(catalogue_keywords & all_rfq_words)[:5],
+    }
+
+
+def _directory_item(supplier: Supplier, catalogue_items: int, engagement: dict, relevance: dict) -> dict:
     return {
         "id": supplier.id,
         "company_name": supplier.company_name,
@@ -165,24 +217,34 @@ def _directory_item(supplier: Supplier, catalogue_items: int, engagement: dict) 
         "joined_at": supplier.created_at,
         "catalogue_items": catalogue_items,
         "engagement": engagement,
+        "relevance": relevance,
     }
 
 
 def get_supplier_directory(db: Session, buyer: User) -> dict:
     suppliers = db.scalars(select(Supplier).order_by(Supplier.company_name.asc())).all()
 
-    catalogue_counts = dict(
-        db.execute(
-            select(SupplierCatalogue.supplier_id, func.count(SupplierCatalogue.id))
-            .group_by(SupplierCatalogue.supplier_id)
-        ).all()
-    )
+    # One pass over catalogue names gives both the item counts and each supplier's keywords.
+    catalogue_counts = Counter()
+    catalogue_keywords = defaultdict(set)
 
+    for supplier_id, product_name in db.execute(
+        select(SupplierCatalogue.supplier_id, SupplierCatalogue.product_name)
+    ).all():
+        catalogue_counts[supplier_id] += 1
+        catalogue_keywords[supplier_id] |= product_keywords(product_name)
+
+    rfq_keywords = _buyer_rfq_keywords(db, buyer)
     engagement = _engagement_by_supplier(db, buyer)
     empty = _empty_engagement() | {"eligibility_rate": None}
 
     items = [
-        _directory_item(supplier, catalogue_counts.get(supplier.id, 0), engagement.get(supplier.id, empty))
+        _directory_item(
+            supplier,
+            catalogue_counts[supplier.id],
+            engagement.get(supplier.id, empty),
+            _relevance(catalogue_keywords[supplier.id], rfq_keywords),
+        )
         for supplier in suppliers
     ]
 
@@ -192,6 +254,8 @@ def get_supplier_directory(db: Session, buyer: User) -> dict:
             "engaged_suppliers": sum(item["engagement"]["quotations"] > 0 for item in items),
             "suppliers_awarded": sum(item["engagement"]["awards"] > 0 for item in items),
             "catalogue_items": sum(catalogue_counts.values()),
+            "relevant_suppliers": sum(item["relevance"]["matching_rfqs"] > 0 for item in items),
+            "buyer_has_rfqs": bool(rfq_keywords),
         },
         "suppliers": items,
     }
@@ -223,16 +287,20 @@ def get_supplier_profile(db: Session, buyer: User, supplier_id: int) -> dict:
         supplier.id, _empty_engagement() | {"eligibility_rate": None}
     )
 
+    rfq_keywords = _buyer_rfq_keywords(db, buyer)
+    item_keywords = {item.id: product_keywords(item.product_name) for item in catalogue}
+    relevance = _relevance(set().union(*item_keywords.values()), rfq_keywords)
+
     return {
-        "supplier": _directory_item(supplier, len(catalogue), engagement),
+        "supplier": _directory_item(supplier, len(catalogue), engagement, relevance),
         "catalogue": [
             {
                 "id": item.id,
                 "product_name": item.product_name,
                 "description": item.description,
-                "unit_price": item.unit_price,
                 "available_quantity": item.available_quantity,
                 "updated_at": item.updated_at or item.created_at,
+                "matching_rfqs": _matching_rfqs(item_keywords[item.id], rfq_keywords),
             }
             for item in catalogue
         ],

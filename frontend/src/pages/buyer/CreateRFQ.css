@@ -1,51 +1,108 @@
+/* =========================================================
+   NALLABID - CREATE RFQ
+   Palette matches BuyerDashboard.css / myRFQs.css.
+   ========================================================= */
+
 .create-rfq-page {
     width: 100%;
-    max-width: 1100px;
+    min-height: 100%;
     margin: 0 auto;
-    padding: 24px 16px 50px;
+    padding: 28px 30px 50px;
+    background: #f7faf8;
+    color: #142238;
 }
 
 .create-rfq-header {
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 }
 
 .back-button {
-    border: none;
-    background: transparent;
-    color: #60a5fa;
-    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 16px;
+    padding: 7px 12px;
+    border: 1px solid #e4eae7;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #0a7a53;
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
-    font-size: 14px;
+    transition: background 0.18s ease;
+}
+
+.back-button:hover {
+    background: #e8f4ee;
 }
 
 .create-rfq-header h1 {
-    margin: 0 0 8px;
-    color: #ffffff;
-    font-size: 28px;
+    margin: 0 0 7px;
+    color: #111d31;
+    font-size: 34px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
 .create-rfq-header p {
     margin: 0;
-    color: #8fa8c4;
-    font-size: 14px;
+    color: #6c788c;
+    font-size: 15px;
+}
+
+.create-rfq-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    align-items: start;
 }
 
 .rfq-form {
-    background: #061d32;
-    border: 1px solid #123d61;
-    border-radius: 16px;
+    min-width: 0;
     overflow: hidden;
+    border: 1px solid #e4eae7;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(17, 45, 35, 0.05);
 }
 
 .form-section {
-    padding: 24px;
+    padding: 22px 24px 4px;
+}
+
+.form-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: -22px -24px 22px;
+    padding: 15px 24px;
+    border-bottom: 1px solid #edf0ee;
+}
+
+.form-section-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #e3f3eb;
+    color: #0a7b55;
+    font-size: 19px;
 }
 
 .form-section h2 {
-    margin: 0 0 24px;
-    color: #ffffff;
-    font-size: 19px;
+    margin: 0;
+    color: #142238;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.form-section-title p {
+    margin: 3px 0 0;
+    color: #718096;
+    font-size: 12px;
 }
 
 .form-group {
@@ -56,28 +113,35 @@
 
 .form-group label {
     margin-bottom: 8px;
-    color: #d8e7f5;
-    font-size: 14px;
-    font-weight: 600;
+    color: #253247;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid #1c4b70;
+    border: 1px solid #dfe5e2;
     border-radius: 9px;
-    background: #04172a;
-    color: #ffffff;
+    background: #ffffff;
+    color: #142238;
     padding: 12px 14px;
     outline: none;
     font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #a0a9b6;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-    border-color: #1683ff;
-    box-shadow: 0 0 0 2px rgba(22, 131, 255, 0.12);
+    border-color: #0c7b55;
+    box-shadow: 0 0 0 3px rgba(12, 123, 85, 0.12);
 }
 
 .form-group textarea {
@@ -86,7 +150,7 @@
 
 .form-group small {
     margin-top: 6px;
-    color: #718aa5;
+    color: #768295;
     font-size: 12px;
 }
 
@@ -100,31 +164,46 @@
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    padding: 20px 24px;
-    border-top: 1px solid #123d61;
+    padding: 18px 24px;
+    border-top: 1px solid #edf0ee;
+    background: #fafcfb;
 }
 
 .cancel-button,
 .create-button {
-    border: none;
-    border-radius: 8px;
-    padding: 11px 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    border-radius: 9px;
+    padding: 0 20px;
     cursor: pointer;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
+    transition: background 0.18s ease, transform 0.18s ease;
 }
 
 .cancel-button {
-    background: #102c46;
-    color: #c5d8ea;
+    border: 1px solid #dfe5e2;
+    background: #ffffff;
+    color: #253247;
+}
+
+.cancel-button:hover {
+    background: #f3f5f4;
 }
 
 .create-button {
-    background: #087cff;
+    border: 0;
+    background: #0c7b55;
     color: #ffffff;
+    box-shadow: 0 7px 18px rgba(8, 123, 85, 0.16);
 }
 
-.create-button:hover {
-    background: #006ce6;
+.create-button:hover:not(:disabled) {
+    background: #086947;
+    transform: translateY(-1px);
 }
 
 .create-button:disabled {
@@ -135,28 +214,85 @@
 .rfq-error {
     margin: 0 24px 20px;
     padding: 12px 14px;
-    border: 1px solid #7f1d1d;
-    border-radius: 8px;
-    background: #3b1117;
-    color: #fca5a5;
+    border: 1px solid #f5c6c6;
+    border-radius: 9px;
+    background: #fdf0f0;
+    color: #b23b3b;
     font-size: 14px;
 }
 
+/* Side panel with illustration and tips */
+
+.create-rfq-aside {
+    min-width: 0;
+    padding: 18px 20px 22px;
+    border: 1px solid #e4eae7;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #f1f9f5, #ffffff 55%);
+    box-shadow: 0 4px 15px rgba(17, 45, 35, 0.05);
+}
+
+.create-rfq-illustration {
+    display: block;
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    margin: 0 auto 8px;
+}
+
+.create-rfq-aside h3 {
+    margin: 0 0 12px;
+    color: #142238;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.create-rfq-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.create-rfq-tips li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    color: #475467;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.create-rfq-tips i {
+    margin-top: 1px;
+    color: #16a06f;
+}
+
 @media (min-width: 768px) {
-    .create-rfq-page {
-        padding: 32px 28px 60px;
-    }
-
-    .create-rfq-header h1 {
-        font-size: 32px;
-    }
-
     .form-row {
         grid-template-columns: 1fr 1fr;
         gap: 20px;
     }
+}
 
-    .form-row .form-group {
-        margin-bottom: 20px;
+@media (min-width: 1150px) {
+    .create-rfq-layout {
+        grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    .create-rfq-page {
+        padding: 20px 14px 40px;
+    }
+
+    .create-rfq-header h1 {
+        font-size: 27px;
+    }
+
+    .form-actions button {
+        flex: 1;
     }
 }

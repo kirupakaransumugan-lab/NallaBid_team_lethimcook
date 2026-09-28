@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { API_URL, getToken } from "../../services/authService";
+import createRfqIllustration from "../../assets/create-rfq-illustration.png";
 import "./CreateRFQ.css";
 
 function CreateRFQ() {
@@ -81,7 +82,8 @@ function CreateRFQ() {
                         className="back-button"
                         onClick={() => navigate("/buyer")}
                     >
-                        ← Back
+                        <i className="bi bi-arrow-left"></i>
+                        Back to Dashboard
                     </button>
 
                     <h1>Create New RFQ</h1>
@@ -93,157 +95,199 @@ function CreateRFQ() {
                 </div>
             </div>
 
-            <form
-                className="rfq-form"
-                onSubmit={handleSubmit}
-            >
+            <div className="create-rfq-layout">
+                <form
+                    className="rfq-form"
+                    onSubmit={handleSubmit}
+                >
 
-                <div className="form-section">
-                    <h2>RFQ Details</h2>
+                    <div className="form-section">
+                        <div className="form-section-title">
+                            <div className="form-section-icon">
+                                <i className="bi bi-file-earmark-text"></i>
+                            </div>
 
-                    <div className="form-group">
-                        <label htmlFor="product_name">
-                            Product Name
-                        </label>
-
-                        <input
-                            id="product_name"
-                            name="product_name"
-                            type="text"
-                            placeholder="e.g. Office Laptops"
-                            value={formData.product_name}
-                            onChange={handleChange}
-                            maxLength="150"
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="description">
-                            Description
-                        </label>
-
-                        <textarea
-                            id="description"
-                            name="description"
-                            placeholder="Describe the product requirements..."
-                            value={formData.description}
-                            onChange={handleChange}
-                            rows="5"
-                        />
-                    </div>
-
-                    <div className="form-row">
+                            <div>
+                                <h2>RFQ Details</h2>
+                                <p>Tell suppliers exactly what you need.</p>
+                            </div>
+                        </div>
 
                         <div className="form-group">
-                            <label htmlFor="quantity">
-                                Quantity
+                            <label htmlFor="product_name">
+                                Product Name
                             </label>
 
                             <input
-                                id="quantity"
-                                name="quantity"
-                                type="number"
-                                min="1"
-                                placeholder="100"
-                                value={formData.quantity}
+                                id="product_name"
+                                name="product_name"
+                                type="text"
+                                placeholder="e.g. Office Laptops"
+                                value={formData.product_name}
                                 onChange={handleChange}
+                                maxLength="150"
                                 required
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="max_delivery_days">
-                                Maximum Delivery Days
+                            <label htmlFor="description">
+                                Description
                             </label>
 
-                            <input
-                                id="max_delivery_days"
-                                name="max_delivery_days"
-                                type="number"
-                                min="1"
-                                placeholder="30"
-                                value={formData.max_delivery_days}
+                            <textarea
+                                id="description"
+                                name="description"
+                                placeholder="Describe the product requirements..."
+                                value={formData.description}
                                 onChange={handleChange}
-                                required
+                                rows="5"
                             />
                         </div>
 
-                    </div>
+                        <div className="form-row">
 
-                    <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="quantity">
+                                    Quantity
+                                </label>
 
-                        <div className="form-group">
-                            <label htmlFor="min_warranty_months">
-                                Minimum Warranty
-                            </label>
+                                <input
+                                    id="quantity"
+                                    name="quantity"
+                                    type="number"
+                                    min="1"
+                                    placeholder="100"
+                                    value={formData.quantity}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
 
-                            <input
-                                id="min_warranty_months"
-                                name="min_warranty_months"
-                                type="number"
-                                min="0"
-                                placeholder="12"
-                                value={formData.min_warranty_months}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="form-group">
+                                <label htmlFor="max_delivery_days">
+                                    Maximum Delivery Days
+                                </label>
 
-                            <small>
-                                Warranty period in months.
-                            </small>
+                                <input
+                                    id="max_delivery_days"
+                                    name="max_delivery_days"
+                                    type="number"
+                                    min="1"
+                                    placeholder="30"
+                                    value={formData.max_delivery_days}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="deadline">
-                                Quotation Deadline
-                            </label>
+                        <div className="form-row">
 
-                            <input
-                                id="deadline"
-                                name="deadline"
-                                type="datetime-local"
-                                value={formData.deadline}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="form-group">
+                                <label htmlFor="min_warranty_months">
+                                    Minimum Warranty
+                                </label>
 
-                            <small>
-                                Suppliers must submit quotations before this
-                                deadline.
-                            </small>
+                                <input
+                                    id="min_warranty_months"
+                                    name="min_warranty_months"
+                                    type="number"
+                                    min="0"
+                                    placeholder="12"
+                                    value={formData.min_warranty_months}
+                                    onChange={handleChange}
+                                    required
+                                />
+
+                                <small>
+                                    Warranty period in months.
+                                </small>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="deadline">
+                                    Quotation Deadline
+                                </label>
+
+                                <input
+                                    id="deadline"
+                                    name="deadline"
+                                    type="datetime-local"
+                                    value={formData.deadline}
+                                    onChange={handleChange}
+                                    required
+                                />
+
+                                <small>
+                                    Suppliers must submit quotations before this
+                                    deadline.
+                                </small>
+                            </div>
+
                         </div>
+                    </div>
+
+                    {error && (
+                        <div className="rfq-error">
+                            {error}
+                        </div>
+                    )}
+
+                    <div className="form-actions">
+
+                        <button
+                            type="button"
+                            className="cancel-button"
+                            onClick={() => navigate("/buyer")}
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            className="create-button"
+                            disabled={loading}
+                        >
+                            <i className={loading ? "bi bi-hourglass-split" : "bi bi-plus-lg"}></i>
+                            {loading ? "Creating..." : "Create RFQ"}
+                        </button>
 
                     </div>
-                </div>
 
-                {error && (
-                    <div className="rfq-error">
-                        {error}
-                    </div>
-                )}
+                </form>
 
-                <div className="form-actions">
+                <aside className="create-rfq-aside">
+                    <img
+                        src={createRfqIllustration}
+                        alt=""
+                        className="create-rfq-illustration"
+                    />
 
-                    <button
-                        type="button"
-                        className="cancel-button"
-                        onClick={() => navigate("/buyer")}
-                    >
-                        Cancel
-                    </button>
+                    <h3>Tips for a great RFQ</h3>
 
-                    <button
-                        type="submit"
-                        className="create-button"
-                        disabled={loading}
-                    >
-                        {loading ? "Creating..." : "Create RFQ"}
-                    </button>
-
-                </div>
-
-            </form>
+                    <ul className="create-rfq-tips">
+                        <li>
+                            <i className="bi bi-check-circle-fill"></i>
+                            Use a clear, specific product name.
+                        </li>
+                        <li>
+                            <i className="bi bi-check-circle-fill"></i>
+                            Describe specs, brand or quality requirements.
+                        </li>
+                        <li>
+                            <i className="bi bi-check-circle-fill"></i>
+                            Delivery and warranty values are used to check
+                            supplier eligibility automatically.
+                        </li>
+                        <li>
+                            <i className="bi bi-check-circle-fill"></i>
+                            Give suppliers enough time before the deadline.
+                        </li>
+                    </ul>
+                </aside>
+            </div>
         </div>
     );
 }
