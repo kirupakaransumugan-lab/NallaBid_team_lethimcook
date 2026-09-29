@@ -492,6 +492,30 @@
     background: #d5ece1;
 }
 
+.edit-rfq-button {
+    height: 36px;
+    min-width: 65px;
+    border: 0;
+    border-left: 1px solid #d5e8df;
+    background: #e3f3eb;
+    color: #087653;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.edit-rfq-button i {
+    margin-right: 5px;
+}
+
+.edit-rfq-button:hover {
+    background: #d5ece1;
+}
+
+.edit-rfq-button-last {
+    border-radius: 0 7px 7px 0;
+}
+
 .action-dropdown {
     width: 37px;
     height: 36px;

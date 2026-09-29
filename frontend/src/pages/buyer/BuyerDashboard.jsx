@@ -147,7 +147,7 @@ function BuyerDashboard() {
                         <span></span>
                     </div>
 
-                    <Link to="/buyer/quotations" className="buyer-stat-arrow">
+                    <Link to="/quotations" className="buyer-stat-arrow">
                         <i className="bi bi-arrow-right"></i>
                     </Link>
                 </article>
@@ -171,7 +171,7 @@ function BuyerDashboard() {
                         <span></span>
                     </div>
 
-                    <Link to="/buyer/quotations" className="buyer-stat-arrow">
+                    <Link to="/quotations?status=PENDING" className="buyer-stat-arrow">
                         <i className="bi bi-arrow-right"></i>
                     </Link>
                 </article>

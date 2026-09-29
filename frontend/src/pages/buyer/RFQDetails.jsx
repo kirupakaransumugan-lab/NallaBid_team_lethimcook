@@ -53,7 +53,7 @@ const ACTION_CONFIRMATIONS = {
     },
     evaluate: {
         title: "Evaluate quotations?",
-        message: "Every quotation will be checked against the delivery, warranty and quantity requirements. Running it again refreshes the results.",
+        message: "Every quotation will be checked against the delivery and warranty requirements. Running it again refreshes the results.",
         label: "Run Evaluation",
         icon: "bi-clipboard-check"
     }

@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { SupplierEmptyState } from "./SupplierDashboard";
 import { getMyQuotations } from "../../services/supplierRFQService";
 import { formatDate, formatLKR } from "../../utils/format";
+import "./supplier.css";
+
+const STATUS_STYLES = {
+    AWARDED: "awarded",
+    ELIGIBLE: "eligible",
+    INELIGIBLE: "ineligible",
+    SUBMITTED: "submitted"
+};
 
 function MyQuotations() {
     const [quotations, setQuotations] = useState([]);
@@ -21,161 +30,65 @@ function MyQuotations() {
         };
     }, []);
 
-    const getStatusClass = (status) => {
-        switch (status) {
-            case "AWARDED":
-                return "bg-success";
-
-            case "ELIGIBLE":
-                return "bg-primary";
-
-            case "INELIGIBLE":
-                return "bg-danger";
-
-            case "SUBMITTED":
-                return "bg-warning text-dark";
-
-            default:
-                return "bg-secondary";
-        }
-    };
-
     return (
-        <main className="pageArea">
-            <div className="container-fluid px-4 py-4">
-
-                <div className="mb-4">
-                    <h2 className="text-white fw-bold mb-1">
-                        My Quotations
-                    </h2>
-
-                    <p className="text-secondary mb-0">
-                        View and track the quotations you have submitted.
-                    </p>
-                </div>
-
-                {error && (
-                    <div
-                        className="alert alert-danger"
-                        role="alert"
-                    >
-                        {error}
+        <div className="supplierPage supplierQuotations">
+            <header className="supplierPageHeading">
+                <div><p className="supplierEyebrow">Supplier Workspace</p><h1>My Quotations</h1><p>View and track the quotations you have submitted.</p></div>
+                <Link className="supplierTextLink" to="/supplier"><i className="bi bi-arrow-left" aria-hidden="true" /> Back to Overview</Link>
+            </header>
+            <section className="supplierCard supplierPanel">
+                <header className="supplierPanelHeading"><div><h2>Submitted Quotations</h2><p>Status of every quotation you have sent to buyers.</p></div><span className="supplierCount">{quotations.length} submitted</span></header>
+                {loading ? (
+                    <div className="supplierLoading"><span className="spinner-border spinner-border-sm" aria-hidden="true" /> Loading your quotations...</div>
+                ) : error ? (
+                    <div className="supplierAlert" role="alert">{error}</div>
+                ) : quotations.length === 0 ? (
+                    <SupplierEmptyState icon="file-earmark-check" title="No quotations submitted">Your submitted quotations will appear here.</SupplierEmptyState>
+                ) : (
+                    <div className="table-responsive quotationTable">
+                        <table className="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Quotation</th>
+                                    <th scope="col">RFQ</th>
+                                    <th scope="col">Unit Price</th>
+                                    <th scope="col">Total Price</th>
+                                    <th scope="col">Delivery</th>
+                                    <th scope="col">Warranty</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col"><span className="visually-hidden">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {quotations.map((quotation) => (
+                                    <tr key={quotation.id}>
+                                        <td className="quotationNumber">{quotation.quotation_number}</td>
+                                        <td>
+                                            <span className="supplierRfqNumber">{quotation.rfq_number}</span>
+                                            <strong className="quotationProduct">{quotation.product_name}</strong>
+                                        </td>
+                                        <td>{formatLKR(quotation.unit_price)}</td>
+                                        <td><strong>{formatLKR(quotation.total_price)}</strong></td>
+                                        <td><i className="bi bi-truck" aria-hidden="true" /> {quotation.delivery_days} days</td>
+                                        <td><i className="bi bi-shield-check" aria-hidden="true" /> {quotation.warranty_months} months</td>
+                                        <td>
+                                            <span className={`quotationStatus ${STATUS_STYLES[quotation.status] ?? ""}`}>{quotation.status}</span>
+                                        </td>
+                                        <td className="text-end">
+                                            {quotation.rfq_status === "OPEN" ? (
+                                                <Link className="quotationViewLink" to={`/supplier/rfqs/${quotation.rfq_id}`}>View RFQ <i className="bi bi-arrow-right" aria-hidden="true" /></Link>
+                                            ) : (
+                                                <span className="quotationClosed">{quotation.rfq_status} · {formatDate(quotation.deadline)}</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
-
-                <div className="card bg-dark border-secondary">
-                    <div className="card-body">
-
-                        {loading ? (
-                            <div className="text-center py-5">
-
-                                <div
-                                    className="spinner-border text-primary"
-                                    role="status"
-                                >
-                                    <span className="visually-hidden">
-                                        Loading...
-                                    </span>
-                                </div>
-
-                                <p className="text-secondary mt-3 mb-0">
-                                    Loading your quotations...
-                                </p>
-
-                            </div>
-                        ) : quotations.length === 0 ? (
-                            <div className="text-center py-5">
-
-                                <i className="bi bi-file-earmark-check fs-1 text-secondary"></i>
-
-                                <h5 className="text-white mt-3">
-                                    No quotations submitted
-                                </h5>
-
-                                <p className="text-secondary mb-0">
-                                    Your submitted quotations will appear here.
-                                </p>
-
-                            </div>
-                        ) : (
-                            <div className="table-responsive">
-
-                                <table className="table table-dark table-hover align-middle mb-0">
-
-                                    <thead>
-                                        <tr>
-                                            <th>Quotation</th>
-                                            <th>RFQ</th>
-                                            <th>Unit Price</th>
-                                            <th>Total Price</th>
-                                            <th>Delivery</th>
-                                            <th>Warranty</th>
-                                            <th>Status</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {quotations.map((quotation) => (
-                                            <tr key={quotation.id}>
-
-                                                <td>
-                                                    {quotation.quotation_number}
-                                                </td>
-
-                                                <td>
-                                                    <strong>{quotation.rfq_number}</strong><br />
-                                                    <small>{quotation.product_name}</small>
-                                                </td>
-
-                                                <td>
-                                                    {formatLKR(quotation.unit_price)}
-                                                </td>
-
-                                                <td>
-                                                    {formatLKR(quotation.total_price)}
-                                                </td>
-
-                                                <td>
-                                                    {quotation.delivery_days} days
-                                                </td>
-
-                                                <td>
-                                                    {quotation.warranty_months} months
-                                                </td>
-
-                                                <td>
-                                                    <span
-                                                        className={`badge ${getStatusClass(
-                                                            quotation.status
-                                                        )}`}
-                                                    >
-                                                        {quotation.status}
-                                                    </span>
-                                                </td>
-
-                                                <td className="text-end">
-                                                    {quotation.rfq_status === "OPEN" ? (
-                                                        <Link to={`/supplier/rfqs/${quotation.rfq_id}`} className="btn btn-sm btn-outline-primary">View RFQ</Link>
-                                                    ) : (
-                                                        <span className="text-secondary">{quotation.rfq_status} · {formatDate(quotation.deadline)}</span>
-                                                    )}
-                                                </td>
-
-                                            </tr>
-                                        ))}
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-                        )}
-
-                    </div>
-                </div>
-
-            </div>
-        </main>
+            </section>
+        </div>
     );
 }
 

@@ -1,8 +1,9 @@
 import { apiRequest } from "./fetchClient";
 
 
-export function getAvailableRFQs() {
-    return apiRequest("/supplier/rfqs", {
+// scope is "open" (accepting quotations) or "closed" (deadline has passed).
+export function getAvailableRFQs(scope = "open") {
+    return apiRequest(`/supplier/rfqs?scope=${scope}`, {
         fallback: "Could not load available RFQs."
     });
 }

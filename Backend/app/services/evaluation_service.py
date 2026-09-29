@@ -9,7 +9,6 @@ from app.models.evaluation import Evaluation, EvaluationStatus
 from app.models.quotation import Quotation, QuotationStatus
 from app.models.rfq import RFQ, RFQStatus
 from app.models.supplier import Supplier
-from app.models.supplier_catalogue import SupplierCatalogue
 from app.models.user import User
 from app.services.rfq_lifecycle import is_sealed
 
@@ -40,28 +39,10 @@ def get_owned_rfq(db: Session, rfq_id: int, buyer: User, lock: bool = False) -> 
     return rfq
 
 
-def find_available_quantity(db: Session, supplier_id: int, product_name: str) -> int | None:
-    """How many units of the RFQ product the supplier's catalogue says they can supply.
-
-    Returns None when the supplier has no catalogue entry for the product.
-    """
-    # TODO(human): decide how a catalogue row matches the RFQ product and how
-    # multiple matching rows combine. Placeholder: exact, case-insensitive name
-    # match, taking the largest available_quantity.
-    return db.scalar(
-        select(func.max(SupplierCatalogue.available_quantity)).where(
-            SupplierCatalogue.supplier_id == supplier_id,
-            func.lower(func.trim(SupplierCatalogue.product_name)) == product_name.strip().lower(),
-        )
-    )
-
-
-def check_quotation(quotation: Quotation, rfq: RFQ, available_quantity: int | None) -> dict:
+def check_quotation(quotation: Quotation, rfq: RFQ) -> dict:
     """Apply the NallaBid eligibility rules to one quotation (no DB writes)."""
     delivery_pass = quotation.delivery_days <= rfq.max_delivery_days
     warranty_pass = quotation.warranty_months >= rfq.min_warranty_months
-    quantity_pass = available_quantity is not None and available_quantity >= rfq.quantity
-
     reasons = []
 
     if not delivery_pass:
@@ -74,20 +55,16 @@ def check_quotation(quotation: Quotation, rfq: RFQ, available_quantity: int | No
             f"Warranty {quotation.warranty_months} months is below minimum {rfq.min_warranty_months} months"
         )
 
-    if not quantity_pass:
-        if available_quantity is None:
-            reasons.append("No catalogue stock found for the requested product")
-        else:
-            reasons.append(
-                f"Available quantity {available_quantity} is below requested {rfq.quantity}"
-            )
-
-    eligible = delivery_pass and warranty_pass and quantity_pass
+    # Catalogue stock and RFQ quantity are informational only. They do not
+    # determine whether a quotation is eligible.
+    eligible = delivery_pass and warranty_pass
 
     return {
         "delivery_pass": delivery_pass,
         "warranty_pass": warranty_pass,
-        "quantity_pass": quantity_pass,
+        # Retained for the existing database column; quantity is no longer an
+        # eligibility rule, so it is always recorded as passing.
+        "quantity_pass": True,
         "overall_status": EvaluationStatus.ELIGIBLE if eligible else EvaluationStatus.INELIGIBLE,
         "failure_reason": "; ".join(reasons) or None,
     }
@@ -131,8 +108,7 @@ def run_rfq_evaluation(db: Session, rfq_id: int, buyer: User) -> dict:
     eligible_count = 0
 
     for quotation in quotations:
-        available = find_available_quantity(db, quotation.supplier_id, rfq.product_name)
-        result = check_quotation(quotation, rfq, available)
+        result = check_quotation(quotation, rfq)
 
         # Re-running an evaluation updates the row; evaluations.quotation_id is UNIQUE.
         evaluation = existing.get(quotation.id)

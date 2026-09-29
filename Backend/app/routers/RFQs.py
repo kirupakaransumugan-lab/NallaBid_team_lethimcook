@@ -497,7 +497,7 @@ def update_rfq(
         changed_terms = [
             field
             for field, value in data.model_dump(exclude_unset=True).items()
-            if field != "deadline" and value is not None and value != getattr(rfq, field)
+            if field != "deadline" and value != getattr(rfq, field)
         ]
 
         if changed_terms:
@@ -524,7 +524,9 @@ def update_rfq(
     if data.product_name is not None:
         rfq.product_name = data.product_name
 
-    if data.description is not None:
+    # `None` is an intentional value for description: it lets a buyer clear
+    # an optional description while the RFQ is still editable.
+    if "description" in data.model_fields_set:
         rfq.description = data.description
 
     if data.quantity is not None:

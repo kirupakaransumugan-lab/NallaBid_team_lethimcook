@@ -1,20 +1,36 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { createQuotation } from "../../services/supplierRFQService";
+import { formatLKR, formatNumber } from "../../utils/format";
+import "./supplier.css";
+import "./SupplierRFQDetails.css";
 
-function QuotationForm() {
-    const { rfqId } = useParams();
-    const navigate = useNavigate();
+const EMPTY_FORM = {
+    unit_price: "",
+    delivery_days: "",
+    warranty_months: "",
+    notes: "",
+};
 
-    const [formData, setFormData] = useState({
-        unit_price: "",
-        delivery_days: "",
-        warranty_months: "",
-        notes: "",
-    });
 
+// Live feedback shown beside the inputs while the supplier types.
+// Returns a list of { field, ok, message } entries.
+function getRequirementHints(formData, rfq) {
+    // TODO(human): compare formData against the RFQ's requirements.
+    void formData;
+    void rfq;
+    return [];
+}
+
+
+export function QuotationFormPanel({ rfq, onSubmitted }) {
+    const [formData, setFormData] = useState(EMPTY_FORM);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
+
+    const unitPrice = Number(formData.unit_price);
+    const estimatedTotal = unitPrice > 0 ? unitPrice * rfq.quantity : null;
+    const hints = getRequirementHints(formData, rfq);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -48,8 +64,9 @@ function QuotationForm() {
         setSubmitting(true);
 
         try {
-            await createQuotation(rfqId, quotationData);
-            navigate("/supplier/quotations", { replace: true });
+            await createQuotation(rfq.id, quotationData);
+            setFormData(EMPTY_FORM);
+            onSubmitted();
         } catch (requestError) {
             setError(requestError.message || "Unable to submit quotation.");
         } finally {
@@ -58,176 +75,88 @@ function QuotationForm() {
     };
 
     return (
-        <main className="pageArea">
-            <div className="container-fluid px-4 py-4">
+        <section className="supplierCard supplierPanel quotationFormPanel">
+            <header className="supplierPanelHeading">
+                <div><h2>Submit Quotation</h2><p>Enter your pricing, delivery and warranty details.</p></div>
+                <span className="supplierMetricIcon"><i className="bi bi-file-earmark-plus" aria-hidden="true" /></span>
+            </header>
 
-                <Link
-                    to={`/supplier/rfqs/${rfqId}`}
-                    className="text-decoration-none"
-                >
-                    <i className="bi bi-arrow-left me-2"></i>
-                    Back to RFQ Details
-                </Link>
+            <form className="quotationForm" onSubmit={handleSubmit}>
+                {error && <div className="supplierAlert" role="alert">{error}</div>}
 
-                <div className="mt-4 mb-4">
-                    <h2 className="text-white fw-bold mb-1">
-                        Submit Quotation
-                    </h2>
-
-                    <p className="text-secondary mb-0">
-                        Enter your pricing, delivery and warranty details.
-                    </p>
-                </div>
-
-                <div className="row">
-                    <div className="col-xl-8">
-
-                        <div className="card bg-dark border-secondary">
-                            <div className="card-body p-4">
-
-                                {error && (
-                                    <div
-                                        className="alert alert-danger"
-                                        role="alert"
-                                    >
-                                        {error}
-                                    </div>
-                                )}
-
-                                <form onSubmit={handleSubmit}>
-
-                                    <div className="mb-4">
-                                        <label
-                                            htmlFor="unit_price"
-                                            className="form-label text-white"
-                                        >
-                                            Unit Price
-                                        </label>
-
-                                        <input
-                                            id="unit_price"
-                                            name="unit_price"
-                                            type="number"
-                                            min="0.01"
-                                            step="0.01"
-                                            className="form-control"
-                                            value={formData.unit_price}
-                                            onChange={handleChange}
-                                            placeholder="Enter unit price"
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="row g-3 mb-4">
-
-                                        <div className="col-md-6">
-                                            <label
-                                                htmlFor="delivery_days"
-                                                className="form-label text-white"
-                                            >
-                                                Delivery Days
-                                            </label>
-
-                                            <input
-                                                id="delivery_days"
-                                                name="delivery_days"
-                                                type="number"
-                                                min="1"
-                                                step="1"
-                                                className="form-control"
-                                                value={formData.delivery_days}
-                                                onChange={handleChange}
-                                                placeholder="Enter delivery days"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="col-md-6">
-                                            <label
-                                                htmlFor="warranty_months"
-                                                className="form-label text-white"
-                                            >
-                                                Warranty Months
-                                            </label>
-
-                                            <input
-                                                id="warranty_months"
-                                                name="warranty_months"
-                                                type="number"
-                                                min="0"
-                                                step="1"
-                                                className="form-control"
-                                                value={formData.warranty_months}
-                                                onChange={handleChange}
-                                                placeholder="Enter warranty months"
-                                                required
-                                            />
-                                        </div>
-
-                                    </div>
-
-                                    <div className="mb-4">
-                                        <label
-                                            htmlFor="notes"
-                                            className="form-label text-white"
-                                        >
-                                            Notes
-                                        </label>
-
-                                        <textarea
-                                            id="notes"
-                                            name="notes"
-                                            className="form-control"
-                                            rows="5"
-                                            value={formData.notes}
-                                            onChange={handleChange}
-                                            placeholder="Add optional quotation notes"
-                                        />
-                                    </div>
-
-                                    <div className="d-flex justify-content-end gap-2">
-
-                                        <Link
-                                            to={`/supplier/rfqs/${rfqId}`}
-                                            className="btn btn-outline-secondary"
-                                        >
-                                            Cancel
-                                        </Link>
-
-                                        <button
-                                            type="submit"
-                                            className="btn btn-primary"
-                                            disabled={submitting}
-                                        >
-                                            {submitting ? (
-                                                <>
-                                                    <span
-                                                        className="spinner-border spinner-border-sm me-2"
-                                                        aria-hidden="true"
-                                                    ></span>
-                                                    Submitting...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <i className="bi bi-send me-2"></i>
-                                                    Submit Quotation
-                                                </>
-                                            )}
-                                        </button>
-
-                                    </div>
-
-                                </form>
-
-                            </div>
-                        </div>
-
+                <div className="quotationField">
+                    <label htmlFor="unit_price">Unit Price</label>
+                    <div className="quotationInput">
+                        <i className="bi bi-cash-coin" aria-hidden="true" />
+                        <input id="unit_price" name="unit_price" type="number" min="0.01" step="0.01" value={formData.unit_price} onChange={handleChange} placeholder="0.00" required />
+                        <span className="quotationUnit">LKR / unit</span>
                     </div>
                 </div>
 
-            </div>
-        </main>
+                <div className="quotationFormRow">
+                    <div className="quotationField">
+                        <label htmlFor="delivery_days">Delivery Time</label>
+                        <div className="quotationInput">
+                            <i className="bi bi-truck" aria-hidden="true" />
+                            <input id="delivery_days" name="delivery_days" type="number" min="1" step="1" value={formData.delivery_days} onChange={handleChange} placeholder={String(rfq.max_delivery_days)} required />
+                            <span className="quotationUnit">days</span>
+                        </div>
+                        <small>Maximum {rfq.max_delivery_days} days</small>
+                    </div>
+                    <div className="quotationField">
+                        <label htmlFor="warranty_months">Warranty</label>
+                        <div className="quotationInput">
+                            <i className="bi bi-shield-check" aria-hidden="true" />
+                            <input id="warranty_months" name="warranty_months" type="number" min="0" step="1" value={formData.warranty_months} onChange={handleChange} placeholder={String(rfq.min_warranty_months)} required />
+                            <span className="quotationUnit">months</span>
+                        </div>
+                        <small>Minimum {rfq.min_warranty_months} months</small>
+                    </div>
+                </div>
+
+                <div className="quotationField">
+                    <label htmlFor="notes">Notes <span className="text-muted fw-normal">(optional)</span></label>
+                    <div className="quotationInput">
+                        <textarea id="notes" name="notes" rows="4" value={formData.notes} onChange={handleChange} placeholder="Brand, model, payment terms or anything the buyer should know" />
+                    </div>
+                </div>
+
+                {hints.length > 0 && (
+                    <ul className="quotationHints">
+                        {hints.map((hint) => (
+                            <li key={hint.field} className={hint.ok ? "ok" : "warn"}>
+                                <i className={`bi ${hint.ok ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill"}`} aria-hidden="true" /> {hint.message}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
+                <div className="quotationTotal">
+                    <div>
+                        <span>Estimated total</span>
+                        <small>{estimatedTotal === null ? `Unit price × ${formatNumber(rfq.quantity)} units` : `${formatLKR(unitPrice)} × ${formatNumber(rfq.quantity)} units`}</small>
+                    </div>
+                    <strong>{estimatedTotal === null ? "—" : formatLKR(estimatedTotal)}</strong>
+                </div>
+
+                <button type="submit" className="supplierButton" disabled={submitting}>
+                    {submitting ? (
+                        <><span className="spinner-border spinner-border-sm" aria-hidden="true" /> Submitting...</>
+                    ) : (
+                        <><i className="bi bi-send" aria-hidden="true" /> Submit Quotation</>
+                    )}
+                </button>
+            </form>
+        </section>
     );
+}
+
+
+// The form now lives beside the RFQ details, so the old standalone route
+// sends suppliers to the split view.
+function QuotationForm() {
+    const { rfqId } = useParams();
+    return <Navigate to={`/supplier/rfqs/${rfqId}`} replace />;
 }
 
 export default QuotationForm;

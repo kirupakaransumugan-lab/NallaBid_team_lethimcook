@@ -398,6 +398,17 @@ function MyRFQs() {
                                                             View
                                                         </button>
 
+                                                        {["DRAFT", "OPEN"].includes(rfq.status) && rfq.quotation_count === 0 && (
+                                                            <button
+                                                                type="button"
+                                                                className={`edit-rfq-button ${rfq.status === "OPEN" ? "" : "edit-rfq-button-last"}`}
+                                                                onClick={() => navigate(`/rfqs/${rfq.id}/edit`)}
+                                                            >
+                                                                <i className="bi bi-pencil-square"></i>
+                                                                Edit
+                                                            </button>
+                                                        )}
+
                                                         {rfq.status === "OPEN" && (
                                                             <>
                                                                 <button

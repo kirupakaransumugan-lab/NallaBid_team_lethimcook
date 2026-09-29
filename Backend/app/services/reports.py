@@ -13,7 +13,6 @@ from app.models.rfq import RFQ, RFQStatus
 from app.models.supplier import Supplier
 from app.models.user import User
 from app.services.evaluation_service import (
-    find_available_quantity,
     get_owned_rfq,
     get_rfq_evaluation_overview,
 )
@@ -300,7 +299,6 @@ def get_rfq_comparison(db: Session, user: User, rfq_id: int | None) -> dict:
 FAILURE_LABELS = {
     "delivery_pass": "Delivery requirement not met",
     "warranty_pass": "Warranty requirement not met",
-    "quantity_pass": "Insufficient available quantity",
 }
 
 
@@ -314,7 +312,7 @@ def get_supplier_eligibility(
         select(Quotation, RFQ, Supplier.company_name, Evaluation)
         .join(RFQ, RFQ.id == Quotation.rfq_id)
         .join(Supplier, Supplier.id == Quotation.supplier_id)
-        .join(Evaluation, Evaluation.quotation_id == Quotation.id)
+        .outerjoin(Evaluation, Evaluation.quotation_id == Quotation.id)
         .order_by(RFQ.created_at.desc(), Supplier.company_name.asc())
     )
     stmt = _scope(stmt, db, user)
@@ -334,19 +332,14 @@ def get_supplier_eligibility(
         stmt = stmt.where(Evaluation.overall_status == eligibility)
         filters["Eligibility"] = eligibility.value.title()
 
-    available_cache = {}
     failure_counts = {label: 0 for label in FAILURE_LABELS.values()}
     rows = []
 
     for quotation, rfq, supplier_name, evaluation in db.execute(stmt).all():
-        cache_key = (quotation.supplier_id, rfq.product_name)
-
-        if cache_key not in available_cache:
-            available_cache[cache_key] = find_available_quantity(db, quotation.supplier_id, rfq.product_name)
-
-        for flag, label in FAILURE_LABELS.items():
-            if not getattr(evaluation, flag):
-                failure_counts[label] += 1
+        if evaluation is not None:
+            for flag, label in FAILURE_LABELS.items():
+                if not getattr(evaluation, flag):
+                    failure_counts[label] += 1
 
         rows.append({
             "supplier_name": supplier_name,
@@ -354,18 +347,22 @@ def get_supplier_eligibility(
             "quotation_number": quotation.quotation_number,
             "product_name": rfq.product_name,
             "requested_quantity": rfq.quantity,
-            "available_quantity": available_cache[cache_key],
             "quoted_price": quotation.total_price,
             "delivery_requirement": rfq.max_delivery_days,
             "actual_delivery": quotation.delivery_days,
             "warranty_requirement": rfq.min_warranty_months,
             "actual_warranty": quotation.warranty_months,
-            "eligibility": evaluation.overall_status.value,
-            "failure_reason": evaluation.failure_reason,
-            "evaluated_at": evaluation.evaluated_at,
+            "eligibility": evaluation.overall_status.value if evaluation else "PENDING",
+            "failure_reason": evaluation.failure_reason if evaluation else None,
+            # A pending quotation has no evaluation timestamp yet. Its submission
+            # time keeps the report row valid and gives the user useful context.
+            "evaluated_at": evaluation.evaluated_at if evaluation else quotation.submitted_at,
         })
 
     eligible = sum(row["eligibility"] == "ELIGIBLE" for row in rows)
+    ineligible = sum(row["eligibility"] == "INELIGIBLE" for row in rows)
+    pending = sum(row["eligibility"] == "PENDING" for row in rows)
+    evaluated = eligible + ineligible
 
     return {
         "generated_at": datetime.utcnow(),
@@ -375,8 +372,9 @@ def get_supplier_eligibility(
         "summary": {
             "total_quotations": len(rows),
             "eligible_quotations": eligible,
-            "ineligible_quotations": len(rows) - eligible,
-            "eligibility_percentage": round(eligible * 100 / len(rows), 1) if rows else 0.0,
+            "ineligible_quotations": ineligible,
+            "pending_quotations": pending,
+            "eligibility_percentage": round(eligible * 100 / evaluated, 1) if evaluated else 0.0,
             "failure_reason_counts": [
                 {"reason": reason, "count": count} for reason, count in failure_counts.items()
             ],
@@ -494,7 +492,6 @@ SUPPLIER_ELIGIBILITY_COLUMNS = [
     ("quotation_number", "Quotation"),
     ("product_name", "Product"),
     ("requested_quantity", "Requested Qty"),
-    ("available_quantity", "Available Qty"),
     ("quoted_price", "Quoted Price (LKR)"),
     ("delivery_requirement", "Max Delivery (days)"),
     ("actual_delivery", "Actual Delivery (days)"),
@@ -540,9 +537,10 @@ def rfq_comparison_summary_lines(report: dict) -> list[tuple[str, object]]:
 def supplier_eligibility_summary_lines(report: dict) -> list[tuple[str, object]]:
     summary = report["summary"]
     lines = [
-        ("Evaluated quotations", summary["total_quotations"]),
+        ("Quotations", summary["total_quotations"]),
         ("Eligible", summary["eligible_quotations"]),
         ("Ineligible", summary["ineligible_quotations"]),
+        ("Pending", summary["pending_quotations"]),
         ("Eligibility rate", f"{summary['eligibility_percentage']}%"),
     ]
 

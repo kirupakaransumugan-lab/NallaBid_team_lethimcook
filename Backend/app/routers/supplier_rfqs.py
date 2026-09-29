@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -22,12 +23,16 @@ def require_supplier(current_user: User) -> User:
     return current_user
 
 
+CLOSED_RFQ_LIMIT = 50
+
+
 @router.get("", response_model=list[SupplierRFQListItem])
 def list_open_rfqs(
+    scope: Literal["open", "closed"] = "open",
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """List every buyer RFQ that is currently open to suppliers.
+    """List buyer RFQs for suppliers: open ones, or ones whose deadline has passed.
 
     The left join only checks whether the current supplier already submitted;
     it never exposes other suppliers' bids or buyer-only data.
@@ -37,15 +42,23 @@ def list_open_rfqs(
     supplier_id = supplier.id if supplier else -1
     now = datetime.utcnow()
 
-    rows = db.execute(
-        select(RFQ, Quotation.id)
-        .outerjoin(
-            Quotation,
-            (Quotation.rfq_id == RFQ.id) & (Quotation.supplier_id == supplier_id),
+    stmt = select(RFQ, Quotation.id).outerjoin(
+        Quotation,
+        (Quotation.rfq_id == RFQ.id) & (Quotation.supplier_id == supplier_id),
+    )
+
+    if scope == "open":
+        stmt = stmt.where(RFQ.status == RFQStatus.OPEN, RFQ.deadline > now).order_by(RFQ.deadline.asc(), RFQ.id.asc())
+    else:
+        # Expired RFQs may still be OPEN until a buyer request runs close_expired_rfqs.
+        stmt = (
+            stmt.where(or_(
+                RFQ.status.in_((RFQStatus.CLOSED, RFQStatus.AWARDED, RFQStatus.COMPLETED)),
+                (RFQ.status == RFQStatus.OPEN) & (RFQ.deadline <= now),
+            ))
+            .order_by(RFQ.deadline.desc(), RFQ.id.desc())
+            .limit(CLOSED_RFQ_LIMIT)
         )
-        .where(RFQ.status == RFQStatus.OPEN, RFQ.deadline > now)
-        .order_by(RFQ.deadline.asc(), RFQ.id.asc())
-    ).all()
 
     return [
         SupplierRFQListItem(
@@ -57,10 +70,10 @@ def list_open_rfqs(
             max_delivery_days=rfq.max_delivery_days,
             min_warranty_months=rfq.min_warranty_months,
             deadline=rfq.deadline,
-            status=rfq.status.value,
+            status=RFQStatus.CLOSED.value if rfq.status == RFQStatus.OPEN and rfq.deadline <= now else rfq.status.value,
             has_submitted=quotation_id is not None,
         )
-        for rfq, quotation_id in rows
+        for rfq, quotation_id in db.execute(stmt).all()
     ]
 
 

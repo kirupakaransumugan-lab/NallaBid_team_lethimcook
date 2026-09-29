@@ -17,6 +17,7 @@ from app.schemas.quotation import (
     SupplierQuotationListItem,
 )
 from app.security.auth import get_current_user
+from app.services.evaluation_service import check_quotation
 
 router = APIRouter(tags=["Quotations"])
 
@@ -82,7 +83,9 @@ def create_quotation(rfq_id: int, data: QuotationCreate, db: Session = Depends(g
     existing = db.scalar(select(Quotation).where(Quotation.rfq_id == rfq_id, Quotation.supplier_id == supplier.id))
     if existing is not None:
         raise HTTPException(status_code=409, detail="You have already submitted a quotation for this RFQ")
-    quotation = Quotation(quotation_number=generate_quotation_number(), rfq_id=rfq.id, supplier_id=supplier.id, unit_price=data.unit_price, total_price=Decimal(data.unit_price) * Decimal(rfq.quantity), delivery_days=data.delivery_days, warranty_months=data.warranty_months, notes=data.notes, status=QuotationStatus.SUBMITTED)
+    quotation = Quotation(quotation_number=generate_quotation_number(), rfq_id=rfq.id, supplier_id=supplier.id, unit_price=data.unit_price, total_price=Decimal(data.unit_price) * Decimal(rfq.quantity), delivery_days=data.delivery_days, warranty_months=data.warranty_months, notes=data.notes)
+    result = check_quotation(quotation, rfq)
+    quotation.status = QuotationStatus.ELIGIBLE if result["overall_status"].value == "ELIGIBLE" else QuotationStatus.INELIGIBLE
     db.add(quotation)
     try:
         db.commit()
@@ -120,5 +123,7 @@ def update_quotation(quotation_id: int, data: QuotationUpdate, db: Session = Dep
     for field, value in data.model_dump(exclude_unset=True).items():
         setattr(quotation, field, value)
     quotation.total_price = Decimal(quotation.unit_price) * Decimal(rfq.quantity)
+    result = check_quotation(quotation, rfq)
+    quotation.status = QuotationStatus.ELIGIBLE if result["overall_status"].value == "ELIGIBLE" else QuotationStatus.INELIGIBLE
     db.commit(); db.refresh(quotation)
     return quotation

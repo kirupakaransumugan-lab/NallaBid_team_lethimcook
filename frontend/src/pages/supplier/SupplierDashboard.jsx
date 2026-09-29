@@ -65,7 +65,7 @@ export default function SupplierDashboard() {
     });
 
     return (
-        <div className="supplierPage">
+        <div className="supplierPage supplierDashboard">
             <header className="supplierPageHeading">
                 <div><p className="supplierEyebrow">Supplier Overview</p>
                     <h1>Welcome Back{name ? `, ${name}` : ""}!</h1>

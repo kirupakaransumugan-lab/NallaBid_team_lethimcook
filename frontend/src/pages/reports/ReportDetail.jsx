@@ -50,7 +50,6 @@ const TABLES = {
             ["Quotation", (row) => row.quotation_number],
             ["Product", (row) => row.product_name],
             ["Requested qty", (row) => formatNumber(row.requested_quantity), true],
-            ["Available qty", (row) => formatNumber(row.available_quantity), true],
             ["Quoted price", (row) => formatLKR(row.quoted_price), true],
             ["Delivery (req / actual)", (row) => `≤ ${row.delivery_requirement} / ${row.actual_delivery} days`, true],
             ["Warranty (req / actual)", (row) => `≥ ${row.warranty_requirement} / ${row.actual_warranty} months`, true],
@@ -115,9 +114,10 @@ function summaryTilesFor(type, summary) {
 
     if (type === "supplier-eligibility") {
         return [
-            ["Evaluated quotations", summary.total_quotations],
+            ["Quotations", summary.total_quotations],
             ["Eligible", summary.eligible_quotations],
             ["Ineligible", summary.ineligible_quotations],
+            ["Pending", summary.pending_quotations],
             ["Eligibility rate", `${summary.eligibility_percentage}%`]
         ];
     }

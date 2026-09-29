@@ -7,7 +7,6 @@ import { getCurrentUser } from "../../services/authService";
 import { downloadReport, getReportDashboard, REPORT_TYPES, reportsBasePath } from "../../services/reportService";
 import { formatLKR, formatNumber } from "../../utils/format";
 import { BarList, ColumnChart } from "./ReportCharts";
-import eligibilityIllustration from "../../assets/eligibility-illustration.png";
 
 import "./reports.css";
 
@@ -299,7 +298,7 @@ function Reports() {
     );
 
     return (
-        <div className="nallabid-reports-page">
+        <div className="nallabid-reports-page nallabid-reports-dashboard">
             <header className="nallabid-report-header">
                 <div>
                     <h1>Reports &amp; Analytics</h1>

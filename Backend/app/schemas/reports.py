@@ -118,7 +118,6 @@ class SupplierEligibilityRow(BaseModel):
     quotation_number: str
     product_name: str
     requested_quantity: int
-    available_quantity: int | None = None
     quoted_price: Decimal
     delivery_requirement: int
     actual_delivery: int
@@ -138,6 +137,7 @@ class SupplierEligibilitySummary(BaseModel):
     total_quotations: int
     eligible_quotations: int
     ineligible_quotations: int
+    pending_quotations: int
     eligibility_percentage: float
     failure_reason_counts: list[FailureReasonCount]
 

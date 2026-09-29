@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import CreateRFQ from "./pages/buyer/CreateRFQ";
+import EditRFQ from "./pages/buyer/EditRFQ";
 import MyRFQs from "./pages/buyer/myRFQs";
 
 import BuyerDashboard from "./pages/buyer/BuyerDashboard";
@@ -75,6 +76,7 @@ function RequireRole({ role, children }) {
 // The Buyer Dashboard links to /buyer/... paths; the pages live at the sidebar paths.
 const BUYER_PATH_ALIASES = {
     "/buyer/rfqs": "/rfqs",
+    "/buyer/quotations": "/quotations",
     "/buyer/suppliers": "/suppliers",
     "/buyer/reports": "/reports",
     "/buyer/profile": "/profile"
@@ -273,6 +275,17 @@ function App() {
                 <Route
                     path="/rfqs/create"
                     element={<Navigate to="/buyer/rfqs/create" replace />}
+                />
+
+                <Route
+                    path="/rfqs/:rfqId/edit"
+                    element={
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <EditRFQ />
+                            </Navbar>
+                        </RequireRole>
+                    }
                 />
 
                 <Route

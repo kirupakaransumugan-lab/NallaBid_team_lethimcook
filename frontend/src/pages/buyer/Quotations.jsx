@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import EmptyState from "../../components/EmptyState";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -56,13 +56,17 @@ function QuotationActions({ quotation }) {
 
 
 function Quotations() {
+    const [searchParams] = useSearchParams();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const [search, setSearch] = useState("");
     const [rfqFilter, setRfqFilter] = useState("ALL");
-    const [statusFilter, setStatusFilter] = useState("ALL");
+    const [statusFilter, setStatusFilter] = useState(() => {
+        const requestedStatus = searchParams.get("status");
+        return STATUS_FILTERS.some(([value]) => value === requestedStatus) ? requestedStatus : "ALL";
+    });
 
     // setState only runs in promise callbacks, never synchronously inside the effect.
     const loadQuotations = useCallback(() => getReceivedQuotations()

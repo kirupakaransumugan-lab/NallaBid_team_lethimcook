@@ -44,12 +44,27 @@ export function closeRFQ(rfqId) {
 }
 
 
+export function getRFQ(rfqId) {
+    return apiRequest(`/rfqs/${rfqId}`, {
+        fallback: "Could not load the RFQ."
+    });
+}
+
+
+// Buyers can change every RFQ field before the first quotation arrives.
+// The backend is the final authority: once quotations exist it accepts only
+// a deadline extension, so a supplier submitting at the same time is safe.
+export function updateRFQ(rfqId, changes) {
+    return apiRequest(`/rfqs/${rfqId}`, {
+        method: "PUT",
+        body: changes,
+        fallback: "Could not update the RFQ."
+    });
+}
+
+
 // The backend permits an OPEN RFQ's deadline to be extended. It rejects any
 // other term change after suppliers have submitted quotations.
 export function extendRFQDeadline(rfqId, deadline) {
-    return apiRequest(`/rfqs/${rfqId}`, {
-        method: "PUT",
-        body: { deadline },
-        fallback: "Could not extend the RFQ deadline."
-    });
+    return updateRFQ(rfqId, { deadline });
 }
