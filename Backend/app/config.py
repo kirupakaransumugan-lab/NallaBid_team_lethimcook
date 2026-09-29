@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     DB_HOST: str
     DB_PORT: int
     DB_NAME: str
+    DB_SSL: bool = False
 
     JWT_SECRET_KEY: str
     JWT_ALGORITHM: str
