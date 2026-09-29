@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { createQuotation } from "../../services/supplierRFQService";
 
 function QuotationForm() {
     const { rfqId } = useParams();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         unit_price: "",
@@ -46,14 +48,10 @@ function QuotationForm() {
         setSubmitting(true);
 
         try {
-            // Quotation API will be connected when the backend endpoint is ready.
-            console.log("RFQ ID:", rfqId);
-            console.log("Quotation:", quotationData);
+            await createQuotation(rfqId, quotationData);
+            navigate("/supplier/quotations", { replace: true });
         } catch (requestError) {
-            setError(
-                requestError.response?.data?.detail ||
-                "Unable to submit quotation."
-            );
+            setError(requestError.message || "Unable to submit quotation.");
         } finally {
             setSubmitting(false);
         }

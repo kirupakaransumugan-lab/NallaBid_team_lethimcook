@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { getSupplierRFQ } from "../../services/supplierRFQService";
+import { formatDate, formatNumber } from "../../utils/format";
 
 function SupplierRFQDetails() {
     const { rfqId } = useParams();
@@ -9,8 +11,16 @@ function SupplierRFQDetails() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        // RFQ details API will be connected when the backend endpoint is ready.
-        setLoading(false);
+        let active = true;
+
+        getSupplierRFQ(rfqId)
+            .then((data) => active && setRfq(data))
+            .catch((requestError) => active && setError(requestError.message))
+            .finally(() => active && setLoading(false));
+
+        return () => {
+            active = false;
+        };
     }, [rfqId]);
 
     if (loading) {
@@ -119,7 +129,7 @@ function SupplierRFQDetails() {
                                 </small>
 
                                 <h5 className="text-white mt-2 mb-0">
-                                    {rfq.quantity}
+                                    {formatNumber(rfq.quantity)} units
                                 </h5>
                             </div>
                         </div>
@@ -161,7 +171,7 @@ function SupplierRFQDetails() {
                                 </small>
 
                                 <h5 className="text-white mt-2 mb-0">
-                                    {new Date(rfq.deadline).toLocaleDateString()}
+                                    {formatDate(rfq.deadline)}
                                 </h5>
                             </div>
                         </div>
@@ -170,13 +180,14 @@ function SupplierRFQDetails() {
                 </div>
 
                 <div className="mt-4">
-                    <Link
-                        to={`/supplier/rfqs/${rfqId}/quotation`}
-                        className="btn btn-primary"
-                    >
-                        <i className="bi bi-file-earmark-plus me-2"></i>
-                        Submit Quotation
-                    </Link>
+                    {rfq.has_submitted ? (
+                        <div className="alert alert-success mb-0">You have already submitted a quotation for this RFQ.</div>
+                    ) : (
+                        <Link to={`/supplier/rfqs/${rfqId}/quotation`} className="btn btn-primary">
+                            <i className="bi bi-file-earmark-plus me-2"></i>
+                            Submit Quotation
+                        </Link>
+                    )}
                 </div>
 
             </div>

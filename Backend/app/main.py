@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import Base, engine
 from app.models.user import User
-from app.routers import suppliers, quotations, imports
+from app.routers import suppliers, quotations, imports, supplier_rfqs
 from app.routers import awards, evaluations, reports, buyer_workspace, users
 
 from app.routers.auth import router as auth_router
@@ -47,8 +47,9 @@ app.include_router(
 # Register Gideon routers
 # Supplier contact details are not public: any logged-in user, but never anonymous.
 app.include_router(suppliers.router, dependencies=[Depends(get_current_user)])
-app.include_router(quotations.router)
+app.include_router(quotations.router, dependencies=AUTO_CLOSE)
 app.include_router(imports.router)
+app.include_router(supplier_rfqs.router, prefix="/api", dependencies=AUTO_CLOSE)
 
 
 app.include_router(

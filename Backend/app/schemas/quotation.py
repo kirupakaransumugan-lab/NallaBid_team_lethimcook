@@ -33,3 +33,10 @@ class QuotationResponse(BaseModel):
     submitted_at: datetime
     updated_at: datetime | None = None
     model_config = ConfigDict(from_attributes=True)
+
+
+class SupplierQuotationListItem(QuotationResponse):
+    rfq_number: str
+    product_name: str
+    rfq_status: str
+    deadline: datetime

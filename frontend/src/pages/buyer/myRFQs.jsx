@@ -13,6 +13,7 @@ function MyRFQs() {
 
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("ALL");
+    const [openActionMenuId, setOpenActionMenuId] = useState(null);
 
     const fetchRFQs = async () => {
         setLoading(true);
@@ -397,21 +398,35 @@ function MyRFQs() {
                                                             View
                                                         </button>
 
-                                                        <button
-                                                            type="button"
-                                                            className="action-dropdown"
-                                                            aria-label="More actions"
-                                                        >
-                                                            <i className="bi bi-chevron-down"></i>
-                                                        </button>
+                                                        {rfq.status === "OPEN" && (
+                                                            <>
+                                                                <button
+                                                                    type="button"
+                                                                    className="action-dropdown"
+                                                                    aria-label="More actions"
+                                                                    aria-expanded={openActionMenuId === rfq.id}
+                                                                    onClick={() => setOpenActionMenuId((current) => current === rfq.id ? null : rfq.id)}
+                                                                >
+                                                                    <i className="bi bi-chevron-down"></i>
+                                                                </button>
 
-                                                        <button
-                                                            type="button"
-                                                            className="action-more"
-                                                            aria-label="More options"
-                                                        >
-                                                            <i className="bi bi-three-dots-vertical"></i>
-                                                        </button>
+                                                                {openActionMenuId === rfq.id && (
+                                                                    <div className="rfq-action-menu" role="menu">
+                                                                        <button
+                                                                            type="button"
+                                                                            role="menuitem"
+                                                                            onClick={() => {
+                                                                                setOpenActionMenuId(null);
+                                                                                navigate(`/rfqs/${rfq.id}?extend=1`);
+                                                                            }}
+                                                                        >
+                                                                            <i className="bi bi-calendar-plus"></i>
+                                                                            Extend deadline
+                                                                        </button>
+                                                                    </div>
+                                                                )}
+                                                            </>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>

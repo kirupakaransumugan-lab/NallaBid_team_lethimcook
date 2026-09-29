@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 
 import EmptyState from "../../components/EmptyState";
 import ErrorMessage from "../../components/ErrorMessage";
 import Loading from "../../components/Loading";
 import { getRFQEvaluation, runEvaluation } from "../../services/evaluationService";
-import { closeRFQ, publishRFQ } from "../../services/rfqService";
+import { closeRFQ, extendRFQDeadline, publishRFQ } from "../../services/rfqService";
 import { formatDate, formatLKR } from "../../utils/format";
 import ConfirmDialog from "./ConfirmDialog";
 
@@ -27,6 +27,14 @@ function currentStep(rfqStatus, evaluatedCount) {
 
 function eligibilityOf(quotation) {
     return quotation.evaluation?.overall_status ?? "PENDING";
+}
+
+
+function toDateTimeLocal(value) {
+    const text = String(value);
+    const date = new Date(/[zZ]|[+-]\d\d:\d\d$/.test(text) ? text : `${text}Z`);
+    const offset = date.getTimezoneOffset() * 60_000;
+    return new Date(date.getTime() - offset).toISOString().slice(0, 16);
 }
 
 
@@ -54,6 +62,7 @@ const ACTION_CONFIRMATIONS = {
 
 function RFQDetails() {
     const { rfqId } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [overview, setOverview] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -63,6 +72,9 @@ function RFQDetails() {
     const [actionBusy, setActionBusy] = useState(false);
     const [actionError, setActionError] = useState("");
     const [actionSuccess, setActionSuccess] = useState("");
+    const [editingDeadline, setEditingDeadline] = useState(false);
+    const [newDeadline, setNewDeadline] = useState("");
+    const [deadlineBusy, setDeadlineBusy] = useState(false);
 
     // setState only runs in promise callbacks, never synchronously inside the effect.
     const loadOverview = useCallback(() => getRFQEvaluation(rfqId)
@@ -112,6 +124,41 @@ function RFQDetails() {
         }
     }
 
+    function openDeadlineEditor() {
+        setActionError("");
+        setActionSuccess("");
+        setNewDeadline(toDateTimeLocal(overview.rfq.deadline));
+        setEditingDeadline(true);
+    }
+
+    async function saveDeadline(event) {
+        event.preventDefault();
+        setActionError("");
+        setActionSuccess("");
+
+        const selectedDeadline = newDeadline || toDateTimeLocal(overview.rfq.deadline);
+        const nextDeadline = new Date(selectedDeadline);
+        const currentDeadline = new Date(`${overview.rfq.deadline}Z`);
+
+        if (Number.isNaN(nextDeadline.getTime()) || nextDeadline <= currentDeadline) {
+            setActionError("Choose a deadline later than the current deadline.");
+            return;
+        }
+
+        setDeadlineBusy(true);
+        try {
+            await extendRFQDeadline(rfqId, nextDeadline.toISOString());
+            setEditingDeadline(false);
+            setSearchParams({}, { replace: true });
+            setActionSuccess("Deadline extended. Suppliers can now submit quotations for longer.");
+            await loadOverview();
+        } catch (requestError) {
+            setActionError(requestError.message);
+        } finally {
+            setDeadlineBusy(false);
+        }
+    }
+
     if (loading && !overview) {
         return (
             <div className="nallabid-flow-page">
@@ -132,6 +179,7 @@ function RFQDetails() {
     const step = currentStep(rfq.status, overview.evaluated_quotations);
     const stepIndex = WORKFLOW_STEPS.indexOf(step);
     const confirmation = pendingAction ? ACTION_CONFIRMATIONS[pendingAction] : null;
+    const showDeadlineEditor = rfq.status === "OPEN" && (editingDeadline || searchParams.get("extend") === "1");
 
     return (
         <div className="nallabid-flow-page nallabid-rfq-details">
@@ -149,6 +197,17 @@ function RFQDetails() {
                 </div>
 
                 <div className="nallabid-flow-actions">
+                    {rfq.status === "OPEN" && (
+                        <button
+                            type="button"
+                            className="nallabid-flow-button nallabid-flow-button-ghost"
+                            onClick={openDeadlineEditor}
+                        >
+                            <i className="bi bi-calendar-plus"></i>
+                            Extend Deadline
+                        </button>
+                    )}
+
                     {rfq.status === "DRAFT" && (
                         <button
                             type="button"
@@ -221,6 +280,35 @@ function RFQDetails() {
                     <i className="bi bi-check-circle"></i>
                     <span>{actionSuccess}</span>
                 </div>
+            )}
+
+            {showDeadlineEditor && (
+                <section className="nallabid-flow-panel nallabid-deadline-editor">
+                    <div className="nallabid-flow-panel-head">
+                        <div>
+                            <h2>Extend quotation deadline</h2>
+                            <p>Current deadline: {formatDate(rfq.deadline)}. You can only choose a later date and time.</p>
+                        </div>
+                    </div>
+                    <form className="nallabid-deadline-form" onSubmit={saveDeadline}>
+                        <label>
+                            New deadline
+                            <input
+                                type="datetime-local"
+                                value={newDeadline || toDateTimeLocal(rfq.deadline)}
+                                onChange={(event) => setNewDeadline(event.target.value)}
+                                required
+                            />
+                        </label>
+                        <div className="nallabid-flow-actions">
+                            <button type="button" className="nallabid-flow-button nallabid-flow-button-ghost" onClick={() => { setEditingDeadline(false); setSearchParams({}, { replace: true }); }} disabled={deadlineBusy}>Cancel</button>
+                            <button type="submit" className="nallabid-flow-button nallabid-flow-button-primary" disabled={deadlineBusy}>
+                                <i className={deadlineBusy ? "bi bi-hourglass-split" : "bi bi-calendar-plus"}></i>
+                                {deadlineBusy ? "Saving..." : "Extend Deadline"}
+                            </button>
+                        </div>
+                    </form>
+                </section>
             )}
 
             {overview.sealed && rfq.status === "OPEN" && overview.total_quotations > 0 && (

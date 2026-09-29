@@ -42,3 +42,14 @@ export function closeRFQ(rfqId) {
         fallback: "Could not close RFQ."
     });
 }
+
+
+// The backend permits an OPEN RFQ's deadline to be extended. It rejects any
+// other term change after suppliers have submitted quotations.
+export function extendRFQDeadline(rfqId, deadline) {
+    return apiRequest(`/rfqs/${rfqId}`, {
+        method: "PUT",
+        body: { deadline },
+        fallback: "Could not extend the RFQ deadline."
+    });
+}

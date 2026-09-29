@@ -10,7 +10,12 @@ from app.database import get_db
 from app.models.quotation import Quotation, QuotationStatus
 from app.models.rfq import RFQ
 from app.models.supplier import Supplier
-from app.schemas.quotation import QuotationCreate, QuotationResponse, QuotationUpdate
+from app.schemas.quotation import (
+    QuotationCreate,
+    QuotationResponse,
+    QuotationUpdate,
+    SupplierQuotationListItem,
+)
 from app.security.auth import get_current_user
 
 router = APIRouter(tags=["Quotations"])
@@ -25,6 +30,44 @@ def get_current_supplier(db: Session, current_user) -> Supplier:
 
 def generate_quotation_number() -> str:
     return f"QTN-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}"
+
+
+@router.get("/api/quotations", response_model=list[SupplierQuotationListItem])
+def list_my_quotations(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """A supplier can see only their own quotations and their RFQ status."""
+    supplier = get_current_supplier(db, current_user)
+
+    rows = db.execute(
+        select(Quotation, RFQ)
+        .join(RFQ, RFQ.id == Quotation.rfq_id)
+        .where(Quotation.supplier_id == supplier.id)
+        .order_by(Quotation.submitted_at.desc())
+    ).all()
+
+    return [
+        SupplierQuotationListItem(
+            id=quotation.id,
+            quotation_number=quotation.quotation_number,
+            rfq_id=quotation.rfq_id,
+            supplier_id=quotation.supplier_id,
+            unit_price=quotation.unit_price,
+            total_price=quotation.total_price,
+            delivery_days=quotation.delivery_days,
+            warranty_months=quotation.warranty_months,
+            notes=quotation.notes,
+            status=quotation.status,
+            submitted_at=quotation.submitted_at,
+            updated_at=quotation.updated_at,
+            rfq_number=rfq.rfq_number,
+            product_name=rfq.product_name,
+            rfq_status=rfq.status.value,
+            deadline=rfq.deadline,
+        )
+        for quotation, rfq in rows
+    ]
 
 @router.post("/api/rfqs/{rfq_id}/quotations", response_model=QuotationResponse, status_code=status.HTTP_201_CREATED)
 def create_quotation(rfq_id: int, data: QuotationCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):

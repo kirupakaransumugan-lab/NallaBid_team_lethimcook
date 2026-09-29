@@ -81,6 +81,25 @@ class RFQListItem(BaseModel):
     quotation_count: int
 
 
+# Supplier-facing RFQ data deliberately excludes buyer_id and every other
+# supplier's quotation data.  An RFQ is an opportunity only while it is OPEN.
+class SupplierRFQListItem(BaseModel):
+    id: int
+    rfq_number: str
+    product_name: str
+    description: str | None = None
+    quantity: int
+    max_delivery_days: int
+    min_warranty_months: int
+    deadline: datetime
+    status: str
+    has_submitted: bool
+
+
+class SupplierRFQDetail(SupplierRFQListItem):
+    created_at: datetime
+
+
 class DashboardStats(BaseModel):
     total_rfqs: int
     quotations_received: int

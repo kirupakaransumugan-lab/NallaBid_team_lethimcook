@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getMyQuotations } from "../../services/supplierRFQService";
+import { formatDate, formatLKR } from "../../utils/format";
 
 function MyQuotations() {
     const [quotations, setQuotations] = useState([]);
@@ -7,9 +9,16 @@ function MyQuotations() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        // Supplier quotation API will be connected
-        // when the backend endpoint is ready.
-        setLoading(false);
+        let active = true;
+
+        getMyQuotations()
+            .then((data) => active && setQuotations(data))
+            .catch((requestError) => active && setError(requestError.message))
+            .finally(() => active && setLoading(false));
+
+        return () => {
+            active = false;
+        };
     }, []);
 
     const getStatusClass = (status) => {
@@ -115,15 +124,16 @@ function MyQuotations() {
                                                 </td>
 
                                                 <td>
-                                                    {quotation.rfq_id}
+                                                    <strong>{quotation.rfq_number}</strong><br />
+                                                    <small>{quotation.product_name}</small>
                                                 </td>
 
                                                 <td>
-                                                    {quotation.unit_price}
+                                                    {formatLKR(quotation.unit_price)}
                                                 </td>
 
                                                 <td>
-                                                    {quotation.total_price}
+                                                    {formatLKR(quotation.total_price)}
                                                 </td>
 
                                                 <td>
@@ -145,12 +155,11 @@ function MyQuotations() {
                                                 </td>
 
                                                 <td className="text-end">
-                                                    <Link
-                                                        to={`/supplier/rfqs/${quotation.rfq_id}`}
-                                                        className="btn btn-sm btn-outline-primary"
-                                                    >
-                                                        View RFQ
-                                                    </Link>
+                                                    {quotation.rfq_status === "OPEN" ? (
+                                                        <Link to={`/supplier/rfqs/${quotation.rfq_id}`} className="btn btn-sm btn-outline-primary">View RFQ</Link>
+                                                    ) : (
+                                                        <span className="text-secondary">{quotation.rfq_status} · {formatDate(quotation.deadline)}</span>
+                                                    )}
                                                 </td>
 
                                             </tr>
