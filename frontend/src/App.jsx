@@ -36,6 +36,7 @@ const DASHBOARD_BY_ROLE = {
 // GIDEON - SUPPLIER PAGES
 // =========================
 
+import SupplierCatalogue from "./pages/supplier/SupplierCatalogue";
 import SupplierDashboard from "./pages/supplier/SupplierDashboard";
 import AvailableRFQs from "./pages/supplier/AvailableRFQs";
 import SupplierRFQDetails from "./pages/supplier/SupplierRFQDetails";
@@ -163,6 +164,10 @@ function App() {
                         </Navbar>
                     }
                 />
+
+                <Route path="/supplier/catalogue" element={
+                    <RequireRole role="SUPPLIER"><Navbar><SupplierCatalogue /></Navbar></RequireRole>
+                } />
 
                 <Route
                     path="/supplier/quotations"

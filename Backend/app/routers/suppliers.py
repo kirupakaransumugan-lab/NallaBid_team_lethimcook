@@ -4,13 +4,23 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.supplier import Supplier
-from app.schemas.supplier import SupplierResponse
+from app.schemas.supplier import SupplierResponse, SupplierCatalogueResponse
+from app.models.supplier_catalogue import SupplierCatalogue
+from app.services.supplier_service import require_supplier_profile
 
 router = APIRouter(prefix="/api/suppliers", tags=["Suppliers"])
 
 @router.get("", response_model=list[SupplierResponse])
 def get_suppliers(db: Session = Depends(get_db)):
     return db.scalars(select(Supplier).order_by(Supplier.id)).all()
+
+@router.get("/me/catalogue", response_model=list[SupplierCatalogueResponse])
+def get_my_catalogue(db: Session = Depends(get_db), supplier: Supplier = Depends(require_supplier_profile)):
+    return db.scalars(
+        select(SupplierCatalogue).where(SupplierCatalogue.supplier_id == supplier.id)
+        .order_by(SupplierCatalogue.product_name, SupplierCatalogue.id)
+    ).all()
+
 
 @router.get("/{supplier_id}", response_model=SupplierResponse)
 def get_supplier(supplier_id: int, db: Session = Depends(get_db)):
