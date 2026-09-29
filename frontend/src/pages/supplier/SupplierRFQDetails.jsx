@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { getSupplierRFQ } from "../../services/supplierRFQService";
 
 function SupplierRFQDetails() {
     const { rfqId } = useParams();
@@ -9,8 +10,22 @@ function SupplierRFQDetails() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        // RFQ details API will be connected when the backend endpoint is ready.
-        setLoading(false);
+        let active = true;
+
+        getSupplierRFQ(rfqId)
+            .then((data) => {
+                if (active) setRfq(data);
+            })
+            .catch((requestError) => {
+                if (active) setError(requestError.message);
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
     }, [rfqId]);
 
     if (loading) {

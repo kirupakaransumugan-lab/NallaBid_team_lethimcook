@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getMyQuotations } from "../../services/supplierRFQService";
+import { formatLKR } from "../../utils/format";
 
 function MyQuotations() {
     const [quotations, setQuotations] = useState([]);
@@ -7,9 +9,22 @@ function MyQuotations() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        // Supplier quotation API will be connected
-        // when the backend endpoint is ready.
-        setLoading(false);
+        let active = true;
+
+        getMyQuotations()
+            .then((data) => {
+                if (active) setQuotations(data);
+            })
+            .catch((requestError) => {
+                if (active) setError(requestError.message);
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
     }, []);
 
     const getStatusClass = (status) => {
@@ -115,15 +130,16 @@ function MyQuotations() {
                                                 </td>
 
                                                 <td>
-                                                    {quotation.rfq_id}
+                                                    <strong>{quotation.rfq_number}</strong><br />
+                                                    <small>{quotation.product_name}</small>
                                                 </td>
 
                                                 <td>
-                                                    {quotation.unit_price}
+                                                    {formatLKR(quotation.unit_price)}
                                                 </td>
 
                                                 <td>
-                                                    {quotation.total_price}
+                                                    {formatLKR(quotation.total_price)}
                                                 </td>
 
                                                 <td>

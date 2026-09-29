@@ -7,7 +7,6 @@ import { getCurrentUser } from "../../services/authService";
 import { downloadReport, getReportDashboard, REPORT_TYPES, reportsBasePath } from "../../services/reportService";
 import { formatLKR, formatNumber } from "../../utils/format";
 import { BarList, ColumnChart } from "./ReportCharts";
-import eligibilityIllustration from "../../assets/eligibility-illustration.png";
 
 import "./reports.css";
 
