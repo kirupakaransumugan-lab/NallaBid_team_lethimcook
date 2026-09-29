@@ -37,7 +37,11 @@ async function throwIfFailed(response, fallback) {
         logoutUser();
     }
 
-    throw requestError(getErrorMessage(data, fallback), response.status);
+    const csvErrors = data?.detail?.errors;
+    const message = Array.isArray(csvErrors) && csvErrors.length
+        ? csvErrors.map((error) => `${error.row ? `Row ${error.row}: ` : ""}${error.message}`).join("\n")
+        : getErrorMessage(data, fallback);
+    throw requestError(message, response.status);
 }
 
 
@@ -56,10 +60,11 @@ export function toQuery(params = {}) {
 
 
 export async function apiRequest(path, { method = "GET", body, fallback = "Request failed." } = {}) {
+    const multipart = body instanceof FormData;
     const response = await authorizedFetch(path, {
         method,
-        headers: body === undefined ? {} : { "Content-Type": "application/json" },
-        body: body === undefined ? undefined : JSON.stringify(body)
+        headers: body === undefined || multipart ? {} : { "Content-Type": "application/json" },
+        body: body === undefined || multipart ? body : JSON.stringify(body)
     });
 
     await throwIfFailed(response, fallback);

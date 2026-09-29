@@ -83,6 +83,11 @@ function Navbar({ children }) {
             path: "/supplier/rfqs"
         },
         {
+            name: "My Catalogue",
+            icon: "bi-box-seam",
+            path: "/supplier/catalogue"
+        },
+        {
             name: "My Quotations",
             icon: "bi-file-earmark-check",
             path: "/supplier/quotations"

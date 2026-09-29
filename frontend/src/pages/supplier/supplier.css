@@ -78,3 +78,27 @@
     .supplierPage .supplierButton { width: 100%; }
     .supplierPanelHeading { flex-wrap: wrap; gap: 10px; }
 }
+
+/* My Catalogue reuses supplier cards and keeps its additions local. */
+.supplierCatalogue .supplierButton { border: 0; }
+.supplierCatalogue button:disabled { opacity: .55; cursor: not-allowed; }
+.supplierCatalogue .catalogueMetrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.supplierCatalogue .catalogueImport { padding: 24px; margin-bottom: 24px; }
+.supplierCatalogue .catalogueImport h2 { font-size: 18px; font-weight: 700; }
+.supplierCatalogue .catalogueImport form { margin-top: 20px; }
+.supplierCatalogue .catalogueColumns { display: block; overflow-wrap: anywhere; margin: 12px 0; color: #087653; }
+.supplierCatalogue .catalogueActions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+.supplierCatalogue .supplierAlert { margin: 16px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.supplierCatalogue .catalogueSuccess { padding: 18px 24px; margin-bottom: 24px; background: #edf7f2; color: #087653; border-radius: 10px; }
+.supplierCatalogue .catalogueTable { border-radius: 0 0 16px 16px; }
+.supplierCatalogue .catalogueTable table { min-width: 660px; --bs-table-color: #182c43; --bs-table-hover-bg: #f0f7f3; }
+.supplierCatalogue .catalogueTable th, .supplierCatalogue .catalogueTable td { padding: 18px 24px; border-color: #edf0ee; vertical-align: middle; }
+.supplierCatalogue .catalogueTable thead th { background: #f8faf9; color: #526375; font-size: 12px; white-space: nowrap; }
+.supplierCatalogue .catalogueTable tbody th { width: 25%; font-size: 14px; overflow-wrap: anywhere; }
+.supplierCatalogue .catalogueTable td { font-size: 14px; max-width: 360px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.supplierCatalogue .catalogueNote { padding: 16px 24px; }
+.supplierCatalogue input:focus-visible, .supplierCatalogue .catalogueTable:focus-visible { outline: 3px solid #469e80; outline-offset: 3px; }
+@media (max-width: 480px) {
+    .supplierCatalogue .catalogueMetrics { grid-template-columns: 1fr; }
+    .supplierCatalogue .catalogueActions { flex-wrap: wrap; }
+}
