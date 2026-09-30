@@ -15,6 +15,14 @@ class Settings(BaseSettings):
 
     FRONTEND_URL: str = "http://localhost:5173"
 
+    # Comma-separated login emails that get the admin panel. Admin is decided here,
+    # not in the database, so the users.role column stays BUYER/SUPPLIER.
+    ADMIN_EMAILS: str = ""
+
+    @property
+    def admin_emails(self) -> set[str]:
+        return {email.strip().lower() for email in self.ADMIN_EMAILS.split(",") if email.strip()}
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8"

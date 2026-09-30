@@ -36,4 +36,5 @@ class LoginResponse(BaseModel):
     user_id: int
     full_name: str
     email: EmailStr
-    role: UserRole    
+    role: UserRole
+    is_admin: bool = False    

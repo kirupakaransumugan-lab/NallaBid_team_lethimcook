@@ -105,13 +105,52 @@ function Navbar({ children }) {
     ];
 
     // ==============================
+    // ADMIN MENU
+    // ==============================
+
+    const adminMenuItems = [
+        {
+            name: "Dashboard",
+            icon: "bi-speedometer2",
+            path: "/admin"
+        },
+        {
+            name: "Users",
+            icon: "bi-people",
+            path: "/admin/users"
+        },
+        {
+            name: "All RFQs",
+            icon: "bi-file-earmark-text",
+            path: "/admin/rfqs"
+        },
+        {
+            name: "All Quotations",
+            icon: "bi-file-earmark-check",
+            path: "/admin/quotations"
+        },
+        {
+            name: "Awards",
+            icon: "bi-trophy",
+            path: "/admin/awards"
+        },
+        {
+            name: "Profile",
+            icon: "bi-person",
+            path: "/admin/profile"
+        }
+    ];
+
+    // ==============================
     // SELECT MENU BY ROLE
     // ==============================
 
     const menuItems =
-        userRole === "SUPPLIER"
-            ? supplierMenuItems
-            : buyerMenuItems;
+        userRole === "ADMIN"
+            ? adminMenuItems
+            : userRole === "SUPPLIER"
+                ? supplierMenuItems
+                : buyerMenuItems;
 
     // ==============================
     // USER INFORMATION
@@ -121,7 +160,9 @@ function Navbar({ children }) {
         currentUser?.full_name || "User";
 
     const displayRole =
-        userRole === "SUPPLIER"
+        userRole === "ADMIN"
+            ? "Administrator"
+            : userRole === "SUPPLIER"
             ? "Supplier"
             : userRole === "BUYER"
                 ? "Procurement Manager"
@@ -145,7 +186,8 @@ function Navbar({ children }) {
 
     function isActive(item) {
         return location.pathname === item.path ||
-            (item.path === "/supplier/rfqs" && location.pathname.startsWith("/supplier/rfqs/"));
+            (item.path === "/supplier/rfqs" && location.pathname.startsWith("/supplier/rfqs/")) ||
+            (item.path !== "/admin" && item.path.startsWith("/admin/") && location.pathname.startsWith(`${item.path}/`));
     }
 
     return (
@@ -162,9 +204,11 @@ function Navbar({ children }) {
 
                     <Link
                         to={
-                            userRole === "SUPPLIER"
-                                ? "/supplier"
-                                : "/buyer"
+                            userRole === "ADMIN"
+                                ? "/admin"
+                                : userRole === "SUPPLIER"
+                                    ? "/supplier"
+                                    : "/buyer"
                         }
                         className="brandLink"
                     >

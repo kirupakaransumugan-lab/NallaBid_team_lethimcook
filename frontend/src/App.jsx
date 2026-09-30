@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import {
     BrowserRouter,
     Navigate,
     Routes,
     Route,
+    useNavigate,
     useParams
 } from "react-router-dom";
 
@@ -23,13 +25,34 @@ import SupplierProfile from "./pages/buyer/SupplierProfile";
 import Profile from "./pages/Profile";
 import Reports from "./pages/reports/Reports";
 import ReportDetail from "./pages/reports/ReportDetail";
-import { getCurrentUser, getToken } from "./services/authService";
+import { getCurrentUser, getToken, refreshCurrentUser } from "./services/authService";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminUserDetail from "./pages/admin/AdminUserDetail";
+import AdminRFQs from "./pages/admin/AdminRFQs";
+import AdminRFQDetail from "./pages/admin/AdminRFQDetail";
+import AdminQuotations from "./pages/admin/AdminQuotations";
+import AdminAwards from "./pages/admin/AdminAwards";
 
 
 const DASHBOARD_BY_ROLE = {
     BUYER: "/buyer",
-    SUPPLIER: "/supplier"
+    SUPPLIER: "/supplier",
+    ADMIN: "/admin"
 };
+
+
+// Admin panel pages: "ADMIN" is a UI role given at login to emails in the backend's ADMIN_EMAILS.
+const ADMIN_ROUTES = [
+    ["/admin", AdminDashboard],
+    ["/admin/users", AdminUsers],
+    ["/admin/users/:userId", AdminUserDetail],
+    ["/admin/rfqs", AdminRFQs],
+    ["/admin/rfqs/:rfqId", AdminRFQDetail],
+    ["/admin/quotations", AdminQuotations],
+    ["/admin/awards", AdminAwards],
+    ["/admin/profile", Profile]
+];
 
 
 
@@ -83,6 +106,31 @@ const BUYER_PATH_ALIASES = {
 };
 
 
+// Once per page load: if the backend says the saved role is out of date
+// (e.g. an admin with a session from before), fix it and open the right dashboard.
+function SessionSync() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const savedRole = getCurrentUser()?.role;
+
+        if (!getToken() || !savedRole) {
+            return;
+        }
+
+        refreshCurrentUser()
+            .then((role) => {
+                if (role && role !== savedRole) {
+                    navigate(DASHBOARD_BY_ROLE[role] ?? "/login", { replace: true });
+                }
+            })
+            .catch(() => {});
+    }, [navigate]);
+
+    return null;
+}
+
+
 function BuyerRFQRedirect() {
     const { rfqId } = useParams();
 
@@ -93,6 +141,8 @@ function BuyerRFQRedirect() {
 function App() {
     return (
         <BrowserRouter>
+
+            <SessionSync />
 
             <Routes>
 
@@ -119,11 +169,32 @@ function App() {
                 <Route
                     path="/buyer"
                     element={
-                        <Navbar>
-                            <BuyerDashboard />
-                        </Navbar>
+                        <RequireRole role="BUYER">
+                            <Navbar>
+                                <BuyerDashboard />
+                            </Navbar>
+                        </RequireRole>
                     }
                 />
+
+
+                {/* =========================
+                    ADMIN
+                ========================= */}
+
+                {ADMIN_ROUTES.map(([path, Page]) => (
+                    <Route
+                        key={path}
+                        path={path}
+                        element={
+                            <RequireRole role="ADMIN">
+                                <Navbar>
+                                    <Page />
+                                </Navbar>
+                            </RequireRole>
+                        }
+                    />
+                ))}
 
 
                 {/* =========================

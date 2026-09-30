@@ -5,6 +5,7 @@ from app.database import Base, engine
 from app.models.user import User
 from app.routers import suppliers, quotations, imports, supplier_rfqs
 from app.routers import awards, evaluations, reports, buyer_workspace, users
+from app.routers import admin
 
 from app.routers.auth import router as auth_router
 from app.routers import RFQs
@@ -85,6 +86,13 @@ app.include_router(
 app.include_router(
     users.router,
     prefix="/api"
+)
+
+# Admin panel: read-only views over all users/RFQs/quotations/awards + account activation.
+app.include_router(
+    admin.router,
+    prefix="/api",
+    dependencies=AUTO_CLOSE
 )
 
 @app.get("/")

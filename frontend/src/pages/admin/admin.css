@@ -1,0 +1,140 @@
+/* =========================================================
+   Admin panel. Builds on the shared .nallabid-flow-* styles
+   (pages/buyer/awardFlow.css); only admin-specific pieces here.
+   ========================================================= */
+
+.nallabid-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+    gap: 20px;
+}
+
+.nallabid-admin-grid > .nallabid-flow-panel {
+    margin-bottom: 0;
+}
+
+.nallabid-admin-grid + .nallabid-flow-panel,
+.nallabid-flow-panel + .nallabid-admin-grid {
+    margin-top: 20px;
+}
+
+.nallabid-admin-small {
+    padding: 6px 11px;
+    font-size: 12px;
+}
+
+/* Role / active / sealed pills */
+
+.nallabid-admin-role,
+.nallabid-admin-active,
+.nallabid-admin-sealed {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.nallabid-admin-role-buyer { background: #e6effd; color: #2d62c9; }
+.nallabid-admin-role-supplier { background: #e2f3eb; color: #0a7c54; }
+.nallabid-admin-role-admin { background: #142238; color: #ffffff; }
+
+.nallabid-admin-active.is-active { background: #e2f3eb; color: #0a7c54; }
+.nallabid-admin-active.is-inactive { background: #fde9e9; color: #c64545; }
+
+.nallabid-admin-sealed { background: #eef1f4; color: #5b6778; }
+
+/* RFQ status bars on the dashboard */
+
+.nallabid-admin-bars {
+    display: grid;
+    gap: 14px;
+}
+
+.nallabid-admin-bar {
+    display: grid;
+    grid-template-columns: 110px 1fr 40px;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: #142238;
+}
+
+.nallabid-admin-bar-track {
+    height: 10px;
+    border-radius: 999px;
+    background: #eef1f4;
+    overflow: hidden;
+}
+
+.nallabid-admin-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: #0a7a53;
+}
+
+.nallabid-admin-bar strong {
+    text-align: right;
+}
+
+/* Key/value details on user and RFQ pages */
+
+.nallabid-admin-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    gap: 16px 24px;
+    margin: 0;
+}
+
+.nallabid-admin-details dt {
+    margin-bottom: 4px;
+    color: #718096;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.nallabid-admin-details dd {
+    margin: 0;
+    color: #142238;
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* Quick links */
+
+.nallabid-admin-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: 12px;
+}
+
+.nallabid-admin-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid #e4eae7;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #142238;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.nallabid-admin-link:hover {
+    border-color: #0a7a53;
+    background: #e8f4ee;
+    color: #086947;
+}
+
+.nallabid-admin-link i {
+    font-size: 20px;
+    color: #0a7a53;
+}

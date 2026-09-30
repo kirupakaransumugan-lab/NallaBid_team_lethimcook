@@ -27,7 +27,7 @@ function Login() {
         try {
             const user = await loginUser(email.trim(), password);
 
-            navigate(user.role === "BUYER" ? "/buyer" : "/supplier");
+            navigate({ ADMIN: "/admin", BUYER: "/buyer" }[user.role] ?? "/supplier");
         } catch (err) {
             setError(err.message);
         } finally {

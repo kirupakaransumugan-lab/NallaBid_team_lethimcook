@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
 from app.schemas.user import PasswordChange, ProfileResponse, ProfileUpdate, UserMeResponse
-from app.security.auth import get_current_user
+from app.security.auth import get_current_user, is_admin
 from app.services.profile_service import change_password, get_profile, update_profile
 
 
@@ -18,7 +18,9 @@ router = APIRouter(
 def get_me(
     current_user: User = Depends(get_current_user)
 ):
-    return current_user
+    return UserMeResponse.model_validate(current_user).model_copy(
+        update={"is_admin": is_admin(current_user)}
+    )
 
 
 @router.get("/me/profile", response_model=ProfileResponse)

@@ -20,6 +20,8 @@ class UserMeResponse(BaseModel):
     role: UserRole
     is_active: bool
     created_at: datetime
+    # Not a DB column: true when the email is in ADMIN_EMAILS (see config.py).
+    is_admin: bool = False
     model_config = ConfigDict(from_attributes=True)
 
 

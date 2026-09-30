@@ -10,7 +10,7 @@ from app.security.jwt import create_access_token
 from app.security.password import verify_password
 from app.schemas.auth import LoginResponse, RegisterRequest, RegisterResponse
 from app.security.password import hash_password
-from app.security.auth import get_current_user
+from app.security.auth import get_current_user, is_admin
 
 
 router = APIRouter(
@@ -105,7 +105,8 @@ def login(
         user_id=user.id,
         full_name=user.full_name,
         email=user.email,
-        role=user.role
+        role=user.role,
+        is_admin=is_admin(user)
     )
 
 # JWTs are stateless: the server can't revoke one, so the client deletes its

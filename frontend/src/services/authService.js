@@ -49,6 +49,10 @@ export async function loginUser(email, password) {
         );
     }
 
+    // Admins are stored with the UI role "ADMIN" so routing sends them to the admin panel.
+    // Their database role stays BUYER/SUPPLIER; the backend re-checks admin on every call.
+    const role = data.is_admin ? "ADMIN" : data.role;
+
     localStorage.setItem(TOKEN_KEY, data.access_token);
     localStorage.setItem(
         USER_KEY,
@@ -56,11 +60,11 @@ export async function loginUser(email, password) {
             id: data.user_id,
             full_name: data.full_name,
             email: data.email,
-            role: data.role
+            role
         })
     );
 
-    return data;
+    return { ...data, role };
 }
 
 
@@ -111,6 +115,25 @@ export function getErrorMessage(data, fallback) {
     }
 
     return fallback;
+}
+
+
+// Re-reads the logged-in user from the backend so a session saved before the user
+// became (or stopped being) an admin gets the right UI role. Returns the role.
+export async function refreshCurrentUser() {
+    const response = await fetch(`${API_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const data = await response.json();
+    const role = data.is_admin ? "ADMIN" : data.role;
+
+    updateStoredUser({ full_name: data.full_name, email: data.email, role });
+    return role;
 }
 
 
