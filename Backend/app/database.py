@@ -1,3 +1,6 @@
+import ssl
+from pathlib import Path
+
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -18,13 +21,18 @@ database_url = URL.create(
 connect_args = {}
 
 if settings.DB_SSL:
-    connect_args["ssl"] = {}
+    connect_args["ssl"] = ssl.create_default_context(
+        cafile=str(Path(__file__).resolve().parent.parent / "ca.pem")
+    )
 
 
 engine = create_engine(
     database_url,
     connect_args=connect_args,
-    pool_pre_ping=True
+    pool_pre_ping=True,
+    pool_size=2,
+    max_overflow=0,
+    pool_recycle=300
 )
 
 
@@ -40,7 +48,6 @@ Base = declarative_base()
 
 def get_db():
     db = SessionLocal()
-
     try:
         yield db
     finally:
